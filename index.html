@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TooughYuff | Premium Vape Showcase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: '#050508',
+              surface: '#0a0a12',
+              elevated: '#10101a',
+              gold: {
+                DEFAULT: '#D4AF37',
+                glow: 'rgba(212,175,55,0.3)',
+                subtle: 'rgba(212,175,55,0.15)',
+              },
+              accent: {
+                blue: '#3B82F6',
+                blueGlow: 'rgba(59,130,246,0.3)',
+              },
+              text: {
+                primary: '#FFFFFF',
+                secondary: 'rgba(255,255,255,0.6)',
+                tertiary: 'rgba(255,255,255,0.4)',
+              }
+            },
+            fontFamily: {
+              sans: ['"Instrument Sans"', 'system-ui', 'sans-serif'],
+            },
+            spacing: {
+              '18': '4.5rem',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #050508;
+        color: #FFFFFF;
+        font-family: "Instrument Sans", sans-serif;
+        overflow-x: hidden;
+      }
+      .glass-panel {
+        background: rgba(10, 10, 18, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .gold-glow-hover:hover {
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #050508;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1a1a24;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #D4AF37;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.34.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
