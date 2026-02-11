@@ -21,27 +21,36 @@ const ScrollToTop = () => {
   return null;
 };
 
+import { db } from './src/firebase';
+import { ref, onValue, set, update } from 'firebase/database';
+
 const App: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse products', e);
-      }
-    }
-    return INITIAL_PRODUCTS;
-  });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('admin_auth') === 'true';
   });
 
-  // Persist products to localStorage
+  // Sync with Firebase
   useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
+    const productsRef = ref(db, 'products');
+    const unsubscribe = onValue(productsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Convert object back to array if needed, or just use as is if stored as array
+        const productList = Array.isArray(data) ? data : Object.values(data);
+        setProducts(productList as Product[]);
+      } else {
+        // Database is empty, seed it with initial data
+        set(productsRef, INITIAL_PRODUCTS);
+        setProducts(INITIAL_PRODUCTS);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogin = () => {
     setIsAdminAuthenticated(true);
@@ -54,8 +63,23 @@ const App: React.FC = () => {
   };
 
   const updateProduct = (id: string, updates: Partial<Product>) => {
+    // Optimistic update (optional, but good for UI responsiveness)
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+
+    // Update in Firebase
+    // Assuming products are stored as an array, keys are indices 0, 1, 2...
+    // But we use 'prod-1', 'prod-2' IDs. 
+    // To make it simple, we will find the index of the product in the array
+    const productIndex = products.findIndex(p => p.id === id);
+    if (productIndex !== -1) {
+      const productRef = ref(db, `products/${productIndex}`);
+      update(productRef, updates);
+    }
   };
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center text-gold">Loading vapes...</div>;
+  }
 
   return (
     <Router>
