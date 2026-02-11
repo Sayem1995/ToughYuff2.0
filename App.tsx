@@ -120,6 +120,7 @@ const App: React.FC = () => {
                 products={products}
                 onUpdateProduct={updateProduct}
                 onLogout={handleLogout}
+                isConnected={isConnected}
               />
             ) : (
               <Navigate to="/login" replace />
