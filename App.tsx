@@ -22,10 +22,26 @@ const ScrollToTop = () => {
 };
 
 const App: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('products');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse products', e);
+      }
+    }
+    return INITIAL_PRODUCTS;
+  });
+
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('admin_auth') === 'true';
   });
+
+  // Persist products to localStorage
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(products));
+  }, [products]);
 
   const handleLogin = () => {
     setIsAdminAuthenticated(true);
@@ -45,7 +61,7 @@ const App: React.FC = () => {
     <Router>
       <ScrollToTop />
       <AgeGate />
-      
+
       <Routes>
         {/* Public Routes with Layout */}
         <Route path="/" element={<Layout><Home /></Layout>} />
@@ -53,26 +69,26 @@ const App: React.FC = () => {
         <Route path="/product/:id" element={<Layout><ProductDetail products={products} /></Layout>} />
         <Route path="/about" element={<Layout><About /></Layout>} />
         <Route path="/contact" element={<Layout><Contact /></Layout>} />
-        
+
         {/* Login Route (No Layout) */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        
+
         {/* Protected Admin Route (No Layout) */}
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={
             isAdminAuthenticated ? (
-              <AdminDashboard 
-                products={products} 
-                onUpdateProduct={updateProduct} 
+              <AdminDashboard
+                products={products}
+                onUpdateProduct={updateProduct}
                 onLogout={handleLogout}
               />
             ) : (
               <Navigate to="/login" replace />
             )
-          } 
+          }
         />
-        
+
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
