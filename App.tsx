@@ -32,6 +32,16 @@ const App: React.FC = () => {
     return localStorage.getItem('admin_auth') === 'true';
   });
 
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Check Connection Status
+  useEffect(() => {
+    const connectedRef = ref(db, ".info/connected");
+    return onValue(connectedRef, (snap) => {
+      setIsConnected(!!snap.val());
+    });
+  }, []);
+
   // Sync with Firebase
   useEffect(() => {
     const productsRef = ref(db, 'products');
@@ -73,7 +83,11 @@ const App: React.FC = () => {
     const productIndex = products.findIndex(p => p.id === id);
     if (productIndex !== -1) {
       const productRef = ref(db, `products/${productIndex}`);
-      update(productRef, updates);
+      update(productRef, updates).catch((err) => {
+        alert(`Failed to save update: ${err.message}. Check your Firebase Rules!`);
+        // Revert the optimistic update since it failed
+        setProducts(prev => prev.map(p => p.id === id ? { ...p, inStock: !updates.inStock } : p));
+      });
     }
   };
 
