@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary antialiased;
+  }
+}
+
+.glass-panel {
+  @apply bg-surface/70 backdrop-blur-md border border-white/5;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-[#1a1a24] rounded;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gold;
+}
