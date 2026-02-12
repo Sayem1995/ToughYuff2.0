@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand } from '../types';
-import { BRANDS } from '../constants';
+import { BRANDS, INITIAL_PRODUCTS } from '../constants';
 import { X, Upload, Save, Loader2 } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Note: importing storage from '../src/firebase' might be key if we want to use the initialized instance
@@ -62,9 +62,20 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
         setFormData(prev => ({
             ...prev,
             brandId,
-            brandName: brand?.name || ''
+            brandName: brand?.name || '',
+            name: '' // Reset name on brand change
         }));
     };
+
+    // Get flavors for the selected brand
+    const uniqueFlavors = React.useMemo(() => {
+        if (!formData.brandId) return [];
+        // Extract unique product names for this brand from the initial data list
+        const brandProducts = INITIAL_PRODUCTS.filter(p => p.brandId === formData.brandId);
+        // Use a Set to ensure uniqueness
+        const uniqueNames = Array.from(new Set(brandProducts.map(p => p.name)));
+        return uniqueNames.map(name => ({ name }));
+    }, [formData.brandId]);
 
     const handleFlavorProfileChange = (profile: string) => {
         setFormData(prev => {
@@ -138,15 +149,49 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                             <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Basic Info</h3>
 
                             <div>
-                                <label className="block text-sm text-text-secondary mb-1">Product Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                    required
-                                />
+                                <label className="block text-sm text-text-secondary mb-1">Product Flavor / Name</label>
+                                <div className="space-y-2">
+                                    {/* Flavor Dropdown */}
+                                    <select
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === 'custom') {
+                                                setFormData(prev => ({ ...prev, name: '' })); // Clear for custom input
+                                            } else {
+                                                // Find pre-defined flavor data to auto-fill other fields if needed
+                                                const preDef = uniqueFlavors.find(f => f.name === val);
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    name: val,
+                                                    // Optional: auto-fill image if we had it in the unique map
+                                                    // image: preDef?.image || prev.image 
+                                                }));
+                                            }
+                                        }}
+                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                    >
+                                        <option value="">-- Select Flavor --</option>
+                                        {uniqueFlavors.map(f => (
+                                            <option key={f.name} value={f.name}>{f.name}</option>
+                                        ))}
+                                        <option value="custom">+ Add Custom Flavor</option>
+                                    </select>
+
+                                    {/* Fallback / Custom Input if 'custom' selected or name not in list (editing legacy) */}
+                                    {(formData.name && !uniqueFlavors.find(f => f.name === formData.name)) || formData.name === '' ? (
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Enter Custom Flavor Name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none animate-in fade-in"
+                                            required
+                                        />
+                                    ) : null}
+                                </div>
                             </div>
 
                             <div>
@@ -200,30 +245,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
 
                         {/* Inventory & Pricing */}
                         <div className="space-y-4">
-                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Inventory & Pricing</h3>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm text-text-secondary mb-1">Stock Quantity</label>
-                                    <input
-                                        type="number"
-                                        name="stockQuantity"
-                                        value={formData.stockQuantity}
-                                        onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm text-text-secondary mb-1">Low Stock Threshold</label>
-                                    <input
-                                        type="number"
-                                        name="lowStockThreshold"
-                                        value={formData.lowStockThreshold}
-                                        onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                    />
-                                </div>
-                            </div>
+                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Pricing & Availability</h3>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -238,31 +260,45 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-text-secondary mb-1">Cost Per Unit ($)</label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        name="costPerUnit"
-                                        value={formData.costPerUnit}
-                                        onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                    />
+                                    <label className="block text-sm text-text-secondary mb-1">Stock Status</label>
+                                    <div className="flex items-center gap-3 h-full">
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                name="inStock"
+                                                checked={formData.inStock}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        inStock: checked,
+                                                        stockQuantity: checked ? 100 : 0 // Auto-set background quantity
+                                                    }));
+                                                }}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                            <span className="ml-3 text-sm font-medium text-white">
+                                                {formData.inStock ? 'In Stock' : 'Out of Stock'}
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="block text-sm text-text-secondary mb-1">Sales Channel</label>
-                                <select
-                                    name="channel"
-                                    value={formData.channel}
-                                    onChange={handleChange}
-                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                >
-                                    <option value="store">In-Store Only</option>
-                                    <option value="online">Online Only</option>
-                                    <option value="both">Both</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label className="block text-sm text-text-secondary mb-1">Sales Channel</label>
+                            <select
+                                name="channel"
+                                value={formData.channel}
+                                onChange={handleChange}
+                                className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            >
+                                <option value="store">In-Store Only</option>
+                                <option value="online">Online Only</option>
+                                <option value="both">Both</option>
+                            </select>
                         </div>
                     </div>
 
@@ -348,8 +384,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                     </div>
 
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

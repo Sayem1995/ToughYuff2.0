@@ -4,7 +4,6 @@ import { Search, LogOut, Package, RefreshCw, Plus, Edit2, Trash2, CheckSquare, S
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import AdminProductForm from '../components/AdminProductForm';
-import RestockModal from '../components/RestockModal';
 
 import { BRANDS } from '../constants';
 
@@ -162,23 +161,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
     setProducts(prev => prev.map(p => p.id === product.id ? { ...p, inStock: !p.inStock, stockQuantity: newStock } : p));
   };
 
-  // Restock logic
-  const [restockProduct, setRestockProduct] = useState<Product | undefined>(undefined);
-
-  const handleRestockClick = (product: Product) => {
-    setRestockProduct(product);
-  };
-
-  const handleConfirmRestock = async (id: string, quantity: number, cost: number) => {
-    await ProductService.adjustStock(id, quantity);
-    // Also update cost if changed
-    if (cost !== restockProduct?.costPerUnit) {
-      await ProductService.updateProduct(id, { costPerUnit: cost });
-    }
-    loadProducts();
-    setRestockProduct(undefined); // Close modal after confirming
-  };
-
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
@@ -318,10 +300,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
                 onChange={handleSelectAll}
               />
             </div>
-            <div className="col-span-4">Product</div>
-            <div className="col-span-2">Stock</div>
+            <div className="col-span-5">Product</div>
             <div className="col-span-2">Price</div>
-            <div className="col-span-1">Status</div>
+            <div className="col-span-2">Status</div>
             <div className="col-span-2 text-right">Actions</div>
           </div>
 
@@ -337,27 +318,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
                     onChange={() => handleSelectOne(product.id)}
                   />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-5">
                   <div className="font-medium text-white">{product.name}</div>
                   <div className="text-xs text-text-secondary">{product.brandName}</div>
-                </div>
-
-                <div className="col-span-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className={`font-mono ${product.stockQuantity < product.lowStockThreshold ? 'text-red-400 font-bold' : 'text-text-secondary'}`}>
-                      {product.stockQuantity}
-                    </span>
-                    <button onClick={() => handleRestockClick(product)} className="px-1.5 py-0.5 bg-white/5 hover:bg-white/10 rounded text-[10px] text-text-tertiary uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                      +Add
-                    </button>
-                  </div>
                 </div>
 
                 <div className="col-span-2 text-sm text-text-secondary">
                   ${product.price?.toFixed(2)}
                 </div>
 
-                <div className="col-span-1">
+                <div className="col-span-2">
                   <button
                     onClick={() => handleQuickStockToggle(product)}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${product.inStock ? 'bg-green-500' : 'bg-gray-700'}`}
@@ -366,6 +336,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
                       className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${product.inStock ? 'translate-x-5' : 'translate-x-1'}`}
                     />
                   </button>
+                  <span className="ml-2 text-xs text-text-secondary">
+                    {product.inStock ? 'In Stock' : 'Out of Stock'}
+                  </span>
                 </div>
 
                 <div className="col-span-2 flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -393,15 +366,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
           initialData={editingProduct}
           onSave={handleSaveProduct}
           onCancel={() => setShowForm(false)}
-        />
-      )}
-
-      {/* Restock Modal */}
-      {restockProduct && (
-        <RestockModal
-          product={restockProduct}
-          onConfirm={handleConfirmRestock}
-          onClose={() => setRestockProduct(undefined)}
         />
       )}
     </div>
