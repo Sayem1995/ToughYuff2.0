@@ -8,7 +8,24 @@ export interface Product {
   isNicotineFree: boolean;
   flavorProfile: string[]; // "Fruity", "Ice", "Dessert"
   description: string;
-  inStock: boolean;
+
+  // Stock & Inventory
+  stockQuantity: number;
+  inStock: boolean; // Computed from stockQuantity > 0
+  lowStockThreshold: number;
+
+  // Pricing
+  price: number;
+  costPerUnit?: number;
+
+  // Metadata
+  image: string;
+  channel: 'online' | 'store' | 'both';
+  category?: string;
+  sku?: string;
+
+  updatedAt?: any; // Firestore Timestamp
+  createdAt?: any; // Firestore Timestamp
 }
 
 export interface Brand {
@@ -17,6 +34,7 @@ export interface Brand {
   tagline: string;
   puffRange: string; // e.g., "8000 Puffs"
   description: string;
+  image: string;
 }
 
 export type FlavorProfile = 'Fruity' | 'Menthol' | 'Dessert' | 'Tobacco' | 'Ice' | 'Drink' | 'Candy';

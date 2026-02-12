@@ -155,10 +155,12 @@ const Catalog: React.FC<CatalogProps> = ({ products }) => {
               <Link to={`/product/${product.id}`} key={product.id} className="group bg-card-bg border border-gold-subtle rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
                 <div className="flex justify-between items-start mb-6">
                   <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
-                  {product.inStock ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20 uppercase">In Stock</span>
-                  ) : (
+                  {product.stockQuantity <= 0 || !product.inStock ? (
                     <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-white/5 text-text-tertiary border border-white/10 uppercase">Out of Stock</span>
+                  ) : product.stockQuantity < (product.lowStockThreshold || 10) ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-500 border border-orange-500/20 uppercase">Low Stock: {product.stockQuantity}</span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20 uppercase">In Stock</span>
                   )}
                 </div>
 

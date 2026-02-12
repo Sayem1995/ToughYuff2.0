@@ -35,14 +35,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Image Placeholder */}
-          <div className="aspect-square bg-card-bg border-2 border-dashed border-gold/30 rounded-2xl flex items-center justify-center relative group">
-             <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/5 rounded-2xl" />
-             <div className="text-center p-8">
-               <div className="text-gold font-bold text-xl mb-2">{product.brandName}</div>
-               <div className="text-white text-3xl font-bold">{product.name}</div>
-               <div className="mt-4 text-text-tertiary uppercase tracking-widest text-sm">Product Render Placeholder</div>
-             </div>
+          {/* Product Image */}
+          <div className="aspect-square bg-card-bg border border-gold/10 rounded-2xl flex items-center justify-center relative overflow-hidden group hover:border-gold/30 transition-colors">
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/5" />
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover p-8 drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+            />
           </div>
 
           {/* Details */}
@@ -59,21 +59,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{product.name}</h1>
-            
+
             <div className="flex items-center gap-4 mb-8">
-               {product.inStock ? (
-                 <span className="flex items-center gap-2 text-green-400 font-medium bg-green-900/10 px-3 py-1.5 rounded-full border border-green-500/20">
-                   <CheckCircle2 className="w-4 h-4" /> In Stock
-                 </span>
-               ) : (
-                 <span className="flex items-center gap-2 text-text-tertiary font-medium bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                   <XCircle className="w-4 h-4" /> Out of Stock
-                 </span>
-               )}
-               <span className="text-text-tertiary">|</span>
-               <span className="text-white">{product.puffCount.toLocaleString()} Puffs</span>
-               <span className="text-text-tertiary">|</span>
-               <span className="text-white">{product.nicotine}</span>
+              {product.stockQuantity <= 0 || !product.inStock ? (
+                <span className="flex items-center gap-2 text-red-400 font-medium bg-red-900/10 px-3 py-1.5 rounded-full border border-red-500/20">
+                  <XCircle className="w-4 h-4" /> Out of Stock
+                </span>
+              ) : product.stockQuantity < (product.lowStockThreshold || 10) ? (
+                <span className="flex items-center gap-2 text-orange-400 font-medium bg-orange-900/10 px-3 py-1.5 rounded-full border border-orange-500/20">
+                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" /> Low Stock: {product.stockQuantity}
+                </span>
+              ) : (
+                <span className="flex items-center gap-2 text-green-400 font-medium bg-green-900/10 px-3 py-1.5 rounded-full border border-green-500/20">
+                  <CheckCircle2 className="w-4 h-4" /> In Stock
+                </span>
+              )}
+              <span className="text-text-tertiary">|</span>
+              <span className="text-white">{product.puffCount.toLocaleString()} Puffs</span>
+              <span className="text-text-tertiary">|</span>
+              <span className="text-white">{product.nicotine}</span>
             </div>
 
             <div className="space-y-8">
@@ -110,12 +114,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
           <div className="mt-24">
             <h2 className="text-2xl font-bold mb-8">More from {product.brandName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               {related.map(rel => (
-                 <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-card-bg border border-white/5 hover:border-gold/30 rounded-xl p-6 transition-colors">
-                   <div className="text-lg font-bold text-white mb-1">{rel.name}</div>
-                   <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
-                 </Link>
-               ))}
+              {related.map(rel => (
+                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-card-bg border border-white/5 hover:border-gold/30 rounded-xl p-6 transition-colors">
+                  <div className="text-lg font-bold text-white mb-1">{rel.name}</div>
+                  <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
+                </Link>
+              ))}
             </div>
           </div>
         )}

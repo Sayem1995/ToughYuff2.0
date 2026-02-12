@@ -22,7 +22,8 @@ const ScrollToTop = () => {
 };
 
 import { db } from './src/firebase';
-import { ref, onValue, set, update } from 'firebase/database';
+import { ProductService } from './src/services/productService';
+import { collection, onSnapshot } from 'firebase/firestore';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -32,31 +33,26 @@ const App: React.FC = () => {
     return localStorage.getItem('admin_auth') === 'true';
   });
 
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true); // Default to true for Firestore
 
-  // Check Connection Status
+  // Sync with Firestore
   useEffect(() => {
-    const connectedRef = ref(db, ".info/connected");
-    return onValue(connectedRef, (snap) => {
-      setIsConnected(!!snap.val());
-    });
-  }, []);
+    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+      const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
 
-  // Sync with Firebase
-  useEffect(() => {
-    const productsRef = ref(db, 'products');
-    const unsubscribe = onValue(productsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Convert object back to array if needed, or just use as is if stored as array
-        const productList = Array.isArray(data) ? data : Object.values(data);
-        setProducts(productList as Product[]);
+      if (productList.length === 0) {
+        // Option: seed data if empty? 
+        // For now, just set empty
+        setProducts(INITIAL_PRODUCTS); // Fallback to constants if empty
       } else {
-        // Database is empty, seed it with initial data
-        set(productsRef, INITIAL_PRODUCTS);
-        setProducts(INITIAL_PRODUCTS);
+        setProducts(productList);
       }
       setLoading(false);
+    }, (error) => {
+      console.error("Firestore sync error:", error);
+      setLoading(false);
+      // Fallback to offline mode/constants
+      setProducts(INITIAL_PRODUCTS);
     });
 
     return () => unsubscribe();
@@ -70,25 +66,6 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsAdminAuthenticated(false);
     localStorage.removeItem('admin_auth');
-  };
-
-  const updateProduct = (id: string, updates: Partial<Product>) => {
-    // Optimistic update (optional, but good for UI responsiveness)
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
-
-    // Update in Firebase
-    // Assuming products are stored as an array, keys are indices 0, 1, 2...
-    // But we use 'prod-1', 'prod-2' IDs. 
-    // To make it simple, we will find the index of the product in the array
-    const productIndex = products.findIndex(p => p.id === id);
-    if (productIndex !== -1) {
-      const productRef = ref(db, `products/${productIndex}`);
-      update(productRef, updates).catch((err) => {
-        alert(`Failed to save update: ${err.message}. Check your Firebase Rules!`);
-        // Revert the optimistic update since it failed
-        setProducts(prev => prev.map(p => p.id === id ? { ...p, inStock: !updates.inStock } : p));
-      });
-    }
   };
 
   if (loading) {
@@ -117,8 +94,6 @@ const App: React.FC = () => {
           element={
             isAdminAuthenticated ? (
               <AdminDashboard
-                products={products}
-                onUpdateProduct={updateProduct}
                 onLogout={handleLogout}
                 isConnected={isConnected}
               />
