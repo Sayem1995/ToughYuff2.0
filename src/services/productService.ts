@@ -10,7 +10,8 @@ import {
     where,
     serverTimestamp,
     orderBy,
-    increment
+    increment,
+    writeBatch
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Product } from '../../types';
@@ -106,6 +107,39 @@ export const ProductService = {
             await deleteDoc(docRef);
         } catch (error) {
             console.error("Error deleting product:", error);
+            throw error;
+        }
+    },
+
+    // Batch Delete
+    batchDeleteProducts: async (ids: string[]): Promise<void> => {
+        try {
+            const batch = writeBatch(db);
+            ids.forEach(id => {
+                const docRef = doc(db, PRODUCTS_COLLECTION, id);
+                batch.delete(docRef);
+            });
+            await batch.commit();
+        } catch (error) {
+            console.error("Error batch deleting:", error);
+            throw error;
+        }
+    },
+
+    // Batch Update Status
+    batchUpdateStatus: async (ids: string[], inStock: boolean): Promise<void> => {
+        try {
+            const batch = writeBatch(db);
+            ids.forEach(id => {
+                const docRef = doc(db, PRODUCTS_COLLECTION, id);
+                batch.update(docRef, {
+                    inStock,
+                    updatedAt: serverTimestamp()
+                });
+            });
+            await batch.commit();
+        } catch (error) {
+            console.error("Error batch updating status:", error);
             throw error;
         }
     }
