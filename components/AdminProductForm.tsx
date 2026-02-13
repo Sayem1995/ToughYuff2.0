@@ -82,6 +82,25 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
         });
     };
 
+    const [uploadTask, setUploadTask] = useState<any>(null); // Store task to cancel
+
+    useEffect(() => {
+        // Cleanup on unmount
+        return () => {
+            if (uploadTask) uploadTask.cancel();
+        };
+    }, [uploadTask]);
+
+    const handleCancelUpload = () => {
+        if (uploadTask) {
+            uploadTask.cancel();
+            setUploading(false);
+            setUploadProgress(0);
+            setUploadTask(null);
+            alert("Upload cancelled.");
+        }
+    };
+
     const handleImageUpload = (file: File) => {
         if (!file) return;
 
@@ -96,25 +115,45 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
         setUploadProgress(0);
 
         const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
+        const task = uploadBytesResumable(storageRef, file);
+        setUploadTask(task);
 
-        uploadTask.on('state_changed',
+        // Timeout Watchdog (15 seconds)
+        const watchdog = setTimeout(() => {
+            if (task.snapshot.bytesTransferred === 0) {
+                console.error("Upload timeout - no bytes transferred");
+                task.cancel();
+                alert("Upload timed out. Check your connection or firewall.");
+                setUploading(false);
+            }
+        }, 15000);
+
+        task.on('state_changed',
             (snapshot) => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 setUploadProgress(Math.round(progress));
+                if (progress > 0) clearTimeout(watchdog); // Clear timeout if we have movement
                 console.log('Upload is ' + progress + '% done');
             },
             (error) => {
+                clearTimeout(watchdog);
                 console.error("Upload failed details:", error);
-                alert(`Upload failed: ${error.message || 'Unknown error'}`);
+
+                // Don't alert if cancelled by user
+                if (error.code !== 'storage/canceled') {
+                    alert(`Upload failed: ${error.message || 'Unknown error'}`);
+                }
                 setUploading(false);
+                setUploadTask(null);
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                clearTimeout(watchdog);
+                getDownloadURL(task.snapshot.ref).then((downloadURL) => {
                     console.log('File available at', downloadURL);
                     setFormData(prev => ({ ...prev, image: downloadURL }));
                     setUploadSuccess(true);
                     setUploading(false);
+                    setUploadTask(null);
                 });
             }
         );
@@ -337,21 +376,27 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                 ) : (
                                     <span className="text-xs text-text-tertiary">No Image</span>
                                 )}
-                                {uploading && (
-                                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2">
-                                        <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
-                                        <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden">
-                                            <div
-                                                className="bg-gold h-full transition-all duration-300"
-                                                style={{ width: `${uploadProgress}%` }}
-                                            />
-                                        </div>
-                                        <span className="text-[10px] text-white mt-1">{uploadProgress}%</span>
+                                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 z-20">
+                                    <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
+                                    <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden mb-2">
+                                        <div
+                                            className="bg-gold h-full transition-all duration-300"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
                                     </div>
+                                    <span className="text-[10px] text-white mb-2">{uploadProgress}%</span>
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelUpload}
+                                        className="text-[10px] text-red-400 hover:text-white underline"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
                                     <Upload className="w-4 h-4" />
                                     {uploading ? 'Uploading...' : formData.image ? 'Change Image' : 'Upload Image'}
                                     <input

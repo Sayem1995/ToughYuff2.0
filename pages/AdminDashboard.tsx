@@ -3,7 +3,24 @@ import { Product } from '../types';
 import { Search, LogOut, Package, RefreshCw, Plus, Edit2, Trash2, CheckSquare, Square, Trash, BarChart, Filter as FilterIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
-import AdminProductForm from '../components/AdminProductForm';
+import { SystemStatus } from '../components/SystemStatus';
+
+// ... (inside component return)
+
+{/* Product Form Modal */ }
+{
+  showForm && (
+    <AdminProductForm
+      initialData={editingProduct}
+      onSave={handleSaveProduct}
+      onCancel={() => setShowForm(false)}
+    />
+  )
+}
+<SystemStatus />
+    </div >
+  );
+};
 
 import { BRANDS } from '../constants';
 
@@ -374,15 +391,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       </div>
 
       {/* Product Form Modal */}
-      {
-        showForm && (
-          <AdminProductForm
-            initialData={editingProduct}
-            onSave={handleSaveProduct}
-            onCancel={() => setShowForm(false)}
-          />
-        )
+      <AdminProductForm
+        initialData={editingProduct}
+        onSave={handleSaveProduct}
+        onCancel={() => setShowForm(false)}
+      />
+      )
       }
+      <SystemStatus />
     </div >
   );
 };
