@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand } from '../types';
-import { BRANDS, INITIAL_PRODUCTS } from '../constants';
+import { BRANDS } from '../constants';
 import { X, Upload, Save, Loader2 } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Note: importing storage from '../src/firebase' might be key if we want to use the initialized instance
@@ -67,15 +67,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
         }));
     };
 
-    // Get flavors for the selected brand
-    const uniqueFlavors = React.useMemo(() => {
-        if (!formData.brandId) return [];
-        // Extract unique product names for this brand from the initial data list
-        const brandProducts = INITIAL_PRODUCTS.filter(p => p.brandId === formData.brandId);
-        // Use a Set to ensure uniqueness
-        const uniqueNames = Array.from(new Set(brandProducts.map(p => p.name)));
-        return uniqueNames.map(name => ({ name }));
-    }, [formData.brandId]);
+
 
     const handleFlavorProfileChange = (profile: string) => {
         setFormData(prev => {
@@ -149,49 +141,16 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                             <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Basic Info</h3>
 
                             <div>
-                                <label className="block text-sm text-text-secondary mb-1">Product Flavor / Name</label>
-                                <div className="space-y-2">
-                                    {/* Flavor Dropdown */}
-                                    <select
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            if (val === 'custom') {
-                                                setFormData(prev => ({ ...prev, name: '' })); // Clear for custom input
-                                            } else {
-                                                // Find pre-defined flavor data to auto-fill other fields if needed
-                                                const preDef = uniqueFlavors.find(f => f.name === val);
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    name: val,
-                                                    // Optional: auto-fill image if we had it in the unique map
-                                                    // image: preDef?.image || prev.image 
-                                                }));
-                                            }
-                                        }}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
-                                    >
-                                        <option value="">-- Select Flavor --</option>
-                                        {uniqueFlavors.map(f => (
-                                            <option key={f.name} value={f.name}>{f.name}</option>
-                                        ))}
-                                        <option value="custom">+ Add Custom Flavor</option>
-                                    </select>
-
-                                    {/* Fallback / Custom Input if 'custom' selected or name not in list (editing legacy) */}
-                                    {(formData.name && !uniqueFlavors.find(f => f.name === formData.name)) || formData.name === '' ? (
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            placeholder="Enter Custom Flavor Name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none animate-in fade-in"
-                                            required
-                                        />
-                                    ) : null}
-                                </div>
+                                <label className="block text-sm text-text-secondary mb-1">Product Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="e.g. Strawberry Ice"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                    required
+                                />
                             </div>
 
                             <div>
