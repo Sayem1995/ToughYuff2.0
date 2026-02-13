@@ -19,12 +19,11 @@ interface FilterState {
   sort: 'name' | 'priceHigh' | 'priceLow' | 'stockHigh' | 'stockLow';
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products }) => {
-  // const [products, setProducts] = useState<Product[]>([]); // Removed local state
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products: initialProducts }) => {
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false); // No longer loading on mount
+  const [loading, setLoading] = useState(true); // Keep true initially to allow auth check
 
-  // Note: We use 'products' from props directly. 
+  // Note: We use 'products' from props directly.
   // App.tsx handles the fetching and real-time updates.
 
   // Bulk Actions & Filters
@@ -38,6 +37,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   // Modal State
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+  const [firebaseAuthStatus, setFirebaseAuthStatus] = useState<'pending' | 'authenticated' | 'error'>('pending');
+
 
   const navigate = useNavigate();
 
