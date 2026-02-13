@@ -96,6 +96,7 @@ const App: React.FC = () => {
               <AdminDashboard
                 onLogout={handleLogout}
                 isConnected={isConnected}
+                products={products}
               />
             ) : (
               <Navigate to="/login" replace />

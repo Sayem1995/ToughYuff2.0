@@ -8,9 +8,9 @@ import AdminProductForm from '../components/AdminProductForm';
 import { BRANDS } from '../constants';
 
 interface AdminDashboardProps {
-  // Props can be simplified now that it handles its own data
   onLogout: () => void;
-  isConnected: boolean; // Keep for now as connection status check
+  isConnected: boolean;
+  products: Product[]; // Receive live products from App.tsx
 }
 
 interface FilterState {
@@ -19,10 +19,13 @@ interface FilterState {
   sort: 'name' | 'priceHigh' | 'priceLow' | 'stockHigh' | 'stockLow';
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products }) => {
+  // const [products, setProducts] = useState<Product[]>([]); // Removed local state
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // No longer loading on mount
+
+  // Note: We use 'products' from props directly. 
+  // App.tsx handles the fetching and real-time updates.
 
   // Bulk Actions & Filters
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -38,22 +41,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
 
   const navigate = useNavigate();
 
-  // Load Products
-  const loadProducts = async () => {
-    setLoading(true);
-    try {
-      const data = await ProductService.getAllProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error("Failed to load products", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // No loadProducts needed! App.tsx handles it.
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
 
   // Filter & Sort Logic
   const filteredAndSorted = React.useMemo(() => {
@@ -104,41 +93,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
     setSelectedIds(newSet);
   };
 
+  const handleDeleteProduct = async (id: string) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      await ProductService.deleteProduct(id);
+      // loadProducts(); // Handled by real-time listener
+    }
+  };
+
   const handleBulkDelete = async () => {
     if (confirm(`Delete ${selectedIds.size} products? This cannot be undone.`)) {
       await ProductService.batchDeleteProducts(Array.from(selectedIds));
       setSelectedIds(new Set());
-      loadProducts();
+      // loadProducts(); // Handled by real-time listener
     }
   };
 
   const handleBulkStatusChange = async (inStock: boolean) => {
     await ProductService.batchUpdateStatus(Array.from(selectedIds), inStock);
     setSelectedIds(new Set());
-    loadProducts();
-  };
-
-  const handleLogout = () => {
-    onLogout();
-    navigate('/login');
-  };
-
-  // CRUD Handlers
-  const handleAddProduct = () => {
-    setEditingProduct(undefined);
-    setShowForm(true);
-  };
-
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct(product);
-    setShowForm(true);
-  };
-
-  const handleDeleteProduct = async (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      await ProductService.deleteProduct(id);
-      loadProducts();
-    }
+    // loadProducts(); // Handled by real-time listener
   };
 
   const handleSaveProduct = async (data: Omit<Product, 'id'>) => {
@@ -147,7 +120,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
     } else {
       await ProductService.addProduct(data);
     }
-    loadProducts();
+    // loadProducts(); // Handled by real-time listener
     setShowForm(false);
   };
 
@@ -157,8 +130,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
       inStock: !product.inStock,
       stockQuantity: newStock
     });
-    // Optimistic Update
-    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, inStock: !p.inStock, stockQuantity: newStock } : p));
+    // Optimistic Update not strictly needed if listener is fast, but good for UX. 
+    // However, since we rely on props, we can't setProducts locally easily without desync.
+    // Let's rely on the listener for consistency.
   };
 
   return (
@@ -189,24 +163,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
             {loading && <span className="text-xs text-gold animate-pulse">Syncing...</span>}
           </div>
           <div className="flex gap-4">
-            <button
-              onClick={handleAddProduct}
-              className="px-4 py-2 bg-gold hover:bg-yellow-500 text-black font-bold rounded-lg text-sm transition-colors flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" /> Add Product
-            </button>
-            <button
-              onClick={async () => {
-                if (confirm('Verify: Migrate data again?')) {
-                  const { migrateDataToFirestore } = await import('../src/utils/migration');
-                  await migrateDataToFirestore();
-                  loadProducts();
-                }
-              }}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-text-secondary rounded-lg text-sm font-medium transition-colors"
-            >
-              Migration Tool
-            </button>
             <div className="md:hidden">
               <button onClick={handleLogout} className="text-sm text-text-secondary">Log Out</button>
             </div>
@@ -263,112 +219,112 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected }
               </select>
             </div>
 
-            <button onClick={loadProducts} className="p-2 hover:bg-white/5 rounded-full transition-colors flex-shrink-0">
-              <RefreshCw className="w-4 h-4 text-text-tertiary" />
-            </button>
-          </div>
-
-          {/* Bulk Action Bar */}
-          {selectedIds.size > 0 && (
-            <div className="bg-gold/10 border-b border-gold/20 p-3 flex items-center justify-between animate-in slide-in-from-top-2">
-              <div className="flex items-center gap-2 text-sm text-gold font-medium">
-                <CheckSquare className="w-4 h-4" />
-                {selectedIds.size} selected
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => handleBulkStatusChange(true)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
-                  Mark In Stock
-                </button>
-                <button onClick={() => handleBulkStatusChange(false)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
-                  Mark Out of Stock
-                </button>
-                <div className="w-px bg-gold/20 mx-1" />
-                <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-900/20 border border-red-500/20 hover:bg-red-900/40 text-red-500 text-xs rounded transition-colors flex items-center gap-1">
-                  <Trash className="w-3 h-3" /> Delete
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Table Header */}
-          <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 bg-white/5 text-xs font-bold text-text-tertiary uppercase tracking-wider items-center">
-            <div className="col-span-1">
-              <input
-                type="checkbox"
-                className="accent-gold w-4 h-4 rounded"
-                checked={selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0}
-                onChange={handleSelectAll}
-              />
-            </div>
-            <div className="col-span-5">Product</div>
-            <div className="col-span-2">Price</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-2 text-right">Actions</div>
-          </div>
-
-          {/* Table Body */}
-          <div className="divide-y divide-white/5">
-            {filteredAndSorted.map(product => (
-              <div key={product.id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group ${selectedIds.has(product.id) ? 'bg-gold/5' : ''}`}>
-                <div className="col-span-1">
-                  <input
-                    type="checkbox"
-                    className="accent-gold w-4 h-4 rounded"
-                    checked={selectedIds.has(product.id)}
-                    onChange={() => handleSelectOne(product.id)}
-                  />
-                </div>
-                <div className="col-span-5">
-                  <div className="font-medium text-white">{product.name}</div>
-                  <div className="text-xs text-text-secondary">{product.brandName}</div>
-                </div>
-
-                <div className="col-span-2 text-sm text-text-secondary">
-                  ${product.price?.toFixed(2)}
-                </div>
-
-                <div className="col-span-2">
-                  <button
-                    onClick={() => handleQuickStockToggle(product)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${product.inStock ? 'bg-green-500' : 'bg-gray-700'}`}
-                  >
-                    <span
-                      className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${product.inStock ? 'translate-x-5' : 'translate-x-1'}`}
-                    />
-                  </button>
-                  <span className="ml-2 text-xs text-text-secondary">
-                    {product.inStock ? 'In Stock' : 'Out of Stock'}
-                  </span>
-                </div>
-
-                <div className="col-span-2 flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEditProduct(product)} className="p-1 hover:text-gold transition-colors">
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleDeleteProduct(product.id)} className="p-1 hover:text-red-500 transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-            {filteredAndSorted.length === 0 && (
-              <div className="p-8 text-center text-text-tertiary">
-                {filteredAndSorted.length} products found matching your filters.
-              </div>
-            )}
           </div>
         </div>
-      </div>
 
-      {/* Product Form Modal */}
-      {showForm && (
-        <AdminProductForm
-          initialData={editingProduct}
-          onSave={handleSaveProduct}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
+        {/* Bulk Action Bar */}
+        {selectedIds.size > 0 && (
+          <div className="bg-gold/10 border-b border-gold/20 p-3 flex items-center justify-between animate-in slide-in-from-top-2">
+            <div className="flex items-center gap-2 text-sm text-gold font-medium">
+              <CheckSquare className="w-4 h-4" />
+              {selectedIds.size} selected
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => handleBulkStatusChange(true)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
+                Mark In Stock
+              </button>
+              <button onClick={() => handleBulkStatusChange(false)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
+                Mark Out of Stock
+              </button>
+              <div className="w-px bg-gold/20 mx-1" />
+              <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-900/20 border border-red-500/20 hover:bg-red-900/40 text-red-500 text-xs rounded transition-colors flex items-center gap-1">
+                <Trash className="w-3 h-3" /> Delete
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Table Header */}
+        <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 bg-white/5 text-xs font-bold text-text-tertiary uppercase tracking-wider items-center">
+          <div className="col-span-1">
+            <input
+              type="checkbox"
+              className="accent-gold w-4 h-4 rounded"
+              checked={selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0}
+              onChange={handleSelectAll}
+            />
+          </div>
+          <div className="col-span-5">Product</div>
+          <div className="col-span-2">Price</div>
+          <div className="col-span-2">Status</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
+
+        {/* Table Body */}
+        <div className="divide-y divide-white/5">
+          {filteredAndSorted.map(product => (
+            <div key={product.id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group ${selectedIds.has(product.id) ? 'bg-gold/5' : ''}`}>
+              <div className="col-span-1">
+                <input
+                  type="checkbox"
+                  className="accent-gold w-4 h-4 rounded"
+                  checked={selectedIds.has(product.id)}
+                  onChange={() => handleSelectOne(product.id)}
+                />
+              </div>
+              <div className="col-span-5">
+                <div className="font-medium text-white">{product.name}</div>
+                <div className="text-xs text-text-secondary">{product.brandName}</div>
+              </div>
+
+              <div className="col-span-2 text-sm text-text-secondary">
+                ${product.price?.toFixed(2)}
+              </div>
+
+              <div className="col-span-2">
+                <button
+                  onClick={() => handleQuickStockToggle(product)}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${product.inStock ? 'bg-green-500' : 'bg-gray-700'}`}
+                >
+                  <span
+                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${product.inStock ? 'translate-x-5' : 'translate-x-1'}`}
+                  />
+                </button>
+                <span className="ml-2 text-xs text-text-secondary">
+                  {product.inStock ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+
+              <div className="col-span-2 flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleEditProduct(product)} className="p-1 hover:text-gold transition-colors">
+                  <Edit2 className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleDeleteProduct(product.id)} className="p-1 hover:text-red-500 transition-colors">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {filteredAndSorted.length === 0 && (
+            <div className="p-8 text-center text-text-tertiary">
+              {filteredAndSorted.length} products found matching your filters.
+            </div>
+          )}
+        </div>
+      </div>
     </div>
+
+      {/* Product Form Modal */ }
+  {
+    showForm && (
+      <AdminProductForm
+        initialData={editingProduct}
+        onSave={handleSaveProduct}
+        onCancel={() => setShowForm(false)}
+      />
+    )
+  }
+    </div >
   );
 };
 
