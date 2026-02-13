@@ -412,8 +412,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {
         showForm && (
           <AdminProductForm
-            product={editingProduct}
-            onClose={() => { setShowForm(false); setEditingProduct(null); }}
+            initialData={editingProduct}
+            onCancel={() => { setShowForm(false); setEditingProduct(undefined); }}
             onSave={handleSaveProduct}
           />
         )
