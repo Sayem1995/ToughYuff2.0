@@ -23,7 +23,6 @@ interface FilterState {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products }) => {
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true); // Keep true initially to allow auth check
 
   // Note: We use 'products' from props directly.
   // App.tsx handles the fetching and real-time updates.
@@ -168,7 +167,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Item Manager <span className="text-sm font-normal text-text-tertiary">({products.length} items)</span></h1>
-            {loading && <span className="text-xs text-gold animate-pulse">Syncing...</span>}
           </div>
           <div className="flex gap-4">
             <div className="md:hidden">
