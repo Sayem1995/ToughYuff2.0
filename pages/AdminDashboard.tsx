@@ -19,7 +19,7 @@ interface FilterState {
   sort: 'name' | 'priceHigh' | 'priceLow' | 'stockHigh' | 'stockLow';
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products: initialProducts }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products }) => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true); // Keep true initially to allow auth check
 
