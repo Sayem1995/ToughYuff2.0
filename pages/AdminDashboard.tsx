@@ -406,20 +406,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           )}
         </div>
       </div>
-    </div>
 
-      {/* Product Form Modal */ }
-  {
-    showForm && (
-      <AdminProductForm
-        initialData={editingProduct}
-        onSave={handleSaveProduct}
-        onCancel={() => setShowForm(false)}
-      />
-    )
-  }
-  <SystemStatus />
-    </div >
+
+      {/* Product Form Modal */}
+      {
+        showForm && (
+          <AdminProductForm
+            product={editingProduct}
+            onClose={() => { setShowForm(false); setEditingProduct(null); }}
+            onSave={handleSaveProduct}
+          />
+        )
+      }
+      <SystemStatus />
+    </div>
   );
 };
 
