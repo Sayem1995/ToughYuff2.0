@@ -171,10 +171,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                 return;
             }
 
-            // Compute inStock
+            // Compute dataToSave
+            // We trust formData.inStock which is set by the checkbox
             const dataToSave = {
                 ...formData,
-                inStock: (formData.stockQuantity || 0) > 0
             } as Omit<Product, 'id'>;
 
             await onSave(dataToSave);
