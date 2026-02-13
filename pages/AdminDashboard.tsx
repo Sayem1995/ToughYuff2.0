@@ -5,22 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { SystemStatus } from '../components/SystemStatus';
 
-// ... (inside component return)
-
-{/* Product Form Modal */ }
-{
-  showForm && (
-    <AdminProductForm
-      initialData={editingProduct}
-      onSave={handleSaveProduct}
-      onCancel={() => setShowForm(false)}
-    />
-  )
-}
-<SystemStatus />
-    </div >
-  );
-};
+import AdminProductForm from '../components/AdminProductForm';
 
 import { BRANDS } from '../constants';
 
