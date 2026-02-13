@@ -135,6 +135,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     // Let's rely on the listener for consistency.
   };
 
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setShowForm(true);
+  };
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
@@ -149,7 +154,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           </button>
         </div>
         <div className="p-4 border-t border-white/5">
-          <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-text-secondary hover:text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
+          <button onClick={onLogout} className="w-full text-left px-4 py-2 text-text-secondary hover:text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
             <LogOut className="w-4 h-4" /> Log Out
           </button>
         </div>
@@ -164,7 +169,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           </div>
           <div className="flex gap-4">
             <div className="md:hidden">
-              <button onClick={handleLogout} className="text-sm text-text-secondary">Log Out</button>
+              <button onClick={onLogout} className="text-sm text-text-secondary">Log Out</button>
             </div>
           </div>
         </div>
