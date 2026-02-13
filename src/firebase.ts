@@ -14,7 +14,21 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const auth = getAuth(app);
+
+// Use a safe initialization pattern to prevent "White Screen of Death" on missing env vars
+const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
+
+if (!isConfigured) {
+    console.error("FIREBASE CONFIGURATION ERROR: Missing Environment Variables. Check your .env file or Vercel Settings.");
+}
+
+// Initialize Firebase only if configured, otherwise we let the app run but services will fail gracefully
+const app = isConfigured ? initializeApp(firebaseConfig) : undefined;
+
+// Export services (cast as any if app is undefined to avoid TS errors in strict mode, 
+// though in reality we should handle this better. For now, this prevents import crash.)
+export const db = isConfigured ? getFirestore(app) : {} as any;
+export const storage = isConfigured ? getStorage(app) : {} as any;
+export const auth = isConfigured ? getAuth(app) : {} as any;
+
+export const isFirebaseInitialized = isConfigured;
