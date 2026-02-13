@@ -223,91 +223,97 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         </div>
 
         {/* Bulk Action Bar */}
-        {selectedIds.size > 0 && (
-          <div className="bg-gold/10 border-b border-gold/20 p-3 flex items-center justify-between animate-in slide-in-from-top-2">
-            <div className="flex items-center gap-2 text-sm text-gold font-medium">
-              <CheckSquare className="w-4 h-4" />
-              {selectedIds.size} selected
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => handleBulkStatusChange(true)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
-                Mark In Stock
-              </button>
-              <button onClick={() => handleBulkStatusChange(false)} className="px-3 py-1.5 bg-background border border-gold/20 hover:border-gold text-white text-xs rounded transition-colors">
-                Mark Out of Stock
-              </button>
-              <div className="w-px bg-gold/20 mx-1" />
-              <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-900/20 border border-red-500/20 hover:bg-red-900/40 text-red-500 text-xs rounded transition-colors flex items-center gap-1">
-                <Trash className="w-3 h-3" /> Delete
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 bg-white/5 text-xs font-bold text-text-tertiary uppercase tracking-wider items-center">
-          <div className="col-span-1">
-            <input
-              type="checkbox"
-              className="accent-gold w-4 h-4 rounded"
-              checked={selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0}
-              onChange={handleSelectAll}
-            />
-          </div>
-          <div className="col-span-5">Product</div>
-          <div className="col-span-2">Price</div>
-          <div className="col-span-2">Status</div>
-          <div className="col-span-2 text-right">Actions</div>
-        </div>
-
-        {/* Table Body */}
+        {/* Grouped Products View */}
         <div className="divide-y divide-white/5">
-          {filteredAndSorted.map(product => (
-            <div key={product.id} className={`grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group ${selectedIds.has(product.id) ? 'bg-gold/5' : ''}`}>
-              <div className="col-span-1">
-                <input
-                  type="checkbox"
-                  className="accent-gold w-4 h-4 rounded"
-                  checked={selectedIds.has(product.id)}
-                  onChange={() => handleSelectOne(product.id)}
-                />
-              </div>
-              <div className="col-span-5">
-                <div className="font-medium text-white">{product.name}</div>
-                <div className="text-xs text-text-secondary">{product.brandName}</div>
-              </div>
+          {BRANDS.map(brand => {
+            // Filter products for this brand from the global filtered list
+            const brandProducts = filteredAndSorted.filter(p => p.brandId === brand.id);
 
-              <div className="col-span-2 text-sm text-text-secondary">
-                ${product.price?.toFixed(2)}
-              </div>
+            if (brandProducts.length === 0) return null;
 
-              <div className="col-span-2">
-                <button
-                  onClick={() => handleQuickStockToggle(product)}
-                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${product.inStock ? 'bg-green-500' : 'bg-gray-700'}`}
-                >
-                  <span
-                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${product.inStock ? 'translate-x-5' : 'translate-x-1'}`}
-                  />
-                </button>
-                <span className="ml-2 text-xs text-text-secondary">
-                  {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </span>
-              </div>
+            return (
+              <div key={brand.id} className="p-6">
+                {/* Brand Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    {brand.image && <img src={brand.image} alt={brand.name} className="w-10 h-10 rounded-lg object-cover bg-white/5" />}
+                    <div>
+                      <h2 className="text-xl font-bold text-white">{brand.name}</h2>
+                      <p className="text-xs text-text-secondary">{brand.tagline}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-medium bg-gold/10 text-gold px-3 py-1 rounded-full border border-gold/20">
+                    {brandProducts.length} Products
+                  </span>
+                </div>
 
-              <div className="col-span-2 flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => handleEditProduct(product)} className="p-1 hover:text-gold transition-colors">
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button onClick={() => handleDeleteProduct(product.id)} className="p-1 hover:text-red-500 transition-colors">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {/* Products Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {brandProducts.map(product => (
+                    <div
+                      key={product.id}
+                      className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-white/5 border-white/5 hover:border-gold/30 hover:bg-white/10' : 'bg-red-900/10 border-red-500/20 opacity-75'}`}
+                    >
+                      {/* Status Indicator Dot */}
+                      <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+
+                      <div className="flex justify-between items-start mb-3 pr-4">
+                        <h3 className="font-bold text-white text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>
+                      </div>
+
+                      <div className="flex flex-col gap-3 mt-auto">
+                        {/* Quick Stock Toggle */}
+                        <button
+                          onClick={() => handleQuickStockToggle(product)}
+                          className={`w-full py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${product.inStock
+                              ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
+                              : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                            }`}
+                        >
+                          {product.inStock ? (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                              IN STOCK
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                              OUT OF STOCK
+                            </>
+                          )}
+                        </button>
+
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditProduct(product)}
+                            className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-medium text-text-secondary hover:text-white transition-colors flex items-center justify-center gap-1"
+                          >
+                            <Edit2 className="w-3 h-3" /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="px-2 py-1.5 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+
+          {/* Empty Filters State */}
           {filteredAndSorted.length === 0 && (
-            <div className="p-8 text-center text-text-tertiary">
-              {filteredAndSorted.length} products found matching your filters.
+            <div className="text-center py-20">
+              <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
+              <button onClick={() => { setSearch(''); setFilters({ brand: 'all', status: 'all', sort: 'name' }); }} className="mt-2 text-gold hover:underline text-sm">
+                Clear Filters
+              </button>
             </div>
           )}
         </div>
