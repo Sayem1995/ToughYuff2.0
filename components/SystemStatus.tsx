@@ -15,8 +15,15 @@ export const SystemStatus: React.FC = () => {
                 setAuthStatus('authenticated');
                 setUserEmail(user.email);
             } else {
-                setAuthStatus('unauthenticated');
-                setUserEmail(null);
+                // Check if we are in simulated admin mode
+                const isAdmin = localStorage.getItem('admin_auth') === 'true';
+                if (isAdmin) {
+                    setAuthStatus('authenticated'); // Treat as authenticated for UI purposes
+                    setUserEmail('admin@local (Simulated)');
+                } else {
+                    setAuthStatus('unauthenticated');
+                    setUserEmail(null);
+                }
             }
         });
 
