@@ -376,23 +376,24 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                 ) : (
                                     <span className="text-xs text-text-tertiary">No Image</span>
                                 )}
-                                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 z-20">
-                                    <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
-                                    <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden mb-2">
-                                        <div
-                                            className="bg-gold h-full transition-all duration-300"
-                                            style={{ width: `${uploadProgress}%` }}
-                                        />
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 z-20">
+                                        <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
+                                        <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden mb-2">
+                                            <div
+                                                className="bg-gold h-full transition-all duration-300"
+                                                style={{ width: `${uploadProgress}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] text-white mb-2">{uploadProgress}%</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleCancelUpload}
+                                            className="text-[10px] text-red-400 hover:text-white underline"
+                                        >
+                                            Cancel
+                                        </button>
                                     </div>
-                                    <span className="text-[10px] text-white mb-2">{uploadProgress}%</span>
-                                    <button
-                                        type="button"
-                                        onClick={handleCancelUpload}
-                                        className="text-[10px] text-red-400 hover:text-white underline"
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
                                 )}
                             </div>
                             <div className="flex-1">
