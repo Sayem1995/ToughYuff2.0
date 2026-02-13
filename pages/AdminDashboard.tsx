@@ -159,7 +159,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       <div className="flex-grow p-6 md:p-12 overflow-y-auto h-screen">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Inventory Management</h1>
+            <h1 className="text-3xl font-bold">Item Manager <span className="text-sm font-normal text-text-tertiary">({products.length} items)</span></h1>
             {loading && <span className="text-xs text-gold animate-pulse">Syncing...</span>}
           </div>
           <div className="flex gap-4">
@@ -306,6 +306,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               </div>
             );
           })}
+
+          {/* Uncategorized Products (Fallback) */}
+          {(() => {
+            const knownBrandIds = new Set(BRANDS.map(b => b.id));
+            const uncategorized = filteredAndSorted.filter(p => !knownBrandIds.has(p.brandId));
+            if (uncategorized.length === 0) return null;
+
+            return (
+              <div key="uncategorized" className="p-6 bg-red-900/10 border-t border-red-500/20">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-bold text-red-400">Uncategorized / Mismatch</h2>
+                    <p className="text-xs text-text-secondary">Products with unknown Brand IDs</p>
+                  </div>
+                  <span className="text-xs font-medium bg-red-500/10 text-red-400 px-3 py-1 rounded-full border border-red-500/20">
+                    {uncategorized.length} Products
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {uncategorized.map(product => (
+                    <div key={product.id} className="p-4 rounded-xl border bg-black/20 border-white/10 opacity-75">
+                      <h3 className="font-bold text-white text-sm mb-2">{product.name}</h3>
+                      <p className="text-xs text-text-tertiary">Brand ID: {product.brandId}</p>
+                      <button onClick={() => handleDeleteProduct(product.id)} className="mt-2 text-red-500 text-xs flex items-center gap-1"><Trash2 className="w-3 h-3" /> Delete</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Empty Filters State */}
           {filteredAndSorted.length === 0 && (
