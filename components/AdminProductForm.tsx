@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product, Brand } from '../types';
 import { BRANDS } from '../constants';
 import { X, Upload, Save, Loader2 } from 'lucide-react';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 // Note: importing storage from '../src/firebase' might be key if we want to use the initialized instance
 import { storage } from '../src/firebase';
 
@@ -37,6 +37,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     useEffect(() => {
         if (initialData) {
@@ -81,7 +82,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
         });
     };
 
-    const handleImageUpload = async (file: File) => {
+    const handleImageUpload = (file: File) => {
         if (!file) return;
 
         // 1. File Size Check (Max 5MB)
@@ -92,27 +93,31 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
 
         setUploading(true);
         setUploadSuccess(false);
-        console.log("Starting upload for:", file.name);
+        setUploadProgress(0);
 
-        try {
-            const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+        const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
-            console.log("Uploading bytes...");
-            const snapshot = await uploadBytes(storageRef, file);
-            console.log("Upload complete, fetching URL...");
-
-            const url = await getDownloadURL(snapshot.ref);
-            console.log("URL fetched:", url);
-
-            setFormData(prev => ({ ...prev, image: url }));
-            setUploadSuccess(true);
-        } catch (error: any) {
-            console.error("Upload failed details:", error);
-            // Show specific error message to user
-            alert(`Upload failed: ${error.message || 'Unknown error'}`);
-        } finally {
-            setUploading(false);
-        }
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadProgress(Math.round(progress));
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                console.error("Upload failed details:", error);
+                alert(`Upload failed: ${error.message || 'Unknown error'}`);
+                setUploading(false);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+                    setFormData(prev => ({ ...prev, image: downloadURL }));
+                    setUploadSuccess(true);
+                    setUploading(false);
+                });
+            }
+        );
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -333,8 +338,15 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                     <span className="text-xs text-text-tertiary">No Image</span>
                                 )}
                                 {uploading && (
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2">
+                                        <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
+                                        <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden">
+                                            <div
+                                                className="bg-gold h-full transition-all duration-300"
+                                                style={{ width: `${uploadProgress}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] text-white mt-1">{uploadProgress}%</span>
                                     </div>
                                 )}
                             </div>
