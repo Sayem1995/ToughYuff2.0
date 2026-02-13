@@ -83,17 +83,33 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
 
     const handleImageUpload = async (file: File) => {
         if (!file) return;
+
+        // 1. File Size Check (Max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert("File is too large! Please upload an image under 5MB.");
+            return;
+        }
+
         setUploading(true);
         setUploadSuccess(false);
+        console.log("Starting upload for:", file.name);
+
         try {
             const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+
+            console.log("Uploading bytes...");
             const snapshot = await uploadBytes(storageRef, file);
+            console.log("Upload complete, fetching URL...");
+
             const url = await getDownloadURL(snapshot.ref);
+            console.log("URL fetched:", url);
+
             setFormData(prev => ({ ...prev, image: url }));
             setUploadSuccess(true);
-        } catch (error) {
-            console.error("Upload failed", error);
-            alert("Image upload failed");
+        } catch (error: any) {
+            console.error("Upload failed details:", error);
+            // Show specific error message to user
+            alert(`Upload failed: ${error.message || 'Unknown error'}`);
         } finally {
             setUploading(false);
         }
