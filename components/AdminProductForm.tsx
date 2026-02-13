@@ -36,6 +36,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadSuccess, setUploadSuccess] = useState(false);
 
     useEffect(() => {
         if (initialData) {
@@ -83,11 +84,13 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
     const handleImageUpload = async (file: File) => {
         if (!file) return;
         setUploading(true);
+        setUploadSuccess(false);
         try {
             const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
             const snapshot = await uploadBytes(storageRef, file);
             const url = await getDownloadURL(snapshot.ref);
             setFormData(prev => ({ ...prev, image: url }));
+            setUploadSuccess(true);
         } catch (error) {
             console.error("Upload failed", error);
             alert("Image upload failed");
@@ -303,8 +306,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                         <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
                                         <button
                                             type="button"
-                                            onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
-                                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
+                                            onClick={() => { setFormData(prev => ({ ...prev, image: '' })); setUploadSuccess(false); }}
+                                            disabled={uploading}
+                                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity disabled:opacity-0"
                                         >
                                             <X className="w-6 h-6" />
                                         </button>
@@ -333,7 +337,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                     />
                                 </label>
                                 <p className="text-xs text-text-tertiary mt-2">Recommended: Square JPG/PNG, max 2MB.</p>
-                                {formData.image && <p className="text-xs text-green-400 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
+                                {uploadSuccess && !uploading && <p className="text-xs text-green-400 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
                             </div>
                         </div>
                     </div>
