@@ -172,16 +172,16 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
             }
 
             // Compute dataToSave
-            // We trust formData.inStock which is set by the checkbox
-            const dataToSave = {
-                ...formData,
-            } as Omit<Product, 'id'>;
+            // Sanitize data to remove undefined values which Firestore hates
+            const sanitizedData = Object.fromEntries(
+                Object.entries(dataToSave).filter(([_, v]) => v !== undefined)
+            );
 
-            await onSave(dataToSave);
+            await onSave(sanitizedData as any);
             onCancel();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error saving product:", error);
-            alert("Failed to save product");
+            alert(`Failed to save product: ${error.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }
