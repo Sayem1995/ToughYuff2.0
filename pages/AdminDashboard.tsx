@@ -260,7 +260,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-white/5 border-white/5 hover:border-gold/30 hover:bg-white/10' : 'bg-red-900/10 border-red-500/20 opacity-75'}`}
                     >
                       {/* Status Indicator Dot */}
-                      <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+                      < div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+
+                      {/* Product Image */}
+                      <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/20 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
+                        {product.image ? (
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        ) : brand.image ? (
+                          <img src={brand.image} alt={brand.name} className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 transition-all" />
+                        ) : (
+                          <div className="text-white/20 text-xs">No Image</div>
+                        )}
+                        {/* Overlay Edit Button */}
+                        <button
+                          onClick={() => handleEditProduct(product)}
+                          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
+                        >
+                          <span className="bg-black/60 px-3 py-1 rounded text-xs backdrop-blur-sm border border-white/20">Edit Image</span>
+                        </button>
+                      </div>
 
                       <div className="flex justify-between items-start mb-3 pr-4">
                         <h3 className="font-bold text-white text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>

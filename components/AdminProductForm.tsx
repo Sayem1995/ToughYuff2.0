@@ -297,17 +297,31 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                     <div>
                         <label className="block text-sm text-text-secondary mb-1">Product Image</label>
                         <div className="flex items-start gap-4">
-                            <div className="w-24 h-24 bg-black/20 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
+                            <div className="w-24 h-24 bg-black/20 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative group">
                                 {formData.image ? (
-                                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                    <>
+                                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
+                                        >
+                                            <X className="w-6 h-6" />
+                                        </button>
+                                    </>
                                 ) : (
                                     <span className="text-xs text-text-tertiary">No Image</span>
                                 )}
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                                    </div>
+                                )}
                             </div>
                             <div className="flex-1">
-                                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors">
+                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                     <Upload className="w-4 h-4" />
-                                    {uploading ? 'Uploading...' : 'Upload Image'}
+                                    {uploading ? 'Uploading...' : formData.image ? 'Change Image' : 'Upload Image'}
                                     <input
                                         type="file"
                                         className="hidden"
@@ -319,6 +333,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                     />
                                 </label>
                                 <p className="text-xs text-text-tertiary mt-2">Recommended: Square JPG/PNG, max 2MB.</p>
+                                {formData.image && <p className="text-xs text-green-400 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
                             </div>
                         </div>
                     </div>
