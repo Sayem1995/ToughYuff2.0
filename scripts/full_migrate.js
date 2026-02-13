@@ -1,0 +1,416 @@
+
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, doc, writeBatch } from 'firebase/firestore';
+
+// --- Configuration ---
+const firebaseConfig = {
+    apiKey: "AIzaSyBAKe0U2e04mVoAPRK4b59M0eqj9o9XhN8",
+    authDomain: "toughyuff-db.firebaseapp.com",
+    databaseURL: "https://toughyuff-db-default-rtdb.firebaseio.com",
+    projectId: "toughyuff-db",
+    storageBucket: "toughyuff-db.firebasestorage.app",
+    messagingSenderId: "408665455799",
+    appId: "1:408665455799:web:2fae30dfe9ce72a4f66132",
+    measurementId: "G-8P21JZZY9C"
+};
+
+// --- Data Copied from constants.ts ---
+const BRANDS = [
+    { id: 'cali-ul8000', name: 'Cali UL 8000', tagline: 'Silky smooth hits with silicone tip', puffRange: '8000 Puffs', description: 'Known for its comfortable silicone mouthpiece and consistent flavor delivery.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Cali+UL+8000' },
+    { id: 'cali-20000', name: 'Cali 20000', tagline: 'Massive capacity for extended use', puffRange: '20000 Puffs', description: 'A powerhouse device designed for longevity without sacrificing flavor intensity.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Cali+20000' },
+    { id: 'unc-nic', name: 'UNC 5%', tagline: 'Pure tobacco leaf extraction', puffRange: '5000 Puffs', description: 'Focused on authentic tobacco and straightforward blends.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=UNC+5%25' },
+    { id: 'unc-nonic', name: 'UNC 0%', tagline: 'Zero nicotine, full flavor', puffRange: '5000 Puffs', description: 'The perfect choice for those who want the sensation without the nicotine.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=UNC+0%25' },
+    { id: 'lava-plus', name: 'Lava Plus', tagline: 'Bold flavors in a compact design', puffRange: '2600 Puffs', description: 'A reliable choice with a vast array of intense fruit and dessert profiles.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Lava+Plus' },
+    { id: 'flair-ultra', name: 'Flair Ultra', tagline: 'Compact premium design', puffRange: '2500 Puffs', description: 'Sleek, portable, and packed with intense flavor profiles.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Flair+Ultra' },
+    { id: 'airbar-diamond', name: 'Airbar Diamond', tagline: 'Jewel-inspired elegance', puffRange: '500 Puffs', description: 'A classic, stylish choice with a hard shell design and smooth draw.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Airbar+Diamond' },
+    { id: 'geekbar-pulse', name: 'Geek Bar Pulse', tagline: 'World’s first full screen disposable', puffRange: '15000 Puffs', description: 'Features Pulse Mode for enhanced airflow and flavor, plus a large display.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse' },
+    { id: 'geekbar-pulsex', name: 'Geekbar Pulse X', tagline: 'Next gen pulse technology', puffRange: '25000 Puffs', description: 'Curved screen display and starry sky UI with faster charging.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse+X' },
+];
+
+const RAW_PRODUCT_DATA = [
+    // Cali 8k
+    { brandId: 'cali-ul8000', name: 'Blue Raspberry Lemonade', code: '(C8K)', image: '/images/cali-ul8000/blue-raspberry-lemonade.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Apple Watermelon', code: '(C8K)', image: '/images/cali-ul8000/frozen-apple-watermelon.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Blackberry', code: '(C8K)', image: '/images/cali-ul8000/frozen-blackberry.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Blue Raspberry', code: '(C8K)', image: '/images/cali-ul8000/frozen-blue-raspberry.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Grape', code: '(C8K)', image: '/images/cali-ul8000/frozen-grape.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Lush', code: '(C8K)', image: '/images/cali-ul8000/frozen-lush.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Peach', code: '(C8K)', image: '/images/cali-ul8000/frozen-peach.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Strawberry Raspberry', code: '(C8K)', image: '/images/cali-ul8000/frozen-strawberry-raspberry.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Banana', code: '(C8K)', image: '/images/cali-ul8000/frozen-banana.jpg' },
+    { brandId: 'cali-ul8000', name: 'Frozen Kiwi Lemonade', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Frozen Watermelon', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Mighty Mint', code: '(C8K)', image: '/images/cali-ul8000/mighty-mint.jpg' },
+    { brandId: 'cali-ul8000', name: 'Mexican Mint', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'LA Mint', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Peach Watermelon', code: '(C8K)', image: '/images/cali-ul8000/peach-watermelon.jpg' },
+    { brandId: 'cali-ul8000', name: 'Peach Mango Watermelon', code: '(C8K)', image: '/images/cali-ul8000/peach-mango-watermelon.jpg' },
+    { brandId: 'cali-ul8000', name: 'Pineapple Splash', code: '(C8K)', image: '/images/cali-ul8000/pineapple-splash.jpg' },
+    { brandId: 'cali-ul8000', name: 'Pineapple Strawberry Banana', code: '(C8K)', image: '/images/cali-ul8000/pineapple-strawberry-banana.jpg' },
+    { brandId: 'cali-ul8000', name: 'Strawberry Banana', code: '(C8K)', image: '/images/cali-ul8000/strawberry-banana.jpg' },
+    { brandId: 'cali-ul8000', name: 'Strawberry Kiwi', code: '(C8K)', image: '/images/cali-ul8000/strawberry-kiwi.jpg' },
+    { brandId: 'cali-ul8000', name: 'Triple Berry', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Watermelon Splash', code: '(C8K)', image: '/images/cali-ul8000/watermelon-splash.jpg' },
+    { brandId: 'cali-ul8000', name: 'Kiwi Dragon Berry', code: '(C8K)', image: '/images/cali-ul8000/kiwi-dragon-berry.jpg' },
+    { brandId: 'cali-ul8000', name: 'Spearmint', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Polar Ice', code: '(C8K)', image: '/images/cali-ul8000/polar-ice.jpg' },
+    { brandId: 'cali-ul8000', name: 'Cherry Lemonade', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Grape', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Strawberry Watermelon', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Fruity Loop', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Cosmic Blast', code: '(C8K)' },
+    { brandId: 'cali-ul8000', name: 'Guava Frenzy', code: '(C8K)' },
+
+    // Cali 20k
+    { brandId: 'cali-20000', name: 'Blue Raspberry Lemonade', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Cherry Lemonade', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Apple Watermelon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Banana', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Blackberry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Blue Raspberry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Grape', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Kiwi Lemonade', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Lush', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Peach', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Strawberry Raspberry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Watermelon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Mighty Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'LA Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Peach Mango Watermelon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Peach Watermelon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Pineapple Splash', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Pineapple Strawberry Banana', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Triple Berry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Watermelon Splash', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Coconut Banana', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Strawberry Kiwi', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Strawberry Banana', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Kiwi Dragon Berry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Spearmint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Polar Ice', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Russian Cream', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Sour Grape', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Clear', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Tobacco', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Sour Apple', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Frozen Sour Peach', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Sour Blueberry', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Sour Lush', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Sour Watermelon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Emerald Green Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Menthol', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Peppermint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Wintergreen Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Meta Moon', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Fucking Fab', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Blue Mint', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Baja Blast', code: '(C20K)' },
+    { brandId: 'cali-20000', name: 'Sour Fckuing Fab', code: '(C20K)' },
+
+    // UNC 5%
+    { brandId: 'unc-nic', name: 'Apple Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Banana', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Banana Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Berry Mist', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Black Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Blue Raz', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Blue Raz Cherry', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Blueberry Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Clear', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Clear Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Cola Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Cool Mint', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Cranberry Grape', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Energy Power', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Fruit Rainbow', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Grape Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Havana Tobacco', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Jolly Rancher', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Juicy Peach Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Kiwi Passion Fruit Guava', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Lush Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Mango Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Mint Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Nerdz Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Orange Peach Pineapple Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Orange Soda', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Passion Fruit Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Peach Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Peach Mango', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Peach Mango Watermelon', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Pineapple Mango', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Raspberry Grape Black Currant', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Raspberry Lemonade', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Skittles', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Sour Apple', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Banana', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Guava', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Ice', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Ice Cream', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Lemon Mint', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Mango', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Strawberry Raspberry', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Watermelon Kiwi', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Watermelon Strawberry', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Watermelon Strawberry Bubblegum', code: '(UNC5%)' },
+    { brandId: 'unc-nic', name: 'Watermelon With Mint', code: '(UNC5%)' },
+
+    // UNC 0%
+    { brandId: 'unc-nonic', name: 'Clear Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Black Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Skittles', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Jolly Ranch (Jolly Rancher)', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Spearmint (Spare mint)', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Watermelon With Mint', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Cool Mint', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Lush Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Blueberry Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Grape Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Watermelon Strawberry', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Peach Mango', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Mango Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Blue Raz (Blue Razz)', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Peach Mango Watermelon', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Peach Mango Strawberry', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Strawberry Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Strawberry Banana', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Apple Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Peach Ice', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Watermelon Blue Raz / Watermelon Blueberry Raz', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Colombian Tobacco', code: '(UNC0%)' },
+    { brandId: 'unc-nonic', name: 'Juicy Peach Ice', code: '(UNC0%)' },
+
+    // Lava Plus
+    { brandId: 'lava-plus', name: 'Apple Peach Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Banana', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Banana Milkshake', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Berry Mist', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Black Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Bloom', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Block Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Blueberry Raspberry Lemon', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Cherry Banana', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Clear', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Clear Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Coffee Latte', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Cool Mint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Cuban Tobacco', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Dragon Flume / Dragon Fume', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Fruit Blast (Skittles)', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Fruit Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Grape Soda', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Grapefruit Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Guava Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Havana Tobacco', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Honey Apple', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Icy Mint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Jolly Ice / Jolly Rancher Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Kiwi Strawberry', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Lemon Mint / Lemon with Mint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Mango Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Melon Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Mojito', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Orange Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Passion Fruit Orange Guava', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Peach Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Peach Mango Sour', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Peach Mango Watermelon', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Pineapple Coconut Rum', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Pineapple Mango Sour', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Skittlrs / Skittles (Fruit Blast)', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Solo Mint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Sour Apple Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Sour Patch', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Sour Watermelon Candy', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Splash Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Spearmint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Strawberry Banana', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Strawberry Ice', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Strawberry Lemon Mint', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Strawberry Milkshake / Strawberry Quake', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Strawberry Watermelon Bubblegum', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Vanilla Custard', code: '(LP)' },
+    { brandId: 'lava-plus', name: 'Watermelon Mint / Watermelon with Mint', code: '(LP)' },
+
+    // Flair Ultra
+    { brandId: 'flair-ultra', name: 'Smooth Tobacco', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Menthol', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Cool Mint', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Clear', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Banana Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Black Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Blueberry Mint', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Blue Razz Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Cherry Cola', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Cherry Lemon', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Grape Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Peach Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Peach Mango', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Raspberry Peach Lime', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Red Apple', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Splash Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Strawberry Guava Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Strawberry Ice', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Strawberry Kiwi', code: '(FU)' },
+    { brandId: 'flair-ultra', name: 'Watermelon Mint', code: '(FU)' },
+
+    // Airbar Diamond
+    { brandId: 'airbar-diamond', name: 'Blueberry Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Watermelon Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Mango', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Mango Strawberry', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Strawberry Watermelon', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Watermelon Candy', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Banana Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Banana Pineapple', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Pineapple Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Peach', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Cool Mint', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Grape Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Cherry Cola', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Kiwi Berry Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Peach Blueberry Candy', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Red Mojito', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Love Story', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Sour Apple Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Juicy Peach Ice', code: '(AD)' },
+    { brandId: 'airbar-diamond', name: 'Clear', code: '(AD)' },
+
+    // Geek Bar Pulse
+    { brandId: 'geekbar-pulse', name: 'Watermelon Ice', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Blue Razz Ice', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Juicy Peach', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Mexico Mango', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Sour Apple', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Tropical Rainbow Blast', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Miami Mint', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Cali Cherry', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Fcuking Fab', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Strawberry Mango', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Strawberry Banana', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'White Gummy Ice', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Pink Lemonade', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Black Cherry', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Grape Blow Pop', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Frozen Watermelon', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Frozen Blackberry Fab', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Frozen Pina Colada', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Frozen Strawberry', code: '(GB P)' },
+    { brandId: 'geekbar-pulse', name: 'Frozen Cherry Apple', code: '(GB P)' },
+
+    // Geek Bar Pulse X
+    { brandId: 'geekbar-pulsex', name: 'Banana Taffy Freeze', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Blue Rancher', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Lime Berry Orange', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Sour Mango Pineapple', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Watermelon Ice', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Kiwi Passionfruit Guava', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Lemon Tart', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Raspberry Peach Lime', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Blue Razz Ice', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Sour Apple Ice', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Blackberry B-Pop', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Orange Fcuking Fab', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Miami Mint', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Lemon Heads', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Blackberry Blueberry', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Cool Mint', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Grapefruit Refresher', code: '(GB PX)' },
+    { brandId: 'geekbar-pulsex', name: 'Sour Fcuking Fab', code: '(GB PX)' },
+];
+
+const getProfile = (name) => {
+    const profiles = [];
+    if (name.toLowerCase().includes('ice') || name.toLowerCase().includes('frozen') || name.toLowerCase().includes('cool') || name.toLowerCase().includes('menthol')) profiles.push('Ice');
+    if (name.toLowerCase().includes('dessert') || name.toLowerCase().includes('custard') || name.toLowerCase().includes('cream') || name.toLowerCase().includes('cake') || name.toLowerCase().includes('tart')) profiles.push('Dessert');
+    if (name.toLowerCase().includes('tobacco')) profiles.push('Tobacco');
+    if (profiles.length === 0) profiles.push('Fruity');
+    return profiles;
+};
+
+const generateProducts = () => {
+    return RAW_PRODUCT_DATA.map((item, index) => {
+        const brand = BRANDS.find(b => b.id === item.brandId);
+        const isNicFree = brand.id.includes('nonic');
+
+        return {
+            id: `prod-${index + 1}`,
+            brandId: brand.id,
+            brandName: brand.name,
+            name: item.name,
+            puffCount: parseInt(brand.puffRange.split(' ')[0]) || 5000,
+            nicotine: isNicFree ? '0 mg (No Nicotine)' : '5%',
+            isNicotineFree: isNicFree,
+            flavorProfile: getProfile(item.name),
+            description: `Experience the premium taste of ${item.name} from ${brand.name}.`,
+            inStock: true, // Default to true as per request to list inventory
+            image: item.image || brand.image, // Use specific product image if available, fallback to brand image
+
+            // DEFAULTS FOR DB
+            stockQuantity: 100,
+            lowStockThreshold: 10,
+            price: 19.99,
+            costPerUnit: 10.00,
+            channel: 'both',
+            category: 'Disposable',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+    });
+};
+
+const INITIAL_PRODUCTS = generateProducts();
+
+// --- Migration Logic ---
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const migrate = async () => {
+    console.log(`Starting full migration of ${INITIAL_PRODUCTS.length} products...`);
+    const batch = writeBatch(db);
+    const productsRef = collection(db, 'products');
+
+    // Due to batch limit of 500, we need to chunk if necessary.
+    // We have < 500 products (looks like ~300), so one batch is fine.
+    // Limit is 500 operations.
+
+    // HOWEVER, if list grows, we should chunk.
+    // For now, simple batch.
+
+    let count = 0;
+
+    // We need to use multiple batches if > 500
+    // Let's implement chunking just in case.
+    const CHUNK_SIZE = 450;
+
+    for (let i = 0; i < INITIAL_PRODUCTS.length; i += CHUNK_SIZE) {
+        const chunk = INITIAL_PRODUCTS.slice(i, i + CHUNK_SIZE);
+        const chunkBatch = writeBatch(db);
+
+        chunk.forEach((product) => {
+            // Use specific ID or auto?
+            // App uses IDs from DB.
+            // If we want consistency with constants, we could use seeded IDs.
+            // But existing code uses `prod-x`. Let's stick to that if we want,
+            // OR let firestore auto-gen.
+            // Code uses `prod-${index+1}`. We can use that as document ID for stability.
+            const docRef = doc(productsRef, product.id);
+            chunkBatch.set(docRef, product);
+            count++;
+        });
+
+        console.log(`Committing batch ${Math.floor(i / CHUNK_SIZE) + 1}...`);
+        await chunkBatch.commit();
+    }
+
+    try {
+        console.log("Successfully migrated all products!");
+        process.exit(0);
+    } catch (e) {
+        console.error("Migration failed:", e);
+        process.exit(1);
+    }
+};
+
+migrate();

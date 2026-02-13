@@ -33,23 +33,32 @@ const App: React.FC = () => {
     return localStorage.getItem('admin_auth') === 'true';
   });
 
-  const [isConnected, setIsConnected] = useState(true); // Default to true for Firestore
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   // Sync with Firestore
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+      // Create products array
       const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
 
       if (productList.length === 0) {
-        // Option: seed data if empty? 
-        // For now, just set empty
-        setProducts(INITIAL_PRODUCTS); // Fallback to constants if empty
+        // If empty, it might be a fresh db or just no data.
+        // We set products to empty array here, letting the Admin verify.
+        // Or we can keep falling back to constants for demo purposes until data exists.
+        // Let's stick to the fallback logic for now to keep the app usable,
+        // BUT we set a flag so Admin knows it's using fallback data.
+        console.warn("Firestore collection is empty. Using fallback data.");
+        setProducts(INITIAL_PRODUCTS);
+        // We don't necessarily call this an 'error', but we can track it as 'using fallback'.
+        setConnectionError("Database is empty. Using static data.");
       } else {
         setProducts(productList);
+        setConnectionError(null); // Clear error if we got data
       }
       setLoading(false);
     }, (error) => {
       console.error("Firestore sync error:", error);
+      setConnectionError(`Connection Error: ${error.message}`);
       setLoading(false);
       // Fallback to offline mode/constants
       setProducts(INITIAL_PRODUCTS);
@@ -95,7 +104,8 @@ const App: React.FC = () => {
             isAdminAuthenticated ? (
               <AdminDashboard
                 onLogout={handleLogout}
-                isConnected={isConnected}
+                isConnected={!connectionError}
+                connectionError={connectionError}
                 products={products}
               />
             ) : (

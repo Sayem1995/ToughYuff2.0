@@ -4,6 +4,7 @@ import { Search, LogOut, Package, RefreshCw, Plus, Edit2, Trash2, CheckSquare, S
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { SystemStatus } from '../components/SystemStatus';
+import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
 
@@ -12,6 +13,7 @@ import { BRANDS } from '../constants';
 interface AdminDashboardProps {
   onLogout: () => void;
   isConnected: boolean;
+  connectionError: string | null;
   products: Product[]; // Receive live products from App.tsx
 }
 
@@ -21,8 +23,9 @@ interface FilterState {
   sort: 'name' | 'priceHigh' | 'priceLow' | 'stockHigh' | 'stockLow';
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, products }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, connectionError, products }) => {
   const [search, setSearch] = useState('');
+  const [isMigrating, setIsMigrating] = useState(false);
 
   // Note: We use 'products' from props directly.
   // App.tsx handles the fetching and real-time updates.
@@ -142,6 +145,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     setShowForm(true);
   };
 
+  const handleMigrateData = async () => {
+    if (!confirm("WARNING: This will attempt to write initial data to Firestore. Use this only if your database is empty or you want to reset using the constants file.")) return;
+
+    setIsMigrating(true);
+    try {
+      const result = await migrateDataToFirestore();
+      if (result.success) {
+        alert(`Migration Successful! Added ${result.count} products.`);
+      } else {
+        alert(`Migration Failed. Check console for details. Error: ${JSON.stringify(result.error)}`);
+      }
+    } catch (e) {
+      alert("Migration failed with an exception.");
+      console.error(e);
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
@@ -168,7 +190,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <div>
             <h1 className="text-3xl font-bold">Item Manager <span className="text-sm font-normal text-text-tertiary">({products.length} items)</span></h1>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            {connectionError && (
+              <span className="text-xs text-red-400 bg-red-900/10 px-3 py-1 rounded-full border border-red-500/20">
+                {connectionError}
+              </span>
+            )}
+            <button
+              onClick={handleMigrateData}
+              disabled={isMigrating}
+              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors"
+            >
+              {isMigrating ? "Initializing..." : "Initialize Database"}
+            </button>
             <div className="md:hidden">
               <button onClick={onLogout} className="text-sm text-text-secondary">Log Out</button>
             </div>
@@ -372,18 +406,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           )}
         </div>
       </div>
+    </div>
 
-      {/* Product Form Modal */}
-      {
-        showForm && (
-          <AdminProductForm
-            initialData={editingProduct}
-            onSave={handleSaveProduct}
-            onCancel={() => setShowForm(false)}
-          />
-        )
-      }
-      <SystemStatus />
+      {/* Product Form Modal */ }
+  {
+    showForm && (
+      <AdminProductForm
+        initialData={editingProduct}
+        onSave={handleSaveProduct}
+        onCancel={() => setShowForm(false)}
+      />
+    )
+  }
+  <SystemStatus />
     </div >
   );
 };
