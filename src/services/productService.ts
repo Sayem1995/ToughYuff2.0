@@ -54,29 +54,33 @@ export const ProductService = {
 
     // Add new product
     addProduct: async (productData: Omit<Product, 'id'>): Promise<string> => {
+        console.log("ProductService: Adding product...", productData);
         try {
             const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), {
                 ...productData,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
+            console.log("ProductService: Product added with ID:", docRef.id);
             return docRef.id;
         } catch (error) {
-            console.error("Error adding product:", error);
+            console.error("ProductService: Error adding product:", error);
             throw error;
         }
     },
 
     // Update product
     updateProduct: async (id: string, updates: Partial<Product>): Promise<void> => {
+        console.log(`ProductService: Updating product ${id}...`, updates);
         try {
             const docRef = doc(db, PRODUCTS_COLLECTION, id);
             await updateDoc(docRef, {
                 ...updates,
                 updatedAt: serverTimestamp()
             });
+            console.log(`ProductService: Product ${id} updated successfully.`);
         } catch (error) {
-            console.error("Error updating product:", error);
+            console.error(`ProductService: Error updating product ${id}:`, error);
             throw error;
         }
     },
