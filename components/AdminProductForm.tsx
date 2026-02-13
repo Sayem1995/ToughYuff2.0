@@ -172,6 +172,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
             }
 
             // Compute dataToSave
+            const dataToSave = { ...formData };
+
             // Sanitize data to remove undefined values which Firestore hates
             const sanitizedData = Object.fromEntries(
                 Object.entries(dataToSave).filter(([_, v]) => v !== undefined)
