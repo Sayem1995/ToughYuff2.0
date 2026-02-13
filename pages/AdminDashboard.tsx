@@ -266,8 +266,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         <button
                           onClick={() => handleQuickStockToggle(product)}
                           className={`w-full py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${product.inStock
-                              ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
-                              : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                            ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
+                            : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
                             }`}
                         >
                           {product.inStock ? (
@@ -318,18 +318,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           )}
         </div>
       </div>
-    </div>
 
-      {/* Product Form Modal */ }
-  {
-    showForm && (
-      <AdminProductForm
-        initialData={editingProduct}
-        onSave={handleSaveProduct}
-        onCancel={() => setShowForm(false)}
-      />
-    )
-  }
+      {/* Product Form Modal */}
+      {
+        showForm && (
+          <AdminProductForm
+            initialData={editingProduct}
+            onSave={handleSaveProduct}
+            onCancel={() => setShowForm(false)}
+          />
+        )
+      }
     </div >
   );
 };
