@@ -62,11 +62,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [firebaseAuthStatus, setFirebaseAuthStatus] = useState<'pending' | 'authenticated' | 'error'>('pending');
 
   const [dynamicBrands, setDynamicBrands] = useState<Brand[]>([]);
+  const [brandOrder, setBrandOrder] = useState<string[]>([]);
+
+  // Sensors for Drag & Drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Combine static BRANDS with dynamic ones
   const allBrands = React.useMemo(() => {
     // Create a map to avoid duplicates if migration ran and added static brands to DB
-    const brandMap = new Map();
+    const brandMap = new Map<string, Brand>();
 
     // Add static brands first
     BRANDS.forEach(b => brandMap.set(b.id, b));
@@ -74,14 +83,57 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     // Add/Overwrite with dynamic brands
     dynamicBrands.forEach(b => brandMap.set(b.id, b));
 
-    return Array.from(brandMap.values());
+    return Array.from(brandMap.values()) as Brand[];
   }, [dynamicBrands]);
+
+  // Sidebar Brands Sorted by Custom Order
+  const sidebarBrands = React.useMemo(() => {
+    if (brandOrder.length === 0) return allBrands;
+
+    const sorted = [...allBrands].sort((a, b) => {
+      const indexA = brandOrder.indexOf(a.id);
+      const indexB = brandOrder.indexOf(b.id);
+
+      // If both are in the order list, sort by index
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+
+      // If only A is in list, A comes first
+      if (indexA !== -1) return -1;
+
+      // If only B is in list, B comes first
+      if (indexB !== -1) return 1;
+
+      // If neither, sort alphabetical
+      return a.name.localeCompare(b.name);
+    });
+
+    return sorted;
+  }, [allBrands, brandOrder]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = sidebarBrands.findIndex((b) => b.id === active.id);
+      const newIndex = sidebarBrands.findIndex((b) => b.id === over?.id);
+
+      const newOrderBrands = arrayMove(sidebarBrands, oldIndex, newIndex);
+      const newOrderIds = newOrderBrands.map(b => b.id);
+
+      setBrandOrder(newOrderIds);
+      BrandService.saveBrandOrder(newOrderIds);
+    }
+  };
 
   useEffect(() => {
     const loadBrands = async () => {
       try {
-        const fetchedBrands = await BrandService.getAllBrands();
+        const [fetchedBrands, fetchedOrder] = await Promise.all([
+          BrandService.getAllBrands(),
+          BrandService.getBrandOrder()
+        ]);
         setDynamicBrands(fetchedBrands);
+        setBrandOrder(fetchedOrder);
       } catch (e) {
         console.error("Failed to load brands", e);
       }
