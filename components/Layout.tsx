@@ -22,8 +22,8 @@ export const Navbar: React.FC = () => {
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2">
-          <div className="bg-black p-1 rounded-md">
-            <img src="/logo.png" alt="ToughYuff" className="h-12 md:h-14 w-auto object-contain" />
+          <div className="bg-black rounded-lg overflow-hidden flex items-center justify-center border border-white/10" style={{ height: '56px', width: 'auto', minWidth: '56px' }}>
+            <img src="/logo.png" alt="ToughYuff" className="h-full w-auto object-contain p-0.5" />
           </div>
         </Link>
 
