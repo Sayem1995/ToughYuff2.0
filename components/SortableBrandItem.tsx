@@ -10,7 +10,7 @@ interface SortableBrandItemProps {
     onClick: () => void;
 }
 
-export const SortableBrandItem = ({ id, name, isActive, onClick }: SortableBrandItemProps) => {
+export const SortableBrandItem: React.FC<SortableBrandItemProps> = ({ id, name, isActive, onClick }) => {
     const {
         attributes,
         listeners,
@@ -32,8 +32,8 @@ export const SortableBrandItem = ({ id, name, isActive, onClick }: SortableBrand
         <div ref={setNodeRef} style={style} className="touch-none mb-1">
             <div
                 className={`w-full flex items-center justify-between rounded-lg text-sm transition-colors group ${isActive
-                        ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
-                        : 'text-text-secondary hover:text-white hover:bg-white/5'
+                    ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
+                    : 'text-text-secondary hover:text-white hover:bg-white/5'
                     }`}
             >
                 {/* Drag Handle */}

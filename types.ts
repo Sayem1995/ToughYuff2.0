@@ -1,5 +1,8 @@
+export type StoreId = 'goldmine' | 'ten2ten';
+
 export interface Product {
   id: string;
+  storeId?: StoreId; // Optional for migration compatibility but should be required
   brandId: string;
   name: string; // Flavor name usually
   brandName: string;
@@ -30,6 +33,7 @@ export interface Product {
 
 export interface Brand {
   id: string;
+  storeId?: StoreId;
   name: string;
   tagline: string;
   puffRange: string; // e.g., "8000 Puffs"

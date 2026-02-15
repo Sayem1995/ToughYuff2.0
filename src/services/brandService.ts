@@ -7,6 +7,7 @@ import {
     deleteDoc,
     doc,
     query,
+    where,
     serverTimestamp,
     orderBy
 } from 'firebase/firestore';
@@ -16,10 +17,10 @@ import { Brand } from '../../types';
 const BRANDS_COLLECTION = 'brands';
 
 export const BrandService = {
-    // Fetch all brands
-    getAllBrands: async (): Promise<Brand[]> => {
+    // Fetch all brands for a specific store
+    getAllBrands: async (storeId: string): Promise<Brand[]> => {
         try {
-            const q = query(collection(db, BRANDS_COLLECTION)); // You might want to order by name eventually
+            const q = query(collection(db, BRANDS_COLLECTION), where('storeId', '==', storeId));
             const querySnapshot = await getDocs(q);
 
             return querySnapshot.docs.map(doc => ({
@@ -72,12 +73,10 @@ export const BrandService = {
         }
     },
 
-    // Save brand order
-    saveBrandOrder: async (order: string[]): Promise<void> => {
+    // Save brand order (Per Store)
+    saveBrandOrder: async (order: string[], storeId: string): Promise<void> => {
         try {
-            const settingsRef = doc(db, 'settings', 'brandOrder');
-            // Use setDoc with merge: true or just setDoc since it overwrites
-            // We need to import setDoc first
+            const settingsRef = doc(db, 'settings', `brandOrder_${storeId}`);
             const { setDoc } = await import('firebase/firestore');
             await setDoc(settingsRef, { order }, { merge: true });
         } catch (error) {
@@ -86,10 +85,10 @@ export const BrandService = {
         }
     },
 
-    // Get brand order
-    getBrandOrder: async (): Promise<string[]> => {
+    // Get brand order (Per Store)
+    getBrandOrder: async (storeId: string): Promise<string[]> => {
         try {
-            const settingsRef = doc(db, 'settings', 'brandOrder');
+            const settingsRef = doc(db, 'settings', `brandOrder_${storeId}`);
             const docSnap = await getDoc(settingsRef);
 
             if (docSnap.exists()) {

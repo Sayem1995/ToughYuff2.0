@@ -321,6 +321,7 @@ const generateProducts = (): Product[] => {
 
     return {
       id: `prod-${index + 1}`,
+      storeId: 'goldmine', // Default for static data
       brandId: brand.id,
       brandName: brand.name,
       name: item.name,
@@ -329,7 +330,11 @@ const generateProducts = (): Product[] => {
       isNicotineFree: isNicFree,
       flavorProfile: getProfile(item.name) as any,
       description: `Experience the premium taste of ${item.name} from ${brand.name}.`,
-      inStock: true, // Default to true as per request to list inventory
+      stockQuantity: 100, // Default stock
+      inStock: true,
+      lowStockThreshold: 10,
+      price: 19.99, // Default price
+      channel: 'both', // Default channel
       image: (item as any).image || brand.image // Use specific product image if available, fallback to brand image
     };
   });
@@ -337,7 +342,8 @@ const generateProducts = (): Product[] => {
 
 export const INITIAL_PRODUCTS = generateProducts();
 
-export const ADMIN_CREDENTIALS = {
-  email: "admin@tooughyuff.com",
-  password: "password123" // Mock password
-};
+export const ADMIN_ACCOUNTS = [
+  { email: "goldmine@tooughyuff.com", password: "password123", storeId: "goldmine" },
+  { email: "ten2ten@tooughyuff.com", password: "password123", storeId: "ten2ten" },
+  { email: "admin@tooughyuff.com", password: "password123", storeId: "goldmine" } // Backwards compatibility / Super admin fallback
+];

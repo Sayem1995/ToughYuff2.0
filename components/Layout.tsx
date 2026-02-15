@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import StoreSelector from '../src/components/StoreSelector';
+
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const location = useLocation();
@@ -40,6 +42,9 @@ export const Navbar: React.FC = () => {
               {link.name}
             </Link>
           ))}
+
+          <div className="w-px h-6 bg-white/10 mx-2"></div>
+          <StoreSelector />
         </div>
 
         {/* CTA */}
@@ -54,9 +59,14 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-white z-50"
+          className="md:hidden text-white z-50 flex items-center gap-4"
           onClick={() => setIsOpen(!isOpen)}
         >
+          {/* Show store selector on mobile header explicitly or just in menu? Let's put in menu to save space, or here? */}
+          {/* Actually, putting it here makes it accessible. */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <StoreSelector />
+          </div>
           {isOpen ? <X /> : <Menu />}
         </button>
 

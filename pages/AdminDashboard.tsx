@@ -27,6 +27,8 @@ import {
 } from '@dnd-kit/sortable';
 import { BRANDS } from '../constants';
 
+import { useStore } from '../src/context/StoreContext';
+
 interface AdminDashboardProps {
   onLogout: () => void;
   isConnected: boolean;
@@ -41,6 +43,7 @@ interface FilterState {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, connectionError, products }) => {
+  const { currentStore } = useStore();
   const [search, setSearch] = useState('');
   const [isMigrating, setIsMigrating] = useState(false);
 
@@ -117,11 +120,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       const oldIndex = sidebarBrands.findIndex((b) => b.id === active.id);
       const newIndex = sidebarBrands.findIndex((b) => b.id === over?.id);
 
-      const newOrderBrands = arrayMove(sidebarBrands, oldIndex, newIndex);
+      const newOrderBrands = arrayMove(sidebarBrands, oldIndex, newIndex) as Brand[];
       const newOrderIds = newOrderBrands.map(b => b.id);
 
       setBrandOrder(newOrderIds);
-      BrandService.saveBrandOrder(newOrderIds);
+      setBrandOrder(newOrderIds);
+      BrandService.saveBrandOrder(newOrderIds, currentStore);
     }
   };
 
@@ -129,8 +133,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     const loadBrands = async () => {
       try {
         const [fetchedBrands, fetchedOrder] = await Promise.all([
-          BrandService.getAllBrands(),
-          BrandService.getBrandOrder()
+          BrandService.getAllBrands(currentStore),
+          BrandService.getBrandOrder(currentStore)
         ]);
         setDynamicBrands(fetchedBrands);
         setBrandOrder(fetchedOrder);
@@ -139,7 +143,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       }
     };
     loadBrands();
-  }, []);
+  }, [currentStore]);
 
 
   const navigate = useNavigate();
@@ -223,7 +227,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     if (editingProduct && editingProduct.id) {
       await ProductService.updateProduct(editingProduct.id, data);
     } else {
-      await ProductService.addProduct(data);
+      await ProductService.addProduct({ ...data, storeId: currentStore });
     }
     // loadProducts(); // Handled by real-time listener
     setShowForm(false);
@@ -584,6 +588,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {showForm && (
         <AdminProductForm
           initialData={editingProduct}
+          brands={allBrands} // Pass the store-specific brands
           onCancel={() => { setShowForm(false); setEditingProduct(undefined); }}
           onSave={handleSaveProduct}
         />
@@ -593,8 +598,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {showBrandForm && (
         <AdminBrandForm
           onSave={async (data) => {
-            await BrandService.addBrand(data);
-            const fetchedBrands = await BrandService.getAllBrands();
+            await BrandService.addBrand({ ...data, storeId: currentStore });
+            const fetchedBrands = await BrandService.getAllBrands(currentStore);
             setDynamicBrands(fetchedBrands);
             setShowBrandForm(false);
           }}

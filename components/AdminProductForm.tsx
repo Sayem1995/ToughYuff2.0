@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand } from '../types';
-import { BRANDS } from '../constants';
+
 import { X, Upload, Save, Loader2 } from 'lucide-react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 // Note: importing storage from '../src/firebase' might be key if we want to use the initialized instance
@@ -8,17 +8,18 @@ import { storage } from '../src/firebase';
 
 interface AdminProductFormProps {
     initialData?: Product;
+    brands: Brand[]; // Pass dynamic brands
     onSave: (data: Omit<Product, 'id'>) => Promise<void>;
     onCancel: () => void;
 }
 
 const FLAVOR_PROFILES = ['Fruity', 'Menthol', 'Dessert', 'Tobacco', 'Ice', 'Drink', 'Candy'];
 
-const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave, onCancel }) => {
+const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands, onSave, onCancel }) => {
     const [formData, setFormData] = useState<Partial<Product>>({
         name: '',
-        brandId: BRANDS[0]?.id || '',
-        brandName: BRANDS[0]?.name || '',
+        brandId: brands[0]?.id || '',
+        brandName: brands[0]?.name || '',
         puffCount: 5000,
         nicotine: '5%',
         isNicotineFree: false,
@@ -60,7 +61,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
 
     const handleBrandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const brandId = e.target.value;
-        const brand = BRANDS.find(b => b.id === brandId);
+        const brand = brands.find(b => b.id === brandId);
         setFormData(prev => ({
             ...prev,
             brandId,
@@ -226,7 +227,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, onSave
                                     onChange={handleBrandChange}
                                     className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
                                 >
-                                    {BRANDS.map(b => (
+                                    {brands.map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>

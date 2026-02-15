@@ -23,15 +23,28 @@ const ScrollToTop = () => {
 
 import { db, isFirebaseInitialized } from './src/firebase';
 import { ProductService } from './src/services/productService';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { useStore } from './src/context/StoreContext';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { currentStore, switchStore } = useStore();
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('admin_auth') === 'true';
   });
+
+  // Enforce Admin Store Context
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      const adminStore = localStorage.getItem('toughyuff_admin_store') as any;
+      if (adminStore && adminStore !== currentStore) {
+        console.log(`App: Enforcing admin store context to ${adminStore}`);
+        switchStore(adminStore);
+      }
+    }
+  }, [isAdminAuthenticated, currentStore, switchStore]);
 
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
@@ -42,7 +55,10 @@ const App: React.FC = () => {
       return;
     }
 
-    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+    // Filter by currentStore
+    const q = query(collection(db, 'products'), where('storeId', '==', currentStore));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       // Create products array
       const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
 
@@ -52,10 +68,17 @@ const App: React.FC = () => {
         // Or we can keep falling back to constants for demo purposes until data exists.
         // Let's stick to the fallback logic for now to keep the app usable,
         // BUT we set a flag so Admin knows it's using fallback data.
-        console.warn("Firestore collection is empty. Using fallback data.");
-        setProducts(INITIAL_PRODUCTS);
-        // We don't necessarily call this an 'error', but we can track it as 'using fallback'.
-        setConnectionError("Database is empty. Using static data.");
+        console.warn(`Firestore collection is empty for store: ${currentStore}. Using fallback data.`);
+
+        // IMPORTANT: Fallback data needs to be filtered effectively or just show nothing?
+        // If we show nothing, it proves the filter works. If we show all constants, it's confusing.
+        // Let's show empty for now to prove isolation, unless it's genuinely empty (new store).
+        // Actually, preventing "Using fallback data" for TEN 2 TEN if we just migrated it is key.
+        // Since we migrated, it SHOULD have data.
+
+        setProducts([]);
+        // setProducts(INITIAL_PRODUCTS); // Disable fallback for multi-store clarity
+        // setConnectionError("Database is empty. Using static data.");
       } else {
         setProducts(productList);
         setConnectionError(null); // Clear error if we got data
@@ -66,11 +89,12 @@ const App: React.FC = () => {
       setConnectionError(`Connection Error: ${error.message}`);
       setLoading(false);
       // Fallback to offline mode/constants
-      setProducts(INITIAL_PRODUCTS);
+      const fallbackProducts = INITIAL_PRODUCTS.filter(p => p.storeId === currentStore);
+      setProducts(fallbackProducts);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [currentStore]);
 
   const handleLogin = () => {
     setIsAdminAuthenticated(true);
