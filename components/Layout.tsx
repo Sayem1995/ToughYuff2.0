@@ -22,7 +22,9 @@ export const Navbar: React.FC = () => {
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2">
-          <img src="/logo.png" alt="ToughYuff" className="h-10 w-auto object-contain" />
+          <div className="bg-black p-1 rounded-md">
+            <img src="/logo.png" alt="ToughYuff" className="h-12 md:h-14 w-auto object-contain" />
+          </div>
         </Link>
 
         {/* Desktop Nav */}
@@ -96,7 +98,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#050505] border-t border-white/10 py-12 px-6">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="ToughYuff" className="h-12 w-auto object-contain" />
+          <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-text-secondary">
