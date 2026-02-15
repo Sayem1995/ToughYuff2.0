@@ -8,7 +8,7 @@ import { SystemStatus } from '../components/SystemStatus';
 import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
-import AdminBrandForm from '../components/AdminBrandForm';
+import { BRANDS } from '../constants';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -44,13 +44,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
   const [firebaseAuthStatus, setFirebaseAuthStatus] = useState<'pending' | 'authenticated' | 'error'>('pending');
 
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [dynamicBrands, setDynamicBrands] = useState<Brand[]>([]);
+
+  // Combine static BRANDS with dynamic ones
+  const allBrands = React.useMemo(() => {
+    // Create a map to avoid duplicates if migration ran and added static brands to DB
+    const brandMap = new Map();
+
+    // Add static brands first
+    BRANDS.forEach(b => brandMap.set(b.id, b));
+
+    // Add/Overwrite with dynamic brands
+    dynamicBrands.forEach(b => brandMap.set(b.id, b));
+
+    return Array.from(brandMap.values());
+  }, [dynamicBrands]);
 
   useEffect(() => {
     const loadBrands = async () => {
       try {
         const fetchedBrands = await BrandService.getAllBrands();
-        setBrands(fetchedBrands);
+        setDynamicBrands(fetchedBrands);
       } catch (e) {
         console.error("Failed to load brands", e);
       }
