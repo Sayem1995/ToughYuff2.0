@@ -70,5 +70,36 @@ export const BrandService = {
             console.error("Error deleting brand:", error);
             throw error;
         }
+    },
+
+    // Save brand order
+    saveBrandOrder: async (order: string[]): Promise<void> => {
+        try {
+            const settingsRef = doc(db, 'settings', 'brandOrder');
+            // Use setDoc with merge: true or just setDoc since it overwrites
+            // We need to import setDoc first
+            const { setDoc } = await import('firebase/firestore');
+            await setDoc(settingsRef, { order }, { merge: true });
+        } catch (error) {
+            console.error("Error saving brand order:", error);
+            throw error;
+        }
+    },
+
+    // Get brand order
+    getBrandOrder: async (): Promise<string[]> => {
+        try {
+            const settingsRef = doc(db, 'settings', 'brandOrder');
+            const docSnap = await getDoc(settingsRef);
+
+            if (docSnap.exists()) {
+                return docSnap.data().order as string[];
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching brand order:", error);
+            return [];
+        }
     }
 };

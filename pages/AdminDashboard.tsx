@@ -9,6 +9,22 @@ import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
 import AdminBrandForm from '../components/AdminBrandForm';
+import { SortableBrandItem } from '../components/SortableBrandItem';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { BRANDS } from '../constants';
 
 interface AdminDashboardProps {
@@ -223,19 +239,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             Filter by Brand
           </div>
           <div className="space-y-1">
-            {allBrands.map(brand => (
-              <button
-                key={brand.id}
-                onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
-                className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-between group ${filters.brand === brand.id
-                  ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
-                  : 'text-text-secondary hover:text-white hover:bg-white/5'
-                  }`}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sidebarBrands.map(b => b.id)}
+                strategy={verticalListSortingStrategy}
               >
-                <span>{brand.name}</span>
-                {filters.brand === brand.id && <div className="w-1.5 h-1.5 rounded-full bg-gold" />}
-              </button>
-            ))}
+                {sidebarBrands.map(brand => (
+                  <SortableBrandItem
+                    key={brand.id}
+                    id={brand.id}
+                    name={brand.name}
+                    isActive={filters.brand === brand.id}
+                    onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
 
           <div className="mt-4 px-4 pt-4 border-t border-white/5">
