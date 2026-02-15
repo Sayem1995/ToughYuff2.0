@@ -169,7 +169,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {/* Sidebar */}
       <div className="w-64 bg-surface border-r border-white/5 flex-col hidden md:flex">
         <div className="p-6 border-b border-white/5 flex flex-col items-center">
-          <img src="/logo.png" alt="ToughYuff" className="h-12 w-auto object-contain mb-2" />
+          <div className="bg-black border border-white/10 rounded-lg p-2 mb-2">
+            <img src="/logo.png?v=3" alt="ToughYuff" className="h-12 w-auto object-contain" />
+          </div>
           <span className="text-xs block text-text-tertiary">Admin Console</span>
         </div>
         <div className="p-4 space-y-2 flex-grow">

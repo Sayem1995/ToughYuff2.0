@@ -22,8 +22,10 @@ export const Navbar: React.FC = () => {
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2">
-          {/* Using v=2 to bust cache */}
-          <img src="/logo.png?v=2" alt="ToughYuff" className="h-[60px] md:h-[72px] w-auto object-contain -ml-2" />
+          {/* Logo Box - Forces black background */}
+          <div className="bg-black border border-white/10 rounded-lg p-1">
+            <img src="/logo.png?v=3" alt="ToughYuff" className="h-[48px] w-auto object-contain block" />
+          </div>
         </Link>
 
         {/* Desktop Nav */}
