@@ -1,6 +1,6 @@
 import { writeBatch, doc, collection } from 'firebase/firestore';
 import { db } from '../firebase';
-import { INITIAL_PRODUCTS } from '../../constants';
+import { INITIAL_PRODUCTS, BRANDS } from '../../constants';
 import { Product } from '../../types';
 
 export const migrateDataToFirestore = async () => {
@@ -8,6 +8,20 @@ export const migrateDataToFirestore = async () => {
         const batch = writeBatch(db);
         const productsRef = collection(db, 'products');
 
+        // 1. Migrate Brands
+        const brandsRef = collection(db, 'brands');
+        console.log(`Starting migration of ${BRANDS.length} brands...`);
+
+        for (const brand of BRANDS) {
+            const brandDocRef = doc(brandsRef, brand.id); // Use ID from constants to keep links working
+            batch.set(brandDocRef, {
+                ...brand,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+        }
+
+        // 2. Migrate Products
         console.log(`Starting migration of ${INITIAL_PRODUCTS.length} products...`);
 
         INITIAL_PRODUCTS.forEach((product) => {
