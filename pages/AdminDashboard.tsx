@@ -320,11 +320,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         {/* Bulk Action Bar */}
         {/* Grouped Products View */}
         <div className="divide-y divide-white/5">
-          {BRANDS.map(brand => {
+          {brands.map(brand => {
             // Filter products for this brand from the global filtered list
             const brandProducts = filteredAndSorted.filter(p => p.brandId === brand.id);
 
-            if (brandProducts.length === 0) return null;
+            // If a brand filter is active, only show that brand.
+            // If we are filtering by brand, and this brand is not it, return null.
+            if (filters.brand !== 'all' && filters.brand !== brand.id) return null;
+
+            // If we have products, show them.
+            // OR if we are explicitly filtering for this brand (and it has no products), show the header so we can add products.
+            if (brandProducts.length === 0 && filters.brand !== brand.id) return null;
 
             return (
               <div key={brand.id} className="p-6">
@@ -350,7 +356,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-white/5 border-white/5 hover:border-gold/30 hover:bg-white/10' : 'bg-red-900/10 border-red-500/20 opacity-75'}`}
                     >
                       {/* Status Indicator Dot */}
-                      < div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+                      <div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
 
                       {/* Product Image */}
                       <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/20 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
@@ -416,7 +422,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     </div>
                   ))}
 
-                  {/* Add New Product Card */}
+                  {/* Add New Product Card - Directly at the end of the grid */}
                   <button
                     onClick={() => {
                       setEditingProduct({
@@ -485,15 +491,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
 
       {/* Product Form Modal */}
-      {
-        showForm && (
-          <AdminProductForm
-            initialData={editingProduct}
-            onCancel={() => { setShowForm(false); setEditingProduct(undefined); }}
-            onSave={handleSaveProduct}
-          />
-        )
-      }
+      {showForm && (
+        <AdminProductForm
+          initialData={editingProduct}
+          onCancel={() => { setShowForm(false); setEditingProduct(undefined); }}
+          onSave={handleSaveProduct}
+        />
+      )}
+
+      {/* Brand Form Modal */}
+      {showBrandForm && (
+        <AdminBrandForm
+          onSave={async (data) => {
+            await BrandService.addBrand(data);
+            const fetchedBrands = await BrandService.getAllBrands();
+            setBrands(fetchedBrands);
+            setShowBrandForm(false);
+          }}
+          onCancel={() => setShowBrandForm(false)}
+        />
+      )}
+
       <SystemStatus />
     </div >
   );
