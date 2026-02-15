@@ -8,6 +8,7 @@ import { SystemStatus } from '../components/SystemStatus';
 import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
+import AdminBrandForm from '../components/AdminBrandForm';
 import { BRANDS } from '../constants';
 
 interface AdminDashboardProps {
