@@ -276,7 +276,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <div className="bg-black border border-white/10 rounded-lg p-2 mb-2">
             <img src="/logo.png?v=3" alt="ToughYuff" className="h-12 w-auto object-contain" />
           </div>
-          <span className="text-xs block text-text-tertiary">Admin Console</span>
+          <span className="text-xs block text-text-tertiary mb-2">Admin Console</span>
+
+          <div className={`px-3 py-1 rounded-full text-xs font-bold border ${currentStore === 'goldmine'
+              ? 'bg-gold/10 text-gold border-gold/20'
+              : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+            }`}>
+            {currentStore === 'goldmine' ? 'GOLDMINE STORE' : 'TEN 2 TEN STORE'}
+          </div>
         </div>
         <div className="p-4 flex-grow overflow-y-auto custom-scrollbar">
           <div className="mb-4">
