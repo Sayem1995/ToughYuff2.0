@@ -8,17 +8,28 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [selectedStore, setSelectedStore] = useState<'goldmine' | 'ten2ten'>('goldmine');
+  const [email, setEmail] = useState('goldmine@tooughyuff.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const handleStoreSelect = (store: 'goldmine' | 'ten2ten') => {
+    setSelectedStore(store);
+    setEmail(`${store}@tooughyuff.com`);
+    setPassword(''); // Clear password for security/convenience balance
+    setError('');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Allow manual override of email, but default to the store specific one
     const admin = ADMIN_ACCOUNTS.find(a => a.email === email && a.password === password);
 
     if (admin) {
+      // Ensure the admin account actually matches the selected store intention, or just use the admin's assigned store
       localStorage.setItem('toughyuff_admin_store', admin.storeId);
+      localStorage.setItem('toughyuff_admin_email', admin.email);
       onLogin();
       navigate('/admin');
     } else {
@@ -49,6 +60,28 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
             <h2 className="text-2xl font-bold text-white">Admin Login</h2>
             <p className="text-text-tertiary mt-2">Sign in to manage stock</p>
+          </div>
+
+          {/* Store Toggles */}
+          <div className="flex bg-surface border border-white/10 rounded-lg p-1 mb-8">
+            <button
+              onClick={() => handleStoreSelect('goldmine')}
+              className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${selectedStore === 'goldmine'
+                ? 'bg-gold text-black shadow-lg'
+                : 'text-text-secondary hover:text-white'
+                }`}
+            >
+              Goldmine
+            </button>
+            <button
+              onClick={() => handleStoreSelect('ten2ten')}
+              className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${selectedStore === 'ten2ten'
+                ? 'bg-purple-500 text-white shadow-lg'
+                : 'text-text-secondary hover:text-white'
+                }`}
+            >
+              TEN 2 TEN
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

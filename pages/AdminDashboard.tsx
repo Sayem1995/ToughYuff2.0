@@ -43,7 +43,7 @@ interface FilterState {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, connectionError, products }) => {
-  const { currentStore } = useStore();
+  const { currentStore, switchStore } = useStore();
   const [search, setSearch] = useState('');
   const [isMigrating, setIsMigrating] = useState(false);
 
@@ -278,11 +278,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           </div>
           <span className="text-xs block text-text-tertiary mb-2">Admin Console</span>
 
-          <div className={`px-3 py-1 rounded-full text-xs font-bold border ${currentStore === 'goldmine'
+          <div
+            onClick={() => {
+              // Simple strict check for super admin email or a specific flag
+              // Since we don't have the email in context easily without refetching or storing it, 
+              // let's rely on a new localStorage item 'admin_email' set during login
+              const email = localStorage.getItem('toughyuff_admin_email');
+              if (email === 'admin@tooughyuff.com') {
+                const target = currentStore === 'goldmine' ? 'ten2ten' : 'goldmine';
+                if (confirm(`Switch to ${target === 'goldmine' ? 'Goldmine' : 'TEN 2 TEN'}?`)) {
+                  switchStore(target);
+                  localStorage.setItem('toughyuff_admin_store', target); // Persist constraint update
+                }
+              }
+            }}
+            className={`px-3 py-1 rounded-full text-xs font-bold border cursor-pointer hover:opacity-80 transition-opacity ${currentStore === 'goldmine'
               ? 'bg-gold/10 text-gold border-gold/20'
               : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-            }`}>
+              }`}>
             {currentStore === 'goldmine' ? 'GOLDMINE STORE' : 'TEN 2 TEN STORE'}
+            {localStorage.getItem('toughyuff_admin_email') === 'admin@tooughyuff.com' && <span className="ml-1 opacity-50">↻</span>}
           </div>
         </div>
         <div className="p-4 flex-grow overflow-y-auto custom-scrollbar">

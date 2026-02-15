@@ -20,7 +20,7 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold-subtle flex items-center">
+    <nav className="fixed top-0 left-0 right-0 z-[9999] h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold-subtle flex items-center">
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2">

@@ -104,6 +104,8 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsAdminAuthenticated(false);
     localStorage.removeItem('admin_auth');
+    localStorage.removeItem('toughyuff_admin_email');
+    localStorage.removeItem('toughyuff_admin_store');
   };
 
   if (loading) {
