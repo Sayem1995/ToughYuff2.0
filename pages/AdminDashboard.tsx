@@ -120,7 +120,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   };
 
   const handleSaveProduct = async (data: Omit<Product, 'id'>) => {
-    if (editingProduct) {
+    // If we have an editingProduct AND it has an ID, it's an update.
+    // Otherwise (even if editingProduct is set for initial data), it's a creation.
+    if (editingProduct && editingProduct.id) {
       await ProductService.updateProduct(editingProduct.id, data);
     } else {
       await ProductService.addProduct(data);
