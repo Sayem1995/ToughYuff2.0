@@ -287,7 +287,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 className="bg-background border border-white/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
               >
                 <option value="all">All Brands</option>
-                {BRANDS.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
 
               <select
