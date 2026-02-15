@@ -223,7 +223,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             Filter by Brand
           </div>
           <div className="space-y-1">
-            {brands.map(brand => (
+            {allBrands.map(brand => (
               <button
                 key={brand.id}
                 onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
@@ -302,7 +302,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 className="bg-background border border-white/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
               >
                 <option value="all">All Brands</option>
-                {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                {allBrands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
 
               <select
@@ -335,7 +335,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         {/* Bulk Action Bar */}
         {/* Grouped Products View */}
         <div className="divide-y divide-white/5">
-          {brands.map(brand => {
+          {allBrands.map(brand => {
             // Filter products for this brand from the global filtered list
             const brandProducts = filteredAndSorted.filter(p => p.brandId === brand.id);
 
@@ -464,7 +464,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           {/* Uncategorized Products (Fallback) */}
           {(() => {
-            const knownBrandIds = new Set(brands.map(b => b.id));
+            const knownBrandIds = new Set(allBrands.map(b => b.id));
             const uncategorized = filteredAndSorted.filter(p => !knownBrandIds.has(p.brandId));
             if (uncategorized.length === 0) return null;
 
@@ -520,7 +520,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           onSave={async (data) => {
             await BrandService.addBrand(data);
             const fetchedBrands = await BrandService.getAllBrands();
-            setBrands(fetchedBrands);
+            setDynamicBrands(fetchedBrands);
             setShowBrandForm(false);
           }}
           onCancel={() => setShowBrandForm(false)}
