@@ -21,9 +21,8 @@ export const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold-subtle flex items-center">
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
-        <Link to="/" className="text-2xl tracking-tight z-50">
-          <span className="font-bold text-gold">Toough</span>
-          <span className="font-medium text-white">Yuff</span>
+        <Link to="/" className="z-50 flex items-center gap-2">
+          <img src="/logo.png" alt="ToughYuff" className="h-10 w-auto object-contain" />
         </Link>
 
         {/* Desktop Nav */}
@@ -32,9 +31,8 @@ export const Navbar: React.FC = () => {
             <Link
               key={link.name}
               to={link.path}
-              className={`text-sm font-medium transition-colors hover:text-gold ${
-                isActive(link.path) ? 'text-gold' : 'text-white/80'
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-gold ${isActive(link.path) ? 'text-gold' : 'text-white/80'
+                }`}
             >
               {link.name}
             </Link>
@@ -97,18 +95,17 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-[#050505] border-t border-white/10 py-12 px-6">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="text-2xl tracking-tight">
-          <span className="font-bold text-gold">Toough</span>
-          <span className="font-medium text-white">Yuff</span>
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="ToughYuff" className="h-12 w-auto object-contain" />
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-text-secondary">
-            <Link to="/catalog" className="hover:text-gold transition-colors">Brands</Link>
-            <Link to="/catalog" className="hover:text-gold transition-colors">Flavors</Link>
-            <Link to="/about" className="hover:text-gold transition-colors">About</Link>
-            <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
-            <span className="hover:text-gold cursor-pointer transition-colors">Age Policy</span>
-            <span className="hover:text-gold cursor-pointer transition-colors">Disclaimer</span>
+          <Link to="/catalog" className="hover:text-gold transition-colors">Brands</Link>
+          <Link to="/catalog" className="hover:text-gold transition-colors">Flavors</Link>
+          <Link to="/about" className="hover:text-gold transition-colors">About</Link>
+          <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
+          <span className="hover:text-gold cursor-pointer transition-colors">Age Policy</span>
+          <span className="hover:text-gold cursor-pointer transition-colors">Disclaimer</span>
         </div>
 
         <div className="text-xs text-text-tertiary text-center md:text-right">
