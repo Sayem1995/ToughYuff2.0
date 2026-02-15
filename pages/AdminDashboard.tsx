@@ -174,10 +174,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           </div>
           <span className="text-xs block text-text-tertiary">Admin Console</span>
         </div>
-        <div className="p-4 space-y-2 flex-grow">
-          <button className="w-full text-left px-4 py-2 bg-white/5 text-white rounded-lg font-medium flex items-center gap-2">
-            <Package className="w-4 h-4" /> Products
-          </button>
+        <div className="p-4 flex-grow overflow-y-auto custom-scrollbar">
+          <div className="mb-4">
+            <button
+              onClick={() => setFilters(p => ({ ...p, brand: 'all' }))}
+              className={`w-full text-left px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${filters.brand === 'all'
+                  ? 'bg-gold text-surface'
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
+                }`}
+            >
+              <Package className="w-4 h-4" /> All Products
+            </button>
+          </div>
+
+          <div className="px-4 mb-2 text-xs font-bold text-text-tertiary uppercase tracking-wider">
+            Filter by Brand
+          </div>
+          <div className="space-y-1">
+            {BRANDS.map(brand => (
+              <button
+                key={brand.id}
+                onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
+                className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-between group ${filters.brand === brand.id
+                    ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
+                    : 'text-text-secondary hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                <span>{brand.name}</span>
+                {filters.brand === brand.id && <div className="w-1.5 h-1.5 rounded-full bg-gold" />}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="p-4 border-t border-white/5">
           <button onClick={onLogout} className="w-full text-left px-4 py-2 text-text-secondary hover:text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
