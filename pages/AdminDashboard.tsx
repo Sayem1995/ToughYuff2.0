@@ -179,8 +179,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             <button
               onClick={() => setFilters(p => ({ ...p, brand: 'all' }))}
               className={`w-full text-left px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${filters.brand === 'all'
-                  ? 'bg-gold text-surface'
-                  : 'text-text-secondary hover:text-white hover:bg-white/5'
+                ? 'bg-gold text-surface'
+                : 'text-text-secondary hover:text-white hover:bg-white/5'
                 }`}
             >
               <Package className="w-4 h-4" /> All Products
@@ -196,8 +196,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 key={brand.id}
                 onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
                 className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-between group ${filters.brand === brand.id
-                    ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
-                    : 'text-text-secondary hover:text-white hover:bg-white/5'
+                  ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
                   }`}
               >
                 <span>{brand.name}</span>
@@ -389,6 +389,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       </div>
                     </div>
                   ))}
+
+                  {/* Add New Product Card */}
+                  <button
+                    onClick={() => {
+                      setEditingProduct({
+                        brandId: brand.id,
+                        brandName: brand.name,
+                        inStock: true
+                      } as any);
+                      setShowForm(true);
+                    }}
+                    className="group relative p-4 rounded-xl border border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-gold/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] gap-4"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gold/10 group-hover:text-gold transition-colors">
+                      <Plus className="w-8 h-8 opacity-50 group-hover:opacity-100" />
+                    </div>
+                    <div className="text-center">
+                      <span className="block font-bold text-white mb-1">Add Product</span>
+                      <span className="text-xs text-text-tertiary">to {brand.name}</span>
+                    </div>
+                  </button>
                 </div>
               </div>
             );
