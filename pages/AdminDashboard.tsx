@@ -443,7 +443,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           {/* Uncategorized Products (Fallback) */}
           {(() => {
-            const knownBrandIds = new Set(BRANDS.map(b => b.id));
+            const knownBrandIds = new Set(brands.map(b => b.id));
             const uncategorized = filteredAndSorted.filter(p => !knownBrandIds.has(p.brandId));
             if (uncategorized.length === 0) return null;
 
