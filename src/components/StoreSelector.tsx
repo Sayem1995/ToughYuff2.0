@@ -28,8 +28,22 @@ const StoreSelector: React.FC = () => {
         setIsOpen(false);
     };
 
+    const handleAdminLogout = () => {
+        localStorage.removeItem('admin_auth');
+        localStorage.removeItem('toughyuff_admin_email');
+        localStorage.removeItem('toughyuff_admin_store');
+        window.location.reload(); // Force reload to trigger auth check and show lock screen
+    };
+
     // If session is valid, user is locked to the store.
-    const isLocked = isSessionValid;
+    const isLocked = isSessionValid && !isAdmin; // Admin is never locked visually, but logic might differ. 
+    // Actually, if Admin, isSessionValid is likely false (unless they entered passcode too). 
+    // If Admin, they should have full control.
+
+    // Logic refinement: 
+    // If Admin: Unlocked.
+    // If Customer (Session Valid): Locked.
+    // If Neither: Lock Screen (App.tsx handles this).
 
     return (
         <div className="relative store-selector-container z-50">
@@ -49,7 +63,7 @@ const StoreSelector: React.FC = () => {
                     </div>
                 ) : (
                     <>
-                        {isAdmin && !isLocked && (
+                        {isAdmin && (
                             <div className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded ml-1">
                                 <span>ADMIN</span>
                             </div>
@@ -75,6 +89,17 @@ const StoreSelector: React.FC = () => {
                                 {currentStore === storeId && <Check className="w-3 h-3" />}
                             </button>
                         ))}
+
+                        {isAdmin && (
+                            <div className="border-t border-white/10 mt-2 pt-2">
+                                <button
+                                    onClick={handleAdminLogout}
+                                    className="w-full flex items-center justify-start px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                                >
+                                    <span>Log Out</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <div className="px-3 py-2 bg-black/20 text-[10px] text-text-tertiary border-t border-white/5">
                         Switching stores will update inventory and product availability.
