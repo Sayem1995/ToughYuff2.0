@@ -5,6 +5,11 @@ import { Store, Check, ChevronDown } from 'lucide-react';
 const StoreSelector: React.FC = () => {
     const { currentStore, switchStore, isSessionValid } = useStore();
     const [isOpen, setIsOpen] = React.useState(false);
+    const [isAdmin, setIsAdmin] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsAdmin(localStorage.getItem('admin_auth') === 'true');
+    }, []);
 
     // Close dropdown when clicking outside
     React.useEffect(() => {
@@ -29,9 +34,11 @@ const StoreSelector: React.FC = () => {
     return (
         <div className="relative store-selector-container z-50">
             <button
+                // On mobile, disabled elements might still capture clicks or behave inconsistently.
+                // pointer-events-none ensures it's dead to the DOM.
                 onClick={() => !isLocked && setIsOpen(!isOpen)}
                 disabled={isLocked}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all text-sm group ${isLocked ? 'cursor-default opacity-80' : 'hover:border-gold/50 cursor-pointer'
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all text-sm group ${isLocked ? 'cursor-default opacity-80 pointer-events-none' : 'hover:border-gold/50 cursor-pointer'
                     }`}
             >
                 <Store className="w-4 h-4 text-gold" />
@@ -41,7 +48,14 @@ const StoreSelector: React.FC = () => {
                         <span>LOCKED</span>
                     </div>
                 ) : (
-                    <ChevronDown className={`w-3 h-3 text-text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <>
+                        {isAdmin && !isLocked && (
+                            <div className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded ml-1">
+                                <span>ADMIN</span>
+                            </div>
+                        )}
+                        <ChevronDown className={`w-3 h-3 text-text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    </>
                 )}
             </button>
 
