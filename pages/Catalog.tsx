@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
-import { BRANDS } from '../constants';
 import { Filter, Search } from 'lucide-react';
 
 interface CatalogProps {
   products: Product[];
+  brands?: Brand[];
 }
 
-const Catalog: React.FC<CatalogProps> = ({ products }) => {
+const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
   const [searchParams] = useSearchParams();
   const initialBrand = searchParams.get('brand') || 'all';
   const initialNic = searchParams.get('nicotine') as 'all' | 'zero' | 'nicotine' || 'all';
@@ -70,7 +70,7 @@ const Catalog: React.FC<CatalogProps> = ({ products }) => {
                 onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
               >
                 <option value="all">All Brands</option>
-                {BRANDS.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
               <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
