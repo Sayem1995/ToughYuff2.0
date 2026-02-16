@@ -25,12 +25,13 @@ import { db, isFirebaseInitialized } from './src/firebase';
 import { ProductService } from './src/services/productService';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { useStore } from './src/context/StoreContext';
+import StoreLockScreen from './src/components/StoreLockScreen';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { currentStore, switchStore } = useStore();
+  const { currentStore, switchStore, isSessionValid } = useStore();
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('admin_auth') === 'true';
   });
@@ -63,22 +64,9 @@ const App: React.FC = () => {
       const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
 
       if (productList.length === 0) {
-        // If empty, it might be a fresh db or just no data.
-        // We set products to empty array here, letting the Admin verify.
-        // Or we can keep falling back to constants for demo purposes until data exists.
-        // Let's stick to the fallback logic for now to keep the app usable,
-        // BUT we set a flag so Admin knows it's using fallback data.
         console.warn(`Firestore collection is empty for store: ${currentStore}. Using fallback data.`);
-
-        // IMPORTANT: Fallback data needs to be filtered effectively or just show nothing?
-        // If we show nothing, it proves the filter works. If we show all constants, it's confusing.
-        // Let's show empty for now to prove isolation, unless it's genuinely empty (new store).
-        // Actually, preventing "Using fallback data" for TEN 2 TEN if we just migrated it is key.
-        // Since we migrated, it SHOULD have data.
-
         setProducts([]);
         // setProducts(INITIAL_PRODUCTS); // Disable fallback for multi-store clarity
-        // setConnectionError("Database is empty. Using static data.");
       } else {
         setProducts(productList);
         setConnectionError(null); // Clear error if we got data
@@ -140,20 +128,38 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
-      <AgeGate />
+      {/* Lock Screen Logic: If not admin authenticated AND not session valid, show lock screen. 
+          Actually, Admin Login page might need access. 
+          Let's render LockScreen for everyone, but maybe hide it if on /login?
+          Easier: Just conditionally render Routes.
+       */}
 
       <Routes>
-        {/* Public Routes with Layout */}
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/catalog" element={<Layout><Catalog products={products} /></Layout>} />
-        <Route path="/product/:id" element={<Layout><ProductDetail products={products} /></Layout>} />
-        <Route path="/about" element={<Layout><About /></Layout>} />
-        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        {/* Public Routes - Gated by Passcode */}
+        <Route path="/" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Home /></Layout>
+        } />
+        <Route path="/catalog" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Catalog products={products} /></Layout>
+        } />
+        <Route path="/product/:id" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><ProductDetail products={products} /></Layout>
+        } />
+        <Route path="/about" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><About /></Layout>
+        } />
+        <Route path="/contact" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Contact /></Layout>
+        } />
 
-        {/* Login Route (No Layout) */}
+        {/* Login Route - Always Accessible? 
+            If I make it accessible, they can bypass lock screen by going to /login?
+            Maybe. But they can't browse catalog. 
+            Let's allow /login. 
+        */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-        {/* Protected Admin Route (No Layout) */}
+        {/* Admin Routes */}
         <Route
           path="/admin"
           element={
