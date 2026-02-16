@@ -33,32 +33,23 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     const [isSessionValid, setIsSessionValid] = useState<boolean>(false);
+    // Track session start time in memory only - clears on refresh
+    const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
 
     useEffect(() => {
-        checkSessionExpiry();
-        // Set up a timer to check every minute or on focus?
+        // Interval to check timeout
         const interval = setInterval(checkSessionExpiry, 30000); // Check every 30s
         return () => clearInterval(interval);
-    }, []);
+    }, [sessionStartTime, isSessionValid]);
 
     const checkSessionExpiry = () => {
-        const timestamp = localStorage.getItem('toughyuff_session_timestamp');
-        const savedStore = localStorage.getItem('toughyuff_store_id');
-
-        if (!timestamp || !savedStore) {
-            setIsSessionValid(false);
-            return;
-        }
+        if (!isSessionValid || !sessionStartTime) return;
 
         const now = Date.now();
-        const sessionTime = parseInt(timestamp, 10);
-
-        if (now - sessionTime > SESSION_TIMEOUT_MS) {
+        if (now - sessionStartTime > SESSION_TIMEOUT_MS) {
             console.log('Session expired');
             setIsSessionValid(false);
-            localStorage.removeItem('toughyuff_session_timestamp');
-        } else {
-            setIsSessionValid(true);
+            setSessionStartTime(null);
         }
     };
 
@@ -67,7 +58,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (targetStore) {
             const now = Date.now();
             localStorage.setItem('toughyuff_store_id', targetStore);
-            localStorage.setItem('toughyuff_session_timestamp', now.toString());
+            // We NO LONGER save timestamp to localStorage. 
+            // This ensures refresh/close kills the session.
+            setSessionStartTime(now);
             setCurrentStore(targetStore);
             setIsSessionValid(true);
             return true;
