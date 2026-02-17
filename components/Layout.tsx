@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-white z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
+                className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-[#0a0a12] border-r border-white/10 z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
@@ -103,7 +103,7 @@ export const Navbar: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="absolute top-6 right-6 text-black hover:text-red-500 transition-colors"
+                    className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
                   >
                     <X className="w-8 h-8" />
                   </button>
@@ -116,7 +116,7 @@ export const Navbar: React.FC = () => {
                     <input
                       type="text"
                       placeholder="Search for products..."
-                      className="w-full bg-gray-100 text-black pl-10 pr-4 py-3 rounded-full text-sm outline-none focus:ring-2 focus:ring-gold/50"
+                      className="w-full bg-white/5 border border-white/10 text-white pl-10 pr-4 py-3 rounded-full text-sm outline-none focus:border-gold/50 placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -138,20 +138,20 @@ export const Navbar: React.FC = () => {
                       key={item}
                       to="/catalog" // Placeholder link
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between py-3 text-black font-bold text-sm tracking-wide border-b border-gray-100 last:border-0 hover:text-gold transition-colors group"
+                      className="flex items-center justify-between py-3 text-white/90 font-bold text-sm tracking-wide border-b border-white/5 last:border-0 hover:text-gold transition-colors group"
                     >
                       <span>{item}</span>
-                      <ChevronDown className="w-4 h-4 text-black group-hover:text-gold transition-transform -rotate-90 group-hover:rotate-0" /> {/* Rotate for arrow effect or keep down for accordion hint */}
+                      <ChevronDown className="w-4 h-4 text-white/30 group-hover:text-gold transition-transform -rotate-90 group-hover:rotate-0" />
                     </Link>
                   ))}
                 </div>
 
                 {/* Footer / Extra Links */}
-                <div className="mt-auto p-6 bg-gray-50">
-                  <Link to="/login" onClick={() => setIsOpen(false)} className="block text-center text-sm font-bold text-gray-500 mb-4 hover:text-black">
+                <div className="mt-auto p-6 bg-black/20 border-t border-white/5">
+                  <Link to="/login" onClick={() => setIsOpen(false)} className="block text-center text-sm font-bold text-gold/80 mb-4 hover:text-gold tracking-widest">
                     LOGIN / REGISTER
                   </Link>
-                  <div className="text-center text-[10px] text-gray-400">
+                  <div className="text-center text-[10px] text-gray-600">
                     © 2026 TOUGH YUFF
                   </div>
                 </div>
