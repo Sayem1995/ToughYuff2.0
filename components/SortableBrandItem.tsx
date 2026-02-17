@@ -85,7 +85,7 @@ export const SortableBrandItem: React.FC<SortableBrandItemProps> = ({ id, name, 
                             e.stopPropagation();
                             setShowMenu(!showMenu);
                         }}
-                        className="p-2 text-white/20 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                        className="p-2 text-text-tertiary hover:text-white transition-colors rounded-lg hover:bg-white/10"
                     >
                         <MoreVertical className="w-4 h-4" />
                     </button>
