@@ -24,7 +24,7 @@ const ScrollToTop = () => {
 import { db, isFirebaseInitialized } from './src/firebase';
 import { ProductService } from './src/services/productService';
 import { CategoryService } from './src/services/categoryService';
-import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { useStore } from './src/context/StoreContext';
 import StoreLockScreen from './src/components/StoreLockScreen';
 
@@ -97,13 +97,13 @@ const App: React.FC = () => {
       orderBy('order', 'asc')
     );
 
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       setCategories(cats);
 
       // Ensure required categories exist
-      await CategoryService.ensureCategories(currentStore as any, [
+      CategoryService.ensureCategories(currentStore as any, [
         'DISPOSABLE VAPE',
         'THC DISPOSABLES',
         'THC CARTRIDGES',
@@ -113,12 +113,32 @@ const App: React.FC = () => {
         'NICOTINE POUCHES',
         'PODS',
         'WRAPS AND BLUNTS'
-      ]);
+      ]).catch(err => console.error("Ensure categories failed", err));
+
     }, (error) => {
-      console.error("Category sync error:", error);
-      // If error is due to missing index, we will need to create it. 
-      // For now, let's just log it. 
-      // Note: 'orderBy' usually requires an index.
+      console.error("Category sync error (likely missing index):", error);
+
+      // FALLBACK: Query without sort (memory sort)
+      const qFallback = query(
+        collection(db, 'categories'),
+        where('storeId', '==', currentStore)
+      );
+
+      // We cannot easily change the subscription variable 'unsubscribe' here.
+      // So we just run a one-time fetch to at least show data, or set up a new listener?
+      // Simpler: Just Fetch Once for now to unblock, or try to set up a new listener?
+      // Let's set up a new listener is tricky inside onError.
+
+      // Better: Just use the fallback query from the start if we suspect, 
+      // but we want the sort. 
+      // Let's just fetch once with fallback to populate UI.
+
+      getDocs(qFallback).then((snapshot) => {
+        const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort in memory
+        cats.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+        setCategories(cats);
+      }).catch(e => console.error("Fallback fetch failed", e));
     });
 
     return () => unsubscribe();
