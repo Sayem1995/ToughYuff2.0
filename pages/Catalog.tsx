@@ -6,22 +6,34 @@ import { ProductService } from '../src/services/productService';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 
+import { Category } from '../types';
+
 interface CatalogProps {
   products: Product[];
   brands?: Brand[];
+  categories?: Category[];
 }
 
-const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
-  const [searchParams] = useSearchParams();
+const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [] }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialBrand = searchParams.get('brand') || 'all';
+  const initialCategory = searchParams.get('category') || 'all';
   const initialNic = searchParams.get('nicotine') as 'all' | 'zero' | 'nicotine' || 'all';
 
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<FilterState & { category: string }>({
     brand: initialBrand,
+    category: initialCategory,
     flavorProfile: 'all',
     nicotine: initialNic,
     availability: false,
   });
+
+  // Sync URL with filters
+  React.useEffect(() => {
+    if (searchParams.get('category') !== filters.category) {
+      setFilters(prev => ({ ...prev, category: searchParams.get('category') || 'all' }));
+    }
+  }, [searchParams]);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -67,6 +79,13 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
   // Filter Logic
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
+      // Category Filter (NEW)
+      if (filters.category !== 'all') {
+        // If product has no category, it might belong to 'Disposable Vape' by default if we haven't migrated yet.
+        // For now, loose match or strictly match if product.category exists.
+        if (product.category !== filters.category) return false;
+      }
+
       // Brand Filter
       if (filters.brand !== 'all' && product.brandId !== filters.brand) return false;
 
@@ -95,7 +114,11 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
       {/* Hero Strip */}
       <div className="pt-12 pb-12 px-6 border-b border-white/5 bg-elevated/50">
         <div className="max-w-[1200px] mx-auto">
-          <h1 className="text-4xl font-bold mb-2">All Vapes & Flavors</h1>
+          <h1 className="text-4xl font-bold mb-2">
+            {filters.category !== 'all'
+              ? categories.find(c => c.id === filters.category)?.name || 'Products'
+              : 'All Vapes & Flavors'}
+          </h1>
           <p className="text-text-secondary">Filter by brand, flavor profile, and nicotine level.</p>
         </div>
       </div>
@@ -183,8 +206,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
             <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
             <button
               onClick={() => {
-                setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', availability: false });
+                setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', availability: false, category: 'all' });
                 setSearchQuery('');
+                setSearchParams({});
               }}
               className="mt-4 text-gold hover:underline"
             >
@@ -262,6 +286,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
           <AdminProductForm
             initialData={editingProduct}
             brands={brands}
+            categories={categories}
             onSave={handleSaveProduct}
             onCancel={() => {
               setShowEditForm(false);

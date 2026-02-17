@@ -5,8 +5,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import StoreSelector from '../src/components/StoreSelector';
 
-export const Navbar: React.FC = () => {
+import { Category } from '../types';
+
+export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [showShopMenu, setShowShopMenu] = React.useState(false);
   const location = useLocation();
 
   const links = [
@@ -47,14 +50,47 @@ export const Navbar: React.FC = () => {
           <StoreSelector />
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:block">
-          <Link
-            to="/catalog"
-            className="bg-gold text-background px-6 py-3 rounded-lg font-semibold text-sm hover:brightness-110 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-300"
+        {/* CTA -> Shop Dropdown */}
+        <div
+          className="hidden md:block relative group"
+          onMouseEnter={() => setShowShopMenu(true)}
+          onMouseLeave={() => setShowShopMenu(false)}
+        >
+          <button
+            className="bg-gold text-background px-6 py-3 rounded-lg font-semibold text-sm hover:brightness-110 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-300 flex items-center gap-2"
           >
-            Browse Vapes
-          </Link>
+            Shop <ChevronDown className="w-4 h-4" />
+          </button>
+
+          <AnimatePresence>
+            {showShopMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full right-0 mt-2 w-64 bg-surface border border-white/10 rounded-xl shadow-2xl overflow-hidden py-2"
+              >
+                {categories.length > 0 ? (
+                  categories.map(cat => (
+                    <Link
+                      key={cat.id}
+                      to={`/catalog?category=${cat.id}`}
+                      className="block px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      {cat.name}
+                    </Link>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-xs text-text-tertiary">No categories found</div>
+                )}
+                <div className="border-t border-white/10 mt-2 pt-2">
+                  <Link to="/catalog" className="block px-4 py-2 text-sm text-gold hover:text-yellow-400 font-bold">
+                    View All Products
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -123,27 +159,27 @@ export const Navbar: React.FC = () => {
 
                 {/* Categories List */}
                 <div className="flex-col px-6 py-2 space-y-1">
-                  {[
-                    'DISPOSABLE VAPE',
-                    'THC DISPOSABLE',
-                    'THC CARTRIDGE',
-                    'THC & DELTA GUMMIES',
-                    'PRE ROLLS',
-                    'HOOKAH FLAVORS',
-                    'NICOTINE POUCHES',
-                    'PODS',
-                    'WRAPS AND BLUNTS'
-                  ].map((item) => (
+                  {categories.map((cat) => (
                     <Link
-                      key={item}
-                      to="/catalog" // Placeholder link
+                      key={cat.id}
+                      to={`/catalog?category=${cat.id}`} // Placeholder link
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-between py-3 text-white/90 font-bold text-sm tracking-wide border-b border-white/5 last:border-0 hover:text-gold transition-colors group"
                     >
-                      <span>{item}</span>
+                      <span>{cat.name}</span>
                       <ChevronDown className="w-4 h-4 text-white/30 group-hover:text-gold transition-transform -rotate-90 group-hover:rotate-0" />
                     </Link>
                   ))}
+
+                  {/* View All */}
+                  <Link
+                    to="/catalog"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between py-3 text-gold font-bold text-sm tracking-wide border-b border-white/5 last:border-0 hover:text-white transition-colors group"
+                  >
+                    <span>VIEW ALL VAPES</span>
+                    <ChevronDown className="w-4 h-4 text-gold group-hover:text-white transition-transform -rotate-90 group-hover:rotate-0" />
+                  </Link>
                 </div>
 
                 {/* Footer / Extra Links */}
@@ -190,10 +226,10 @@ export const Footer: React.FC = () => {
   );
 };
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const Layout: React.FC<{ children: React.ReactNode; categories?: Category[] }> = ({ children, categories = [] }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar categories={categories} />
       <main className="flex-grow pt-[72px]">
         {children}
       </main>

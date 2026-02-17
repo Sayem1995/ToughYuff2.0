@@ -31,6 +31,14 @@ export interface Product {
   createdAt?: any; // Firestore Timestamp
 }
 
+export interface Category {
+  id: string;
+  storeId: StoreId;
+  name: string; // e.g., "DISPOSABLE VAPE"
+  order: number;
+  slug: string; // url-friendly
+}
+
 export interface Brand {
   id: string;
   storeId?: StoreId;

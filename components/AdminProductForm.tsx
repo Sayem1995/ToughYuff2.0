@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Product, Brand } from '../types';
+import { Product, Brand, Category } from '../types';
 
 import { X, Upload, Save, Loader2 } from 'lucide-react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -9,13 +9,14 @@ import { storage } from '../src/firebase';
 interface AdminProductFormProps {
     initialData?: Product;
     brands: Brand[]; // Pass dynamic brands
+    categories: Category[]; // Pass dynamic categories
     onSave: (data: Omit<Product, 'id'>) => Promise<void>;
     onCancel: () => void;
 }
 
 const FLAVOR_PROFILES = ['Fruity', 'Menthol', 'Dessert', 'Tobacco', 'Ice', 'Drink', 'Candy'];
 
-const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands, onSave, onCancel }) => {
+const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands, categories, onSave, onCancel }) => {
     const [formData, setFormData] = useState<Partial<Product>>({
         name: '',
         brandId: brands[0]?.id || '',
@@ -31,7 +32,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
         costPerUnit: 0,
         image: '',
         channel: 'both',
-        inStock: false
+        inStock: false,
+        category: ''
     });
 
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -229,6 +231,21 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                 >
                                     {brands.map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm text-text-secondary mb-1">Category</label>
+                                <select
+                                    name="category"
+                                    value={formData.category || ''}
+                                    onChange={handleChange}
+                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                >
+                                    <option value="">Select Category</option>
+                                    {categories.map(c => (
+                                        <option key={c.id} value={c.slug}>{c.name}</option>
                                     ))}
                                 </select>
                             </div>

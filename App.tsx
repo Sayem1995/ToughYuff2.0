@@ -23,12 +23,14 @@ const ScrollToTop = () => {
 
 import { db, isFirebaseInitialized } from './src/firebase';
 import { ProductService } from './src/services/productService';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { CategoryService } from './src/services/categoryService';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { useStore } from './src/context/StoreContext';
 import StoreLockScreen from './src/components/StoreLockScreen';
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { currentStore, switchStore, isSessionValid } = useStore();
@@ -79,6 +81,47 @@ const App: React.FC = () => {
       // Fallback to offline mode/constants
       const fallbackProducts = INITIAL_PRODUCTS.filter(p => p.storeId === currentStore);
       setProducts(fallbackProducts);
+    });
+
+    return () => unsubscribe();
+  }, [currentStore]);
+
+  // Sync Categories
+  useEffect(() => {
+    if (!currentStore) return;
+
+    // Subscribe to categories
+    const q = query(
+      collection(db, 'categories'),
+      where('storeId', '==', currentStore),
+      orderBy('order', 'asc')
+    );
+
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (cats.length === 0) {
+        // Self-healing: Seed if empty
+        console.log("Seeding default categories...");
+        await CategoryService.seedInitialCategories(currentStore as any, [
+          'DISPOSABLE VAPE',
+          'THC DISPOSABLE',
+          'THC CARTRIDGE',
+          'THC & DELTA GUMMIES',
+          'PRE ROLLS',
+          'HOOKAH FLAVORS',
+          'NICOTINE POUCHES',
+          'PODS',
+          'WRAPS AND BLUNTS'
+        ]);
+      } else {
+        setCategories(cats);
+      }
+    }, (error) => {
+      console.error("Category sync error:", error);
+      // If error is due to missing index, we will need to create it. 
+      // For now, let's just log it. 
+      // Note: 'orderBy' usually requires an index.
     });
 
     return () => unsubscribe();
@@ -175,19 +218,19 @@ const App: React.FC = () => {
       <Routes>
         {/* Public Routes - Gated by Passcode */}
         <Route path="/" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Home brands={displayBrands} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Home brands={displayBrands} /></Layout>
         } />
         <Route path="/catalog" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Catalog products={products} brands={displayBrands} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Catalog products={products} brands={displayBrands} categories={categories} /></Layout>
         } />
         <Route path="/product/:id" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><ProductDetail products={products} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><ProductDetail products={products} /></Layout>
         } />
         <Route path="/about" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><About /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><About /></Layout>
         } />
         <Route path="/contact" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout><Contact /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Contact /></Layout>
         } />
 
         {/* Login Route - Always Accessible? 
@@ -207,6 +250,7 @@ const App: React.FC = () => {
                 isConnected={!connectionError}
                 connectionError={connectionError}
                 products={products}
+                categories={categories}
               />
             ) : (
               <Navigate to="/login" replace />
