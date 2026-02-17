@@ -100,23 +100,20 @@ const App: React.FC = () => {
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (cats.length === 0) {
-        // Self-healing: Seed if empty
-        console.log("Seeding default categories...");
-        await CategoryService.seedInitialCategories(currentStore as any, [
-          'DISPOSABLE VAPE',
-          'THC DISPOSABLE',
-          'THC CARTRIDGE',
-          'THC & DELTA GUMMIES',
-          'PRE ROLLS',
-          'HOOKAH FLAVORS',
-          'NICOTINE POUCHES',
-          'PODS',
-          'WRAPS AND BLUNTS'
-        ]);
-      } else {
-        setCategories(cats);
-      }
+      setCategories(cats);
+
+      // Ensure required categories exist
+      await CategoryService.ensureCategories(currentStore as any, [
+        'DISPOSABLE VAPE',
+        'THC DISPOSABLES',
+        'THC CARTRIDGES',
+        'THC & DELTA GUMMIES',
+        'PRE ROLLS',
+        'HOOKAH FLAVORS',
+        'NICOTINE POUCHES',
+        'PODS',
+        'WRAPS AND BLUNTS'
+      ]);
     }, (error) => {
       console.error("Category sync error:", error);
       // If error is due to missing index, we will need to create it. 

@@ -119,6 +119,31 @@ export const CategoryService = {
                 createdAt: serverTimestamp()
             });
         });
+    },
+
+
+    // Ensure specific categories exist (add if missing)
+    ensureCategories: async (storeId: StoreId, requiredNames: string[]): Promise<void> => {
+        const existing = await CategoryService.getAllCategories(storeId);
+        const existingNames = new Set(existing.map(c => c.name.toLowerCase()));
+
+        const missing = requiredNames.filter(name => !existingNames.has(name.toLowerCase()));
+
+        if (missing.length === 0) return;
+
+        const batch = writeBatch(db);
+        const startOrder = existing.length > 0 ? Math.max(...existing.map(c => c.order || 0)) + 1 : 0;
+
+        missing.forEach((name, index) => {
+            const docRef = doc(collection(db, CATEGORIES_COLLECTION));
+            batch.set(docRef, {
+                storeId,
+                name,
+                slug: name.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+                order: startOrder + index,
+                createdAt: serverTimestamp()
+            });
+        });
         await batch.commit();
     }
 };
