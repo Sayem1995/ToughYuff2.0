@@ -74,7 +74,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
   const [dynamicBrands, setDynamicBrands] = useState<Brand[]>([]);
   const [brandOrder, setBrandOrder] = useState<string[]>([]);
-  const [dynamicCategories, setDynamicCategories] = useState<Category[]>([]);
+
+  // Use props.categories directly
+  // Sort them by order for display
+  const dynamicCategories = React.useMemo(() => {
+    return [...categories].sort((a, b) => (a.order || 0) - (b.order || 0) || a.name.localeCompare(b.name));
+  }, [categories]);
 
   // Sensors for Drag & Drop
   const sensors = useSensors(
@@ -131,7 +136,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     if (active.id !== over?.id) {
       if (!over) return;
 
-      if (activeTab !== 'products' && activeTab !== 'categories') {
+      if (activeTab === 'categories') {
+        if (active.id !== over.id) {
+          const oldIndex = dynamicCategories.findIndex((c) => c.id === active.id);
+          const newIndex = dynamicCategories.findIndex((c) => c.id === over.id);
+
+          const newOrderedCategories = arrayMove(dynamicCategories, oldIndex, newIndex);
+          // With props, we can't set state locally. We just fire the service call.
+          // App.tsx will update props when Firestore updates.
+
+          // Update order property and save
+          const reorderedForSave = newOrderedCategories.map((cat, index) => ({
+            ...cat,
+            order: index,
+          }));
+          CategoryService.reorderCategories(reorderedForSave);
+        }
+      } else if (activeTab !== 'products') {
+        // Brand Reordering
         if (active.id !== over.id) {
           const oldIndex = sidebarBrands.findIndex((b) => b.id === active.id);
           const newIndex = sidebarBrands.findIndex((b) => b.id === over.id);
@@ -141,22 +163,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           setBrandOrder(newOrderIds); // Optimistic UI
           BrandService.saveBrandOrder(newOrderIds, currentStore);
-        }
-      }
-      if (activeTab === 'categories') {
-        if (active.id !== over.id) {
-          const oldIndex = dynamicCategories.findIndex((c) => c.id === active.id);
-          const newIndex = dynamicCategories.findIndex((c) => c.id === over.id);
-
-          const newOrderedCategories = arrayMove(dynamicCategories, oldIndex, newIndex);
-          setDynamicCategories(newOrderedCategories); // Optimistic UI
-
-          // Update order property and save
-          const reorderedForSave = newOrderedCategories.map((cat, index) => ({
-            ...cat,
-            order: index,
-          }));
-          CategoryService.reorderCategories(reorderedForSave);
         }
       }
     }
@@ -176,20 +182,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       }
     };
     loadBrands();
-  }, [currentStore]);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const fetchedCategories = await CategoryService.getAllCategories(currentStore);
-        // Sort by 'order' property, if it exists, otherwise by name
-        const sortedCategories = fetchedCategories.sort((a, b) => (a.order || 0) - (b.order || 0) || a.name.localeCompare(b.name));
-        setDynamicCategories(sortedCategories);
-      } catch (e) {
-        console.error("Failed to load categories", e);
-      }
-    };
-    loadCategories();
   }, [currentStore]);
 
 
