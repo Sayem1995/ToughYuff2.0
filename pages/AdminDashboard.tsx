@@ -62,6 +62,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [showForm, setShowForm] = useState(false);
   const [showBrandForm, setShowBrandForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+  const [editingBrand, setEditingBrand] = useState<Brand | undefined>(undefined);
   const [firebaseAuthStatus, setFirebaseAuthStatus] = useState<'pending' | 'authenticated' | 'error'>('pending');
 
   const [dynamicBrands, setDynamicBrands] = useState<Brand[]>([]);
@@ -249,6 +250,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     setShowForm(true);
   };
 
+  const handleEditBrand = (brand: Brand) => {
+    setEditingBrand(brand);
+    setShowBrandForm(true);
+  };
+
+  const handleDeleteBrand = async (brandId: string) => {
+    if (confirm('Are you sure you want to delete this brand? Products associated with it might be orphaned.')) {
+      try {
+        await BrandService.deleteBrand(brandId);
+        // Refresh brands
+        const [fetchedBrands, fetchedOrder] = await Promise.all([
+          BrandService.getAllBrands(currentStore),
+          BrandService.getBrandOrder(currentStore)
+        ]);
+        setDynamicBrands(fetchedBrands);
+        setBrandOrder(fetchedOrder); // Maintain order or update it? Deleting might shift things.
+      } catch (e) {
+        console.error("Failed to delete brand", e);
+        alert("Failed to delete brand");
+      }
+    }
+  };
+
   const handleMigrateData = async () => {
     if (!confirm("WARNING: This will attempt to write initial data to Firestore. Use this only if your database is empty or you want to reset using the constants file.")) return;
 
@@ -333,6 +357,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     name={brand.name}
                     isActive={filters.brand === brand.id}
                     onClick={() => setFilters(p => ({ ...p, brand: brand.id }))}
+                    onEdit={() => handleEditBrand(brand)}
+                    onDelete={() => handleDeleteBrand(brand.id)}
                   />
                 ))}
               </SortableContext>
@@ -619,13 +645,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {/* Brand Form Modal */}
       {showBrandForm && (
         <AdminBrandForm
+          initialData={editingBrand}
           onSave={async (data) => {
-            await BrandService.addBrand({ ...data, storeId: currentStore });
+            if (editingBrand) {
+              await BrandService.updateBrand(editingBrand.id, data);
+            } else {
+              await BrandService.addBrand({ ...data, storeId: currentStore });
+            }
             const fetchedBrands = await BrandService.getAllBrands(currentStore);
             setDynamicBrands(fetchedBrands);
             setShowBrandForm(false);
+            setEditingBrand(undefined);
           }}
-          onCancel={() => setShowBrandForm(false)}
+          onCancel={() => {
+            setShowBrandForm(false);
+            setEditingBrand(undefined);
+          }}
         />
       )}
 
