@@ -366,6 +366,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleRepairCategories = async () => {
+    if (!confirm("This will ensure all default categories exist. Continue?")) return;
+    try {
+      const { DEFAULT_CATEGORIES, CategoryService } = await import('../src/services/categoryService');
+      await CategoryService.ensureCategories(currentStore as any, DEFAULT_CATEGORIES);
+      alert("Categories repaired successfully! The sidebar should update shortly.");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to repair categories.");
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background text-text-primary overflow-hidden">
       {/* Sidebar */}
@@ -407,7 +419,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           </button>
         </div>
 
-        <div className="p-4 mt-auto border-t border-white/10">
+        <div className="p-4 mt-auto border-t border-white/10 space-y-2">
+          <button onClick={handleRepairCategories} className="w-full flex items-center gap-2 text-text-secondary hover:text-gold text-xs">
+            <BarChart className="w-3 h-3" /> Repair Categories
+          </button>
           <button onClick={onLogout} className="w-full flex items-center gap-2 text-text-secondary hover:text-white text-sm">
             <LogOut className="w-4 h-4" /> Logout
           </button>

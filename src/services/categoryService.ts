@@ -17,6 +17,18 @@ import { Category, StoreId } from '../../types';
 
 const CATEGORIES_COLLECTION = 'categories';
 
+export const DEFAULT_CATEGORIES = [
+    'DISPOSABLE VAPE',
+    'THC DISPOSABLES',
+    'THC CARTRIDGES',
+    'THC & DELTA GUMMIES',
+    'PRE ROLLS',
+    'HOOKAH FLAVORS',
+    'NICOTINE POUCHES',
+    'PODS',
+    'WRAPS AND BLUNTS'
+];
+
 export const CategoryService = {
     // Fetch all categories for a store, ordered by 'order'
     getAllCategories: async (storeId: StoreId): Promise<Category[]> => {
