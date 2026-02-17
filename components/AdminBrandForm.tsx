@@ -94,7 +94,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-surface border border-white/10 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 <div className="sticky top-0 bg-surface border-b border-white/10 p-4 flex justify-between items-center z-10">
-                    <h2 className="text-xl font-bold text-white">{initialData ? 'Edit Brand' : 'Add New Brand'}</h2>
+                    <h2 className="text-xl font-bold text-white">{initialData ? 'Edit Disposable Vape' : 'Add New Disposable Vape'}</h2>
                     <button onClick={onCancel} className="text-text-tertiary hover:text-white p-1">
                         <X className="w-6 h-6" />
                     </button>
@@ -102,7 +102,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     <div>
-                        <label className="block text-sm text-text-secondary mb-1">Brand Name</label>
+                        <label className="block text-sm text-text-secondary mb-1">Name</label>
                         <input
                             type="text"
                             name="name"
@@ -148,7 +148,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
 
                     {/* Image Upload */}
                     <div>
-                        <label className="block text-sm text-text-secondary mb-1">Brand Logo/Image</label>
+                        <label className="block text-sm text-text-secondary mb-1">Logo/Image</label>
                         <div className="flex items-start gap-4">
                             <div className="w-24 h-24 bg-black/20 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative group">
                                 {formData.image ? (
@@ -204,7 +204,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             className="px-6 py-2 bg-gold hover:bg-yellow-500 text-black font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                            Save Brand
+                            Save Disposable Vape
                         </button>
                     </div>
                 </form>

@@ -398,7 +398,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             onClick={() => setActiveTab('brands')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'brands' ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
           >
-            <CheckSquare className="w-4 h-4" /> Brands
+            <CheckSquare className="w-4 h-4" /> Disposable Vapes
           </button>
           <button
             onClick={() => setActiveTab('categories')}
@@ -420,7 +420,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         {/* Header */}
         <header className="h-[72px] border-b border-white/10 flex items-center justify-between px-8 bg-surface/50 backdrop-blur-sm">
           <h2 className="text-xl font-bold text-white capitalize">
-            {activeTab} Management
+            {activeTab === 'brands' ? 'Disposable Vapes' : activeTab} Management
           </h2>
           <div className="flex items-center gap-4">
             {activeTab === 'products' && (
@@ -436,7 +436,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 onClick={() => { setEditingBrand(undefined); setShowBrandForm(true); }}
                 className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
               >
-                <Plus className="w-4 h-4" /> Add Brand
+                <Plus className="w-4 h-4" /> Add Disposable Vape
               </button>
             )}
             {activeTab === 'categories' && (
@@ -708,7 +708,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           {/* BRANDS VIEW */}
           {activeTab === 'brands' && (
             <div className="bg-surface rounded-xl border border-white/5 p-6">
-              <h3 className="text-xl font-bold mb-4">Manage Brands ({dynamicBrands.length})</h3>
+              <h3 className="text-xl font-bold mb-4">Manage Disposable Vapes ({dynamicBrands.length})</h3>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
