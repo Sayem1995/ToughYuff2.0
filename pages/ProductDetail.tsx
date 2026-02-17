@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
-import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus } from 'lucide-react';
 
 interface ProductDetailProps {
   products: Product[];
 }
+
+const AccordionItem = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-black/10">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full text-left py-4 hover:bg-black/5 transition-colors px-2 -mx-2 rounded-lg"
+      >
+        <span className="flex items-center gap-3 font-semibold text-lg text-text-primary">
+          {Icon && <Icon className="w-5 h-5 text-text-secondary" />}
+          {title}
+        </span>
+        {isOpen ? <Minus className="w-5 h-5 text-text-secondary" /> : <Plus className="w-5 h-5 text-text-secondary" />}
+      </button>
+      {isOpen && <div className="pb-6 text-text-secondary leading-relaxed px-2">{children}</div>}
+    </div>
+  );
+};
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
   const { id } = useParams<{ id: string }>();
@@ -61,44 +80,89 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
             <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">{product.name}</h1>
 
             <div className="flex items-center gap-4 mb-8">
-              {product.stockQuantity <= 0 || !product.inStock ? (
-                <span className="flex items-center gap-2 text-red-500 font-medium bg-red-50 px-3 py-1.5 rounded-full border border-red-200">
-                  <XCircle className="w-4 h-4" /> Out of Stock
-                </span>
-              ) : product.stockQuantity < (product.lowStockThreshold || 10) ? (
-                <span className="flex items-center gap-2 text-orange-600 font-medium bg-orange-50 px-3 py-1.5 rounded-full border border-orange-200">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" /> Low Stock: {product.stockQuantity}
-                </span>
-              ) : (
-                <span className="flex items-center gap-2 text-green-600 font-medium bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
-                  <CheckCircle2 className="w-4 h-4" /> In Stock
-                </span>
-              )}
-              <span className="text-text-tertiary">|</span>
-              <span className="text-text-primary font-medium">{product.puffCount.toLocaleString()} Puffs</span>
+              <span className="text-text-primary font-medium">{(product.puffCount || 0).toLocaleString()} Puffs</span>
               <span className="text-text-tertiary">|</span>
               <span className="text-text-primary font-medium">{product.nicotine}</span>
             </div>
 
-            <div className="space-y-8">
-              <div className="bg-surface p-6 rounded-xl border border-black/5 shadow-sm">
-                <h3 className="text-lg font-semibold text-gold mb-3">Flavor Notes</h3>
-                <p className="text-text-secondary leading-relaxed">{product.description}</p>
-              </div>
+            {/* Highlights Section */}
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-text-primary mb-4">Highlights</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-50 border border-orange-100">
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Battery className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Battery</div>
+                    <div className="font-semibold text-text-primary">{product.battery || 'Unknown'}</div>
+                  </div>
+                </div>
 
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-3">Good For</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.flavorProfile.map(p => (
-                    <span key={p} className="text-sm bg-black/5 text-text-secondary px-4 py-2 rounded-lg border border-black/5">
-                      Fans of {p} flavors
-                    </span>
-                  ))}
-                  <span className="text-sm bg-black/5 text-text-secondary px-4 py-2 rounded-lg border border-black/5">
-                    All-day vaping
-                  </span>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 border border-red-100">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <Droplet className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Nicotine</div>
+                    <div className="font-semibold text-text-primary">{product.nicotine}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-pink-50 border border-pink-100">
+                  <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
+                    <Wind className="w-5 h-5 text-pink-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Puffs</div>
+                    <div className="font-semibold text-text-primary">{(product.puffCount || 0).toLocaleString()}+ per device</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 border border-green-100">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Charging</div>
+                    <div className="font-semibold text-text-primary">{product.isRechargeable ? 'Rechargeable' : 'Non-Rechargeable'}</div>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            {/* Accordions */}
+            <div className="space-y-1 border-t border-black/10">
+              <AccordionItem title={`About ${product.brandName}`}>
+                {product.aboutText || product.description || `Experience the premium quality of ${product.brandName}. This product delivers exceptional performance and flavor.`}
+              </AccordionItem>
+
+              <AccordionItem title="Flavor">
+                {product.flavorText || (
+                  <div>
+                    <p className="mb-4">{product.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {(product.flavorProfile || []).map(p => (
+                        <span key={p} className="text-xs font-medium bg-black/5 text-text-secondary px-3 py-1 rounded-full">
+                          {p}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </AccordionItem>
+
+              <AccordionItem title="Features">
+                {product.features && product.features.length > 0 ? (
+                  <ul className="list-disc list-inside space-y-1">
+                    {product.features.map((feature, i) => (
+                      <li key={i}>{feature}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-text-tertiary italic">No specific features listed.</p>
+                )}
+              </AccordionItem>
             </div>
 
             <div className="mt-12 pt-8 border-t border-black/10">

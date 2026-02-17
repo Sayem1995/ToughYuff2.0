@@ -21,6 +21,14 @@ export interface Product {
   price: number;
   costPerUnit?: number;
 
+
+  // Highlights & Content
+  battery?: string; // e.g. "650mAh"
+  isRechargeable?: boolean;
+  aboutText?: string; // Content for "About [Brand]"
+  flavorText?: string; // Content for "Flavor" section
+  features?: string[]; // List of features
+
   // Metadata
   image: string;
   channel: 'online' | 'store' | 'both';

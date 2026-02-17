@@ -33,7 +33,12 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
         image: '',
         channel: 'both',
         inStock: false,
-        category: ''
+        category: '',
+        battery: '650mAh',
+        isRechargeable: true,
+        aboutText: '',
+        flavorText: '',
+        features: ['']
     });
 
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -83,6 +88,22 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                 return { ...prev, flavorProfile: [...current, profile] };
             }
         });
+    };
+
+    const handleFeatureChange = (index: number, value: string) => {
+        const newFeatures = [...(formData.features || [])];
+        newFeatures[index] = value;
+        setFormData(prev => ({ ...prev, features: newFeatures }));
+    };
+
+    const addFeature = () => {
+        setFormData(prev => ({ ...prev, features: [...(prev.features || []), ''] }));
+    };
+
+    const removeFeature = (index: number) => {
+        const newFeatures = [...(formData.features || [])];
+        newFeatures.splice(index, 1);
+        setFormData(prev => ({ ...prev, features: newFeatures }));
     };
 
     const [uploadTask, setUploadTask] = useState<any>(null); // Store task to cancel
@@ -283,6 +304,29 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                 />
                                 <label className="text-sm text-text-secondary">Nicotine Free</label>
                             </div>
+
+                            <div>
+                                <label className="block text-sm text-text-secondary mb-1">Battery</label>
+                                <input
+                                    type="text"
+                                    name="battery"
+                                    placeholder="e.g. 650mAh"
+                                    value={formData.battery || ''}
+                                    onChange={handleChange}
+                                    className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    name="isRechargeable"
+                                    checked={formData.isRechargeable ?? true}
+                                    onChange={handleChange}
+                                    className="accent-gold w-4 h-4"
+                                />
+                                <label className="text-sm text-text-secondary">Rechargeable</label>
+                            </div>
                         </div>
 
                         {/* Inventory & Pricing */}
@@ -374,6 +418,66 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                             rows={3}
                             className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none resize-none"
                         />
+                    </div>
+
+                    {/* Detailed Content */}
+                    <div className="space-y-4 pt-4 border-t border-black/5">
+                        <h3 className="text-gold font-bold text-sm uppercase tracking-wider">Detailed Content</h3>
+
+                        <div>
+                            <label className="block text-sm text-text-secondary mb-1">About {formData.brandName || "Brand"}</label>
+                            <textarea
+                                name="aboutText"
+                                value={formData.aboutText || ''}
+                                onChange={handleChange}
+                                rows={3}
+                                className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                placeholder={`Information about ${formData.brandName || "the brand"}...`}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm text-text-secondary mb-1">Flavor Description</label>
+                            <textarea
+                                name="flavorText"
+                                value={formData.flavorText || ''}
+                                onChange={handleChange}
+                                rows={3}
+                                className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                placeholder="Detailed flavor description..."
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm text-text-secondary mb-2">Features</label>
+                            <div className="space-y-2">
+                                {(formData.features || []).map((feature, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={feature}
+                                            onChange={(e) => handleFeatureChange(index, e.target.value)}
+                                            className="flex-1 bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                            placeholder="Feature description"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeFeature(index)}
+                                            className="p-2 text-red-500 hover:bg-black/5 rounded"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={addFeature}
+                                    className="text-sm text-gold hover:underline font-medium"
+                                >
+                                    + Add Feature
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Image Upload */}

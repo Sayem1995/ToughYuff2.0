@@ -25,7 +25,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     category: initialCategory,
     flavorProfile: 'all',
     nicotine: initialNic,
-    availability: false,
+    // availability: false, // Removed filter, now enforced
   });
 
   // Sync URL with filters
@@ -96,8 +96,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
       if (filters.nicotine === 'zero' && !product.isNicotineFree) return false;
       if (filters.nicotine === 'nicotine' && product.isNicotineFree) return false;
 
-      // Availability
-      if (filters.availability && !product.inStock) return false;
+      // Availability - ALWAYS ENFORCE IN STOCK for frontend
+      if (!product.inStock) return false;
+      // if (filters.availability && !product.inStock) return false;
 
       // Search
       if (searchQuery) {
@@ -174,15 +175,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               </button>
             </div>
 
-            <label className="flex items-center gap-2 cursor-pointer ml-2">
-              <input
-                type="checkbox"
-                checked={filters.availability}
-                onChange={(e) => setFilters(p => ({ ...p, availability: e.target.checked }))}
-                className="accent-gold w-4 h-4"
-              />
-              <span className="text-sm text-text-secondary">In Stock Only</span>
-            </label>
+            {/* Availability Filter Removed - Always In Stock */}
           </div>
 
           <div className="relative w-full lg:w-64">
@@ -206,7 +199,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
             <button
               onClick={() => {
-                setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', availability: false, category: 'all' });
+                setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', category: 'all' } as any);
                 setSearchQuery('');
                 setSearchParams({});
               }}
@@ -254,13 +247,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
                 <div className="flex justify-between items-start mb-6">
                   <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
-                  {product.stockQuantity <= 0 || !product.inStock ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-black/5 text-text-tertiary border border-black/10 uppercase">Out of Stock</span>
-                  ) : product.stockQuantity < (product.lowStockThreshold || 10) ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-600 border border-orange-500/20 uppercase">Low Stock: {product.stockQuantity}</span>
-                  ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-600 border border-green-500/20 uppercase">In Stock</span>
-                  )}
+                  {/* Stock Status Removed */}
                 </div>
 
                 <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">

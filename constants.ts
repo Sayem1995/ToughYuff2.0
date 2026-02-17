@@ -335,7 +335,14 @@ const generateProducts = (): Product[] => {
       lowStockThreshold: 10,
       price: 19.99, // Default price
       channel: 'both', // Default channel
-      image: (item as any).image || brand.image // Use specific product image if available, fallback to brand image
+      image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
+
+      // New defaults
+      battery: '650mAh',
+      isRechargeable: true,
+      aboutText: brand.description,
+      flavorText: `A rich and authentic ${item.name} flavor profile.`,
+      features: ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };
