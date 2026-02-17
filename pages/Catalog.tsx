@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
-import { Filter, Search } from 'lucide-react';
+import { Filter, Search, MoreVertical, Edit, Trash } from 'lucide-react';
+import { ProductService } from '../src/services/productService';
+import AdminProductForm from '../components/AdminProductForm';
+import { useStore } from '../src/context/StoreContext';
 
 interface CatalogProps {
   products: Product[];
@@ -21,6 +24,45 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
   });
 
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Admin Features
+  const { currentStore } = useStore();
+  const [isAdmin] = useState(() => localStorage.getItem('admin_auth') === 'true');
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  // Close menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = () => setActiveMenuId(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleEditProduct = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveMenuId(null);
+    setEditingProduct(product);
+    setShowEditForm(true);
+  };
+
+  const handleDeleteProduct = async (e: React.MouseEvent, productId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveMenuId(null);
+    if (confirm('Are you sure you want to delete this product?')) {
+      await ProductService.deleteProduct(productId);
+    }
+  };
+
+  const handleSaveProduct = async (data: Omit<Product, 'id'>) => {
+    if (editingProduct && editingProduct.id) {
+      await ProductService.updateProduct(editingProduct.id, data);
+    }
+    setShowEditForm(false);
+    setEditingProduct(undefined);
+  };
 
   // Filter Logic
   const filteredProducts = useMemo(() => {
@@ -152,7 +194,40 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(product => (
-              <Link to={`/product/${product.id}`} key={product.id} className="group bg-card-bg border border-gold-subtle rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+              <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-gold-subtle rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+                {/* Admin Controls */}
+                {isAdmin && (
+                  <div className="absolute top-4 right-4 z-20">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveMenuId(activeMenuId === product.id ? null : product.id);
+                      }}
+                      className="p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-sm"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+
+                    {activeMenuId === product.id && (
+                      <div className="absolute right-0 mt-2 w-32 bg-surface border border-white/10 rounded-lg shadow-xl overflow-hidden z-30">
+                        <button
+                          onClick={(e) => handleEditProduct(e, product)}
+                          className="w-full text-left px-4 py-2 text-xs text-secondary hover:text-white hover:bg-white/5 flex items-center gap-2"
+                        >
+                          <Edit className="w-3 h-3" /> Edit
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteProduct(e, product.id)}
+                          className="w-full text-left px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2"
+                        >
+                          <Trash className="w-3 h-3" /> Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex justify-between items-start mb-6">
                   <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
                   {product.stockQuantity <= 0 || !product.inStock ? (
@@ -180,7 +255,22 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [] }) => {
           </div>
         )}
       </div>
-    </div>
+
+      {/* Admin Edit Modal */}
+      {
+        showEditForm && (
+          <AdminProductForm
+            initialData={editingProduct}
+            brands={brands}
+            onSave={handleSaveProduct}
+            onCancel={() => {
+              setShowEditForm(false);
+              setEditingProduct(undefined);
+            }}
+          />
+        )
+      }
+    </div >
   );
 };
 
