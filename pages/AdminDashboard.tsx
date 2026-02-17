@@ -379,10 +379,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleBrandClick = (brandId: string) => {
+    setFilters(prev => ({ ...prev, brand: brandId }));
+    setActiveTab('products');
+  };
+
   return (
     <div className="flex h-screen bg-background text-text-primary overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/10 bg-surface flex flex-col">
+
         {/* Sidebar Header */}
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-2 mb-1">
@@ -761,8 +767,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                             key={brand.id}
                             id={brand.id}
                             name={brand.name}
-                            isActive={false} // Not filtering here, just managing
-                            onClick={() => handleEditBrand(brand)}
+                            isActive={false}
+                            onClick={() => handleBrandClick(brand.id)}
                             onEdit={() => handleEditBrand(brand)}
                             onDelete={() => handleDeleteBrand(brand.id)}
                           />
