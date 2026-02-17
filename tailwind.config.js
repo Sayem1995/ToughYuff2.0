@@ -9,23 +9,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#050508',
-        surface: '#0a0a12',
-        elevated: '#10101a',
-        'card-bg': 'rgba(255,255,255,0.03)',
+        background: '#F8F9FA', // Light gray/whiteish
+        surface: '#FFFFFF',    // Pure white
+        elevated: '#FFFFFF',   // Pure white
+        'card-bg': 'rgba(0,0,0,0.03)', // Subtle dark tint
         gold: {
           DEFAULT: '#D4AF37',
-          glow: 'rgba(212,175,55,0.3)',
-          subtle: 'rgba(212,175,55,0.15)',
+          glow: 'rgba(212,175,55,0.15)',
+          subtle: 'rgba(212,175,55,0.05)',
         },
         accent: {
           blue: '#3B82F6',
-          blueGlow: 'rgba(59,130,246,0.3)',
+          blueGlow: 'rgba(59,130,246,0.15)',
         },
         text: {
-          primary: '#FFFFFF',
-          secondary: 'rgba(255,255,255,0.6)',
-          tertiary: 'rgba(255,255,255,0.4)',
+          primary: '#1A1A1A',   // Near black
+          secondary: 'rgba(0,0,0,0.6)',
+          tertiary: 'rgba(0,0,0,0.4)',
         }
       },
       fontFamily: {

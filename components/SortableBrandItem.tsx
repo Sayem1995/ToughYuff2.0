@@ -54,14 +54,14 @@ export const SortableBrandItem: React.FC<SortableBrandItemProps> = ({ id, name, 
             <div
                 className={`w-full flex items-center justify-between rounded-lg text-sm transition-colors group relative ${isActive
                     ? 'bg-gold/10 text-gold border border-gold/20 font-medium'
-                    : 'text-text-secondary hover:text-white hover:bg-white/5'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
                     }`}
             >
                 {/* Drag Handle */}
                 <button
                     {...attributes}
                     {...listeners}
-                    className="p-2 cursor-grab active:cursor-grabbing text-white/20 hover:text-white/50 touch-none"
+                    className="p-2 cursor-grab active:cursor-grabbing text-text-tertiary hover:text-text-primary touch-none"
                     title="Drag to reorder"
                 >
                     <GripVertical className="w-4 h-4" />
@@ -85,21 +85,21 @@ export const SortableBrandItem: React.FC<SortableBrandItemProps> = ({ id, name, 
                             e.stopPropagation();
                             setShowMenu(!showMenu);
                         }}
-                        className="p-2 text-text-tertiary hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                        className="p-2 text-text-tertiary hover:text-text-primary transition-colors rounded-lg hover:bg-black/5"
                     >
                         <MoreVertical className="w-4 h-4" />
                     </button>
 
                     {/* Dropdown Menu */}
                     {showMenu && (
-                        <div className="absolute right-0 top-full mt-1 w-32 bg-surface border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                        <div className="absolute right-0 top-full mt-1 w-32 bg-surface border border-black/10 rounded-lg shadow-xl z-50 overflow-hidden">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShowMenu(false);
                                     onEdit();
                                 }}
-                                className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-white hover:bg-white/5 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
                             >
                                 <Edit className="w-3 h-3" /> Edit
                             </button>
@@ -109,7 +109,7 @@ export const SortableBrandItem: React.FC<SortableBrandItemProps> = ({ id, name, 
                                     setShowMenu(false);
                                     onDelete();
                                 }}
-                                className="w-full text-left px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center gap-2"
                             >
                                 <Trash className="w-3 h-3" /> Delete
                             </button>

@@ -40,13 +40,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen flex">
       {/* Left Pane */}
-      <div className="hidden lg:flex w-1/2 bg-surface relative items-center justify-center p-12 border-r border-white/5">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#444 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+      <div className="hidden lg:flex w-1/2 bg-surface relative items-center justify-center p-12 border-r border-black/5">
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
         <div className="relative z-10 text-center">
           <div className="w-64 h-80 mx-auto bg-background border-2 border-dashed border-gold/30 rounded-xl mb-8 flex items-center justify-center">
             <span className="text-text-tertiary">Admin Visual / Logo</span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">TooughYuff Admin</h1>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">TooughYuff Admin</h1>
           <p className="text-text-secondary">Product Availability Console</p>
         </div>
       </div>
@@ -55,20 +55,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
         <div className="max-w-md w-full">
           <div className="text-center mb-10">
-            <div className="inline-flex p-4 bg-surface rounded-full mb-4 border border-white/5">
+            <div className="inline-flex p-4 bg-surface rounded-full mb-4 border border-black/5 shadow-sm">
               <Lock className="w-6 h-6 text-gold" />
             </div>
-            <h2 className="text-2xl font-bold text-white">Admin Login</h2>
+            <h2 className="text-2xl font-bold text-text-primary">Admin Login</h2>
             <p className="text-text-tertiary mt-2">Sign in to manage stock</p>
           </div>
 
           {/* Store Toggles */}
-          <div className="flex bg-surface border border-white/10 rounded-lg p-1 mb-8">
+          <div className="flex bg-surface border border-black/10 rounded-lg p-1 mb-8">
             <button
               onClick={() => handleStoreSelect('goldmine')}
               className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${selectedStore === 'goldmine'
-                ? 'bg-gold text-black shadow-lg'
-                : 'text-text-secondary hover:text-white'
+                ? 'bg-gold text-black shadow-md'
+                : 'text-text-secondary hover:text-text-primary'
                 }`}
             >
               Goldmine
@@ -76,8 +76,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <button
               onClick={() => handleStoreSelect('ten2ten')}
               className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${selectedStore === 'ten2ten'
-                ? 'bg-purple-500 text-white shadow-lg'
-                : 'text-text-secondary hover:text-white'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-text-secondary hover:text-text-primary'
                 }`}
             >
               TEN 2 TEN
@@ -85,7 +85,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm rounded-lg text-center">{error}</div>}
+            {error && <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center">{error}</div>}
 
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-2">Email</label>
@@ -93,7 +93,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface border border-white/10 rounded-lg p-3 text-white focus:border-gold focus:outline-none"
+                className="w-full bg-surface border border-black/10 rounded-lg p-3 text-text-primary focus:border-gold focus:outline-none"
                 placeholder="admin@tooughyuff.com"
               />
             </div>
@@ -104,12 +104,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-surface border border-white/10 rounded-lg p-3 text-white focus:border-gold focus:outline-none"
+                className="w-full bg-surface border border-black/10 rounded-lg p-3 text-text-primary focus:border-gold focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
 
-            <button type="submit" className="w-full bg-gold text-background font-bold py-3 rounded-lg hover:brightness-110 transition-all">
+            <button type="submit" className="w-full bg-gold text-background font-bold py-3 rounded-lg hover:brightness-110 transition-all shadow-md">
               Sign In
             </button>
           </form>

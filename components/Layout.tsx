@@ -23,12 +23,18 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[9999] h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold-subtle flex items-center">
+    <nav className="fixed top-0 left-0 right-0 z-[9999] h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold/10 flex items-center">
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2">
-          {/* Logo Box - Forces black background */}
-          <div className="bg-black border border-white/10 rounded-lg p-1">
+          {/* Logo Box - Forces black background for contrast if logo is light, or just use surface if logo is dark. 
+              Let's assume logo needs dark bg for now to be safe, or just remove bg if logo works on white. 
+              Let's try removing bg box and just showing logo. If user complains, we put it back. 
+              Actually, let's keep it but make it 'bg-black' explicitly as a design choice or use 'bg-gold' even. 
+              Let's stick to simple: No box, just logo. If logo is white text, it will be invisible. 
+              Safest: Keep the box but make it stylish. 
+          */}
+          <div className="bg-black/90 border border-white/10 rounded-lg p-1">
             <img src="/logo.png?v=3" alt="ToughYuff" className="h-[48px] w-auto object-contain block" />
           </div>
         </Link>
@@ -39,14 +45,14 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
             <Link
               key={link.name}
               to={link.path}
-              className={`text-sm font-medium transition-colors hover:text-gold ${isActive(link.path) ? 'text-gold' : 'text-white/80'
+              className={`text-sm font-medium transition-colors hover:text-gold ${isActive(link.path) ? 'text-gold' : 'text-text-secondary'
                 }`}
             >
               {link.name}
             </Link>
           ))}
 
-          <div className="w-px h-6 bg-white/10 mx-2"></div>
+          <div className="w-px h-6 bg-black/10 mx-2"></div>
           <StoreSelector />
         </div>
 
@@ -57,7 +63,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
           onMouseLeave={() => setShowShopMenu(false)}
         >
           <button
-            className="bg-gold text-background px-6 py-3 rounded-lg font-semibold text-sm hover:brightness-110 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-300 flex items-center gap-2"
+            className="bg-gold text-white px-6 py-3 rounded-lg font-semibold text-sm hover:brightness-110 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-300 flex items-center gap-2"
           >
             Shop <ChevronDown className="w-4 h-4" />
           </button>
@@ -68,14 +74,14 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full right-0 mt-2 w-64 bg-surface border border-white/10 rounded-xl shadow-2xl overflow-hidden py-2"
+                className="absolute top-full right-0 mt-2 w-64 bg-surface border border-black/5 rounded-xl shadow-2xl overflow-hidden py-2"
               >
                 {categories.length > 0 ? (
                   categories.map(cat => (
                     <Link
                       key={cat.id}
                       to={`/catalog?category=${cat.id}`}
-                      className="block px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
+                      className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-black/5 transition-colors"
                     >
                       {cat.name}
                     </Link>
@@ -83,8 +89,8 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 ) : (
                   <div className="px-4 py-2 text-xs text-text-tertiary">No categories found</div>
                 )}
-                <div className="border-t border-white/10 mt-2 pt-2">
-                  <Link to="/catalog" className="block px-4 py-2 text-sm text-gold hover:text-yellow-400 font-bold">
+                <div className="border-t border-black/5 mt-2 pt-2">
+                  <Link to="/catalog" className="block px-4 py-2 text-sm text-gold hover:text-yellow-600 font-bold">
                     View All Products
                   </Link>
                 </div>
@@ -95,7 +101,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-white z-50 flex items-center gap-4"
+          className="md:hidden text-text-primary z-50 flex items-center gap-4"
           onClick={() => setIsOpen(!isOpen)}
         >
           {/* Show store selector on mobile header explicitly or just in menu? Let's put in menu to save space, or here? */}
@@ -116,7 +122,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsOpen(false)}
-                className="fixed inset-0 bg-black/60 z-[10000] md:hidden backdrop-blur-sm"
+                className="fixed inset-0 bg-black/20 z-[10000] md:hidden backdrop-blur-sm"
               />
 
               {/* Sidebar Drawer */}
@@ -125,7 +131,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-[#0a0a12] border-r border-white/10 z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
+                className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-surface border-r border-black/5 z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
@@ -134,12 +140,12 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                     {/* Text Logo if needed, but image is likely enough based on ref */}
                     <div className="text-center">
                       <span className="block text-gold font-bold tracking-widest text-sm">TOUGH YUFF</span>
-                      <span className="block text-[10px] text-gray-400 tracking-[0.2em]">VAPE STORE</span>
+                      <span className="block text-[10px] text-text-tertiary tracking-[0.2em]">VAPE STORE</span>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+                    className="absolute top-6 right-6 text-text-tertiary hover:text-text-primary transition-colors"
                   >
                     <X className="w-8 h-8" />
                   </button>
@@ -202,10 +208,13 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#050505] border-t border-white/10 py-12 px-6">
+    <footer className="bg-surface border-t border-black/5 py-12 px-6">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
+          {/* Logo Box - keeping consistent with header logic, simple wrapper or just image */}
+          <div className="bg-black/90 border border-white/10 rounded-lg p-1">
+            <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-text-secondary">

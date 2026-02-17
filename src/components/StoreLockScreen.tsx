@@ -26,7 +26,7 @@ const StoreLockScreen: React.FC = () => {
         <div className="fixed inset-0 z-[10000] bg-background flex flex-col items-center justify-center p-6">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1536566482680-fca31930ed28?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center opacity-10 blur-xl"></div>
 
-            <div className={`relative w-full max-w-md bg-surface/50 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl flex flex-col items-center gap-8 ${shake ? 'animate-shake' : ''}`}>
+            <div className={`relative w-full max-w-md bg-white/80 backdrop-blur-2xl border border-black/10 rounded-3xl p-8 sm:p-12 shadow-2xl flex flex-col items-center gap-8 ${shake ? 'animate-shake' : ''}`}>
 
                 {/* Header */}
                 <div className="flex flex-col items-center gap-4 text-center">
@@ -34,7 +34,7 @@ const StoreLockScreen: React.FC = () => {
                         <Lock className="w-8 h-8 text-gold" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white mb-2">Store Access</h1>
+                        <h1 className="text-2xl font-bold text-text-primary mb-2">Store Access</h1>
                         <p className="text-text-secondary text-sm">
                             Please enter your store passcode to continue.
                         </p>
@@ -50,7 +50,7 @@ const StoreLockScreen: React.FC = () => {
                                 value={passcode}
                                 onChange={(e) => setPasscode(e.target.value)}
                                 placeholder="Enter Passcode"
-                                className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-center text-lg tracking-widest text-white placeholder:text-white/20 placeholder:tracking-normal focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all uppercase"
+                                className="w-full bg-white/50 border border-black/10 rounded-xl px-5 py-4 text-center text-lg tracking-widest text-text-primary placeholder:text-text-tertiary placeholder:tracking-normal focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all uppercase"
                                 autoFocus
                             />
                         </div>
@@ -65,7 +65,7 @@ const StoreLockScreen: React.FC = () => {
                     <button
                         type="submit"
                         disabled={!passcode}
-                        className="w-full bg-gold text-black font-bold py-4 rounded-xl hover:bg-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+                        className="w-full bg-gold text-black font-bold py-4 rounded-xl hover:bg-gold-light hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group shadow-lg"
                     >
                         <span>Enter Store</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

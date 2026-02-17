@@ -58,10 +58,10 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface border border-white/10 rounded-xl w-full max-w-sm">
-                <div className="sticky top-0 bg-surface border-b border-white/10 p-4 flex justify-between items-center z-10 rounded-t-xl">
-                    <h2 className="text-xl font-bold text-white">{initialData ? 'Edit Category' : 'Add Category'}</h2>
-                    <button onClick={onCancel} className="text-text-tertiary hover:text-white p-1">
+            <div className="bg-surface border border-black/10 rounded-xl w-full max-w-sm shadow-2xl">
+                <div className="sticky top-0 bg-surface border-b border-black/10 p-4 flex justify-between items-center z-10 rounded-t-xl">
+                    <h2 className="text-xl font-bold text-text-primary">{initialData ? 'Edit Category' : 'Add Category'}</h2>
+                    <button onClick={onCancel} className="text-text-tertiary hover:text-text-primary p-1">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -74,17 +74,17 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. Disposable Vapes"
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             required
                             autoFocus
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-black/5">
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="px-6 py-2 text-text-secondary hover:text-white transition-colors"
+                            className="px-6 py-2 text-text-secondary hover:text-text-primary transition-colors"
                         >
                             Cancel
                         </button>

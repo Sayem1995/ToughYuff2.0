@@ -27,12 +27,12 @@ export const AgeGate: React.FC = () => {
   if (denied) {
     return (
       <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center text-center p-6">
-         <ShieldAlert className="w-16 h-16 text-red-500 mb-6" />
-         <h1 className="text-3xl font-bold text-white mb-4">Access Denied</h1>
-         <p className="text-text-secondary max-w-md">
-           You must be 21 years of age or older to view this website. 
-           Please close this tab or navigate away.
-         </p>
+        <ShieldAlert className="w-16 h-16 text-red-500 mb-6" />
+        <h1 className="text-3xl font-bold text-text-primary mb-4">Access Denied</h1>
+        <p className="text-text-secondary max-w-md">
+          You must be 21 years of age or older to view this website.
+          Please close this tab or navigate away.
+        </p>
       </div>
     );
   }
@@ -49,27 +49,27 @@ export const AgeGate: React.FC = () => {
           <motion.div
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
-            className="bg-surface border border-gold-subtle p-8 md:p-12 rounded-2xl max-w-lg w-full text-center shadow-2xl shadow-black/50"
+            className="bg-surface border border-gold-subtle p-8 md:p-12 rounded-2xl max-w-lg w-full text-center shadow-2xl shadow-black/10"
           >
             <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <ShieldAlert className="w-8 h-8 text-gold" />
+              <ShieldAlert className="w-8 h-8 text-gold" />
             </div>
-            <h2 className="text-3xl font-bold mb-4 text-white">Are you 21 or older?</h2>
+            <h2 className="text-3xl font-bold mb-4 text-text-primary">Are you 21 or older?</h2>
             <p className="text-text-secondary mb-8 leading-relaxed">
-              TooughYuff showcases vape products intended for adults 21+ only. 
+              TooughYuff showcases vape products intended for adults 21+ only.
               No purchases are available on this site.
             </p>
-            
+
             <div className="flex flex-col md:flex-row gap-4">
               <button
                 onClick={handleYes}
-                className="flex-1 bg-gold text-background py-3.5 rounded-lg font-bold hover:brightness-110 transition-all"
+                className="flex-1 bg-gold text-background py-3.5 rounded-lg font-bold hover:brightness-110 transition-all shadow-md"
               >
                 Yes, I am 21+
               </button>
               <button
                 onClick={handleNo}
-                className="flex-1 border border-white/20 text-white py-3.5 rounded-lg font-semibold hover:bg-white/5 transition-all"
+                className="flex-1 border border-black/10 text-text-primary py-3.5 rounded-lg font-semibold hover:bg-black/5 transition-all"
               >
                 No
               </button>

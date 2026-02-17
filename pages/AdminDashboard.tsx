@@ -387,10 +387,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   return (
     <div className="flex h-screen bg-background text-text-primary overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-surface flex flex-col">
+      <aside className="w-64 border-r border-black/5 bg-surface flex flex-col">
 
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-white/10">
+        <div className="p-6 border-b border-black/5">
           <div className="flex items-center gap-2 mb-1">
             <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
             <h1 className="text-lg font-bold text-gold tracking-widest">ADMIN</h1>
@@ -404,7 +404,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             <button
               key={category.id}
               onClick={() => setActiveTab(category.slug)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
             >
               <Package className="w-4 h-4" />
               {/* Format Name: Title Case if all caps */}
@@ -412,19 +412,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             </button>
           ))}
 
-          <div className="my-2 border-t border-white/5 mx-4" />
+          <div className="my-2 border-t border-black/5 mx-4" />
 
           {/* Fallback/Utility for All Products if needed, or just Manage Categories */}
           <button
             onClick={() => setActiveTab('products')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
           >
             <CheckSquare className="w-4 h-4" /> All Items (Inventory)
           </button>
 
           <button
             onClick={() => setActiveTab('categories')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
           >
             <BarChart className="w-4 h-4" /> Manage Categories
           </button>
@@ -432,11 +432,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
 
 
-        <div className="p-4 mt-auto border-t border-white/10 space-y-2">
+        <div className="p-4 mt-auto border-t border-black/5 space-y-2">
           <button onClick={handleRepairCategories} className="w-full flex items-center gap-2 text-text-secondary hover:text-gold text-xs">
             <BarChart className="w-3 h-3" /> Repair Categories
           </button>
-          <button onClick={onLogout} className="w-full flex items-center gap-2 text-text-secondary hover:text-white text-sm">
+          <button onClick={onLogout} className="w-full flex items-center gap-2 text-text-secondary hover:text-text-primary text-sm">
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -445,8 +445,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {/* Main Content */}
       < main className="flex-1 flex flex-col min-w-0" >
         {/* Header */}
-        < header className="h-[72px] border-b border-white/10 flex items-center justify-between px-8 bg-surface/50 backdrop-blur-sm" >
-          <h2 className="text-xl font-bold text-white capitalize">
+        < header className="h-[72px] border-b border-black/5 flex items-center justify-between px-8 bg-surface/50 backdrop-blur-sm" >
+          <h2 className="text-xl font-bold text-text-primary capitalize">
             {activeTab === 'products' ? 'Products Management' :
               activeTab === 'categories' ? 'Category Management' :
                 `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
@@ -504,7 +504,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     <button
                       onClick={handleMigrateData}
                       disabled={isMigrating}
-                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors"
+                      className="px-4 py-2 bg-black/5 hover:bg-black/10 text-text-primary text-sm font-medium rounded-lg border border-black/10 transition-colors"
                     >
                       {isMigrating ? "Initializing..." : "Initialize Database"}
                     </button>
@@ -514,9 +514,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                   </div>
                 </div>
 
-                <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
+                <div className="bg-surface rounded-xl border border-black/5 overflow-hidden">
                   {/* Toolbar */}
-                  <div className="p-4 border-b border-white/5 flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="p-4 border-b border-black/5 flex flex-col md:flex-row gap-4 items-center justify-between">
                     {/* Search */}
                     <div className="relative flex-grow w-full md:w-auto max-w-md">
                       <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2" />
@@ -525,7 +525,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         placeholder="Search products..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-background border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white focus:border-gold focus:outline-none text-sm"
+                        className="w-full bg-background border border-black/10 rounded-lg pl-10 pr-4 py-2 text-text-primary focus:border-gold focus:outline-none text-sm"
                       />
                     </div>
 
@@ -534,7 +534,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       <select
                         value={filters.brand}
                         onChange={(e) => setFilters(p => ({ ...p, brand: e.target.value }))}
-                        className="bg-background border border-white/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
+                        className="bg-background border border-black/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
                       >
                         <option value="all">All Brands</option>
                         {allBrands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
@@ -543,7 +543,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       <select
                         value={filters.status}
                         onChange={(e) => setFilters(p => ({ ...p, status: e.target.value as any }))}
-                        className="bg-background border border-white/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
+                        className="bg-background border border-black/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
                       >
                         <option value="all">All Status</option>
                         <option value="inStock">In Stock</option>
@@ -554,7 +554,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       <select
                         value={filters.sort}
                         onChange={(e) => setFilters(p => ({ ...p, sort: e.target.value as any }))}
-                        className="bg-background border border-white/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
+                        className="bg-background border border-black/10 rounded-lg px-3 py-2 text-sm text-text-secondary focus:border-gold outline-none"
                       >
                         <option value="name">Name (A-Z)</option>
                         <option value="priceHigh">Price (High-Low)</option>
@@ -569,7 +569,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
                 {/* Bulk Action Bar */}
                 {/* Grouped Products View */}
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-black/5">
                   {allBrands.map(brand => {
                     // Filter products for this brand from the global filtered list
                     const brandProducts = filteredAndSorted.filter(p => p.brandId === brand.id);
@@ -587,9 +587,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         {/* Brand Header */}
                         <div className="flex items-center justify-between mb-6">
                           <div className="flex items-center gap-4">
-                            {brand.image && <img src={brand.image} alt={brand.name} className="w-10 h-10 rounded-lg object-cover bg-white/5" />}
+                            {brand.image && <img src={brand.image} alt={brand.name} className="w-10 h-10 rounded-lg object-cover bg-black/5" />}
                             <div>
-                              <h2 className="text-xl font-bold text-white">{brand.name}</h2>
+                              <h2 className="text-xl font-bold text-text-primary">{brand.name}</h2>
                               <p className="text-xs text-text-secondary">{brand.tagline}</p>
                             </div>
                           </div>
@@ -603,19 +603,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                           {brandProducts.map(product => (
                             <div
                               key={product.id}
-                              className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-white/5 border-white/5 hover:border-gold/30 hover:bg-white/10' : 'bg-red-900/10 border-red-500/20 opacity-75'}`}
+                              className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-surface border-black/5 shadow-sm hover:border-gold/30 hover:shadow-md' : 'bg-red-50 border-red-200 opacity-75'}`}
                             >
                               {/* Status Indicator Dot */}
                               <div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
 
                               {/* Product Image */}
-                              <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/20 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
+                              <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
                                 {product.image ? (
                                   <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                                 ) : brand.image ? (
                                   <img src={brand.image} alt={brand.name} className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 transition-all" />
                                 ) : (
-                                  <div className="text-white/20 text-xs">No Image</div>
+                                  <div className="text-text-tertiary text-xs">No Image</div>
                                 )}
                                 {/* Overlay Edit Button */}
                                 <button
@@ -627,7 +627,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                               </div>
 
                               <div className="flex justify-between items-start mb-3 pr-4">
-                                <h3 className="font-bold text-white text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>
+                                <h3 className="font-bold text-text-primary text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>
                               </div>
 
                               <div className="flex flex-col gap-3 mt-auto">
@@ -635,18 +635,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                                 <button
                                   onClick={() => handleQuickStockToggle(product)}
                                   className={`w-full py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${product.inStock
-                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
-                                    : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                                    ? 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100'
+                                    : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
                                     }`}
                                 >
                                   {product.inStock ? (
                                     <>
-                                      <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                                       IN STOCK
                                     </>
                                   ) : (
                                     <>
-                                      <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                                      <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                       OUT OF STOCK
                                     </>
                                   )}
@@ -656,13 +656,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => handleEditProduct(product)}
-                                    className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs font-medium text-text-secondary hover:text-white transition-colors flex items-center justify-center gap-1"
+                                    className="flex-1 py-1.5 bg-black/5 hover:bg-black/10 border border-black/5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1"
                                   >
                                     <Edit2 className="w-3 h-3" /> Edit
                                   </button>
                                   <button
                                     onClick={() => handleDeleteProduct(product.id)}
-                                    className="px-2 py-1.5 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors"
+                                    className="px-2 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-500 hover:text-red-700 transition-colors"
                                     title="Delete Product"
                                   >
                                     <Trash2 className="w-3 h-3" />
@@ -682,13 +682,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                               } as any);
                               setShowForm(true);
                             }}
-                            className="group relative p-4 rounded-xl border border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-gold/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] gap-4"
+                            className="group relative p-4 rounded-xl border border-dashed border-black/10 bg-black/5 hover:bg-black/10 hover:border-gold/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] gap-4"
                           >
-                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gold/10 group-hover:text-gold transition-colors">
+                            <div className="w-16 h-16 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-gold/10 group-hover:text-gold transition-colors">
                               <Plus className="w-8 h-8 opacity-50 group-hover:opacity-100" />
                             </div>
                             <div className="text-center">
-                              <span className="block font-bold text-white mb-1">Add Product</span>
+                              <span className="block font-bold text-text-primary mb-1">Add Product</span>
                               <span className="text-xs text-text-tertiary">to {brand.name}</span>
                             </div>
                           </button>
@@ -704,20 +704,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     if (uncategorized.length === 0) return null;
 
                     return (
-                      <div key="uncategorized" className="p-6 bg-red-900/10 border-t border-red-500/20">
+                      <div key="uncategorized" className="p-6 bg-red-50 border-t border-red-200">
                         <div className="flex items-center justify-between mb-6">
                           <div>
-                            <h2 className="text-xl font-bold text-red-400">Uncategorized / Mismatch</h2>
+                            <h2 className="text-xl font-bold text-red-500">Uncategorized / Mismatch</h2>
                             <p className="text-xs text-text-secondary">Products with unknown Brand IDs</p>
                           </div>
-                          <span className="text-xs font-medium bg-red-500/10 text-red-400 px-3 py-1 rounded-full border border-red-500/20">
+                          <span className="text-xs font-medium bg-red-100 text-red-600 px-3 py-1 rounded-full border border-red-200">
                             {uncategorized.length} Products
                           </span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                           {uncategorized.map(product => (
-                            <div key={product.id} className="p-4 rounded-xl border bg-black/20 border-white/10 opacity-75">
-                              <h3 className="font-bold text-white text-sm mb-2">{product.name}</h3>
+                            <div key={product.id} className="p-4 rounded-xl border bg-white border-red-200 opacity-75">
+                              <h3 className="font-bold text-text-primary text-sm mb-2">{product.name}</h3>
                               <p className="text-xs text-text-tertiary">Brand ID: {product.brandId}</p>
                               <button onClick={() => handleDeleteProduct(product.id)} className="mt-2 text-red-500 text-xs flex items-center gap-1"><Trash2 className="w-3 h-3" /> Delete</button>
                             </div>
@@ -744,7 +744,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           {/* BRANDS VIEW */}
           {
             activeTab !== 'products' && activeTab !== 'categories' && (
-              <div className="bg-surface rounded-xl border border-white/5 p-6">
+              <div className="bg-surface rounded-xl border border-black/5 p-6">
                 <h3 className="text-xl font-bold mb-4">
                   Manage {dynamicCategories.find(c => c.slug === activeTab)?.name} Items ({
                     sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).length
@@ -783,7 +783,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           {/* CATEGORIES VIEW */}
           {
             activeTab === 'categories' && (
-              <div className="bg-surface rounded-xl border border-white/5 p-6">
+              <div className="bg-surface rounded-xl border border-black/5 p-6">
                 <h3 className="text-xl font-bold mb-4">Manage Categories ({dynamicCategories.length})</h3>
                 <DndContext
                   sensors={sensors}

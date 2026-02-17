@@ -200,12 +200,12 @@ const App: React.FC = () => {
 
   if (!isFirebaseInitialized) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 text-center text-white">
-        <div className="max-w-xl bg-surface border border-white/10 rounded-2xl p-8 shadow-2xl">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 text-center text-text-primary">
+        <div className="max-w-xl bg-surface border border-black/10 rounded-2xl p-8 shadow-2xl">
           <h1 className="text-3xl font-bold text-red-500 mb-4">Configuration Error</h1>
           <p className="text-lg mb-6">The application could not start because the Firebase configuration is missing.</p>
 
-          <div className="bg-black/30 p-4 rounded-lg text-left text-sm font-mono text-text-secondary mb-6 overflow-x-auto">
+          <div className="bg-black/5 p-4 rounded-lg text-left text-sm font-mono text-text-secondary mb-6 overflow-x-auto">
             <p className="text-gold mb-2">// Missing Environment Variables in Vercel:</p>
             <p>VITE_FIREBASE_API_KEY=...</p>
             <p>VITE_FIREBASE_PROJECT_ID=...</p>

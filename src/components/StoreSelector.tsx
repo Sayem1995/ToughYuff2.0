@@ -52,11 +52,11 @@ const StoreSelector: React.FC = () => {
                 // pointer-events-none ensures it's dead to the DOM.
                 onClick={() => !isLocked && setIsOpen(!isOpen)}
                 disabled={isLocked}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all text-sm group ${isLocked ? 'cursor-default opacity-80 pointer-events-none' : 'hover:border-gold/50 cursor-pointer'
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 border border-black/10 transition-all text-sm group ${isLocked ? 'cursor-default opacity-80 pointer-events-none' : 'hover:border-gold/50 cursor-pointer'
                     }`}
             >
                 <Store className="w-4 h-4 text-gold" />
-                <span className="text-white font-medium">{STORE_NAMES[currentStore]}</span>
+                <span className="text-text-primary font-medium">{STORE_NAMES[currentStore]}</span>
                 {isLocked ? (
                     <div className="flex items-center gap-1 text-[10px] text-gold/70 bg-gold/10 px-1.5 py-0.5 rounded ml-1">
                         <span>LOCKED</span>
@@ -64,7 +64,7 @@ const StoreSelector: React.FC = () => {
                 ) : (
                     <>
                         {isAdmin && (
-                            <div className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded ml-1">
+                            <div className="flex items-center gap-1 text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded ml-1">
                                 <span>ADMIN</span>
                             </div>
                         )}
@@ -74,7 +74,7 @@ const StoreSelector: React.FC = () => {
             </button>
 
             {isOpen && !isLocked && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-surface border border-white/10 rounded-xl shadow-xl overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2">
+                <div className="absolute top-full left-0 mt-2 w-48 bg-surface border border-black/10 rounded-xl shadow-xl overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2">
                     <div className="p-2 space-y-1">
                         {(Object.keys(STORE_NAMES) as StoreId[]).map((storeId) => (
                             <button
@@ -82,7 +82,7 @@ const StoreSelector: React.FC = () => {
                                 onClick={() => handleSelect(storeId)}
                                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${currentStore === storeId
                                     ? 'bg-gold/10 text-gold'
-                                    : 'text-text-secondary hover:bg-white/5 hover:text-white'
+                                    : 'text-text-secondary hover:bg-black/5 hover:text-text-primary'
                                     }`}
                             >
                                 <span>{STORE_NAMES[storeId]}</span>
@@ -91,17 +91,17 @@ const StoreSelector: React.FC = () => {
                         ))}
 
                         {isAdmin && (
-                            <div className="border-t border-white/10 mt-2 pt-2">
+                            <div className="border-t border-black/10 mt-2 pt-2">
                                 <button
                                     onClick={handleAdminLogout}
-                                    className="w-full flex items-center justify-start px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                                    className="w-full flex items-center justify-start px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors"
                                 >
                                     <span>Log Out</span>
                                 </button>
                             </div>
                         )}
                     </div>
-                    <div className="px-3 py-2 bg-black/20 text-[10px] text-text-tertiary border-t border-white/5">
+                    <div className="px-3 py-2 bg-black/5 text-[10px] text-text-tertiary border-t border-black/5">
                         Switching stores will update inventory and product availability.
                     </div>
                 </div>

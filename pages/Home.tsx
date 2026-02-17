@@ -62,10 +62,10 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
       </section>
 
       {/* SECTION 3: FEATURED BRANDS */}
-      <section className="py-32 bg-background relative border-t border-white/5">
+      <section className="py-32 bg-background relative border-t border-black/5">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl font-semibold mb-4 inline-block relative pb-4">
+            <h2 className="text-4xl font-semibold mb-4 inline-block relative pb-4 text-text-primary">
               Featured Brands
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-1 bg-gold rounded-full"></span>
             </h2>
@@ -73,16 +73,16 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayBrands.map((brand) => (
-              <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-gold-subtle rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+              <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-black/5 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
                 <div className="mb-4">
-                  <h3 className="text-2xl font-semibold text-white mb-2">{brand.name}</h3>
+                  <h3 className="text-2xl font-semibold text-text-primary mb-2">{brand.name}</h3>
                   <p className="text-text-secondary text-sm h-10">{brand.tagline}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-8">
                   <span className="bg-elevated text-gold text-xs px-2 py-1 rounded border border-gold/20">{brand.puffRange}</span>
                   {brand.id.includes('nonic') && (
-                    <span className="bg-blue-900/20 text-accent-blue text-xs px-2 py-1 rounded border border-accent-blue/20">Zero Nicotine</span>
+                    <span className="bg-blue-50 text-accent-blue text-xs px-2 py-1 rounded border border-accent-blue/20">Zero Nicotine</span>
                   )}
                 </div>
 
@@ -96,12 +96,12 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
       </section>
 
       {/* SECTION 4: FLAVOR SPOTLIGHT */}
-      <section className="py-32 bg-[#050505] relative overflow-hidden">
+      <section className="py-32 bg-surface relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div className="max-w-[1200px] mx-auto px-6 relative z-10">
           <div className="mb-16">
-            <h2 className="text-4xl font-semibold mb-4 text-white">Flavor Spotlight</h2>
+            <h2 className="text-4xl font-semibold mb-4 text-text-primary">Flavor Spotlight</h2>
             <p className="text-text-secondary text-lg max-w-xl">From fruity ice to rich dessert notes, explore the profiles that match your taste.</p>
           </div>
 
@@ -112,17 +112,17 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
               { name: 'Cool Mint', tags: ['Menthol', 'Fresh'], brands: ['Flair Ultra', 'UNC'], nic: 'Various' },
               { name: 'Strawberry Ice Cream', tags: ['Dessert', 'Sweet'], brands: ['Geek Bar Pulse'], nic: '5%' }
             ].map((flavor, idx) => (
-              <div key={idx} className="bg-elevated border border-white/5 p-8 rounded-2xl hover:border-white/10 transition-colors">
+              <div key={idx} className="bg-elevated border border-black/5 p-8 rounded-2xl hover:border-black/10 transition-colors shadow-sm">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-2xl font-medium text-white">{flavor.name}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${flavor.nic === '0 mg' ? 'border-accent-blue text-accent-blue' : 'border-white/20 text-text-tertiary'}`}>
+                  <h3 className="text-2xl font-medium text-text-primary">{flavor.name}</h3>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${flavor.nic === '0 mg' ? 'border-accent-blue text-accent-blue' : 'border-black/10 text-text-tertiary'}`}>
                     {flavor.nic}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-6">
                   {flavor.tags.map(t => (
-                    <span key={t} className="text-xs text-text-secondary bg-white/5 px-2 py-1 rounded uppercase tracking-wider">{t}</span>
+                    <span key={t} className="text-xs text-text-secondary bg-black/5 px-2 py-1 rounded uppercase tracking-wider">{t}</span>
                   ))}
                 </div>
 
@@ -136,9 +136,9 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
       </section>
 
       {/* SECTION 5: CTA */}
-      <section className="py-32 bg-background border-t border-white/5">
+      <section className="py-32 bg-background border-t border-black/5">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Find Your Next Go-To Disposable</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-text-primary">Find Your Next Go-To Disposable</h2>
           <p className="text-text-secondary text-lg mb-10">Compare brands, puff counts, and flavor profiles before you hit your local shop.</p>
 
           <Link to="/catalog" className="inline-block bg-gold text-background px-10 py-5 rounded-lg font-bold text-xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(212,175,55,0.4)]">

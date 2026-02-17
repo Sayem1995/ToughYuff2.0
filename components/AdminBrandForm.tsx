@@ -92,10 +92,10 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface border border-white/10 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 bg-surface border-b border-white/10 p-4 flex justify-between items-center z-10">
-                    <h2 className="text-xl font-bold text-white">{initialData ? 'Edit Disposable Vape' : 'Add New Disposable Vape'}</h2>
-                    <button onClick={onCancel} className="text-text-tertiary hover:text-white p-1">
+            <div className="bg-surface border border-black/10 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
+                <div className="sticky top-0 bg-surface border-b border-black/10 p-4 flex justify-between items-center z-10">
+                    <h2 className="text-xl font-bold text-text-primary">{initialData ? 'Edit Disposable Vape' : 'Add New Disposable Vape'}</h2>
+                    <button onClick={onCancel} className="text-text-tertiary hover:text-text-primary p-1">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -108,7 +108,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             required
                         />
                     </div>
@@ -120,7 +120,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             name="tagline"
                             value={formData.tagline}
                             onChange={handleChange}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                         />
                     </div>
 
@@ -131,7 +131,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             name="puffRange"
                             value={formData.puffRange}
                             onChange={handleChange}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                         />
                     </div>
 
@@ -142,7 +142,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             value={formData.description}
                             onChange={handleChange}
                             rows={3}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none resize-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none resize-none"
                         />
                     </div>
 
@@ -150,7 +150,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                     <div>
                         <label className="block text-sm text-text-secondary mb-1">Logo/Image</label>
                         <div className="flex items-start gap-4">
-                            <div className="w-24 h-24 bg-black/20 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative group">
+                            <div className="w-24 h-24 bg-black/5 rounded-lg border border-black/10 flex items-center justify-center overflow-hidden relative group">
                                 {formData.image ? (
                                     <>
                                         <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
@@ -173,7 +173,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                                 )}
                             </div>
                             <div className="flex-1">
-                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
+                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-sm text-text-primary transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
                                     <Upload className="w-4 h-4" />
                                     {uploading ? 'Uploading...' : formData.image ? 'Change Image' : 'Upload Image'}
                                     <input
@@ -190,11 +190,11 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-black/5">
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="px-6 py-2 text-text-secondary hover:text-white transition-colors"
+                            className="px-6 py-2 text-text-secondary hover:text-text-primary transition-colors"
                         >
                             Cancel
                         </button>

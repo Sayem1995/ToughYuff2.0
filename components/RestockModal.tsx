@@ -31,10 +31,10 @@ const RestockModal: React.FC<RestockModalProps> = ({ product, onConfirm, onClose
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface border border-white/10 rounded-xl w-full max-w-md">
-                <div className="flex justify-between items-center p-4 border-b border-white/10">
-                    <h3 className="text-lg font-bold text-white">Restock {product.name}</h3>
-                    <button onClick={onClose} className="text-text-tertiary hover:text-white transition-colors">
+            <div className="bg-surface border border-black/10 rounded-xl w-full max-w-md shadow-2xl">
+                <div className="flex justify-between items-center p-4 border-b border-black/10">
+                    <h3 className="text-lg font-bold text-text-primary">Restock {product.name}</h3>
+                    <button onClick={onClose} className="text-text-tertiary hover:text-text-primary transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -49,7 +49,7 @@ const RestockModal: React.FC<RestockModalProps> = ({ product, onConfirm, onClose
                             type="number"
                             value={quantity}
                             onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             min="1"
                             required
                         />
@@ -62,7 +62,7 @@ const RestockModal: React.FC<RestockModalProps> = ({ product, onConfirm, onClose
                             step="0.01"
                             value={cost}
                             onChange={(e) => setCost(parseFloat(e.target.value) || 0)}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                         />
                         <p className="text-xs text-text-tertiary mt-1">Updates the cost for this batch and future tracking.</p>
                     </div>
@@ -71,14 +71,14 @@ const RestockModal: React.FC<RestockModalProps> = ({ product, onConfirm, onClose
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-text-secondary hover:text-white transition-colors text-sm"
+                            className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors text-sm"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading || quantity <= 0}
-                            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50 shadow-md"
                         >
                             {loading && <Loader2 className="w-3 h-3 animate-spin" />}
                             Confirm Restock

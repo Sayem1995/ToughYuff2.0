@@ -112,9 +112,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Strip */}
-      <div className="pt-12 pb-12 px-6 border-b border-white/5 bg-elevated/50">
+      <div className="pt-12 pb-12 px-6 border-b border-black/5 bg-elevated/50">
         <div className="max-w-[1200px] mx-auto">
-          <h1 className="text-4xl font-bold mb-2">
+          <h1 className="text-4xl font-bold mb-2 text-text-primary">
             {filters.category !== 'all'
               ? categories.find(c => c.id === filters.category)?.name || 'Products'
               : 'All Vapes & Flavors'}
@@ -124,13 +124,13 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
       </div>
 
       {/* Filter Bar */}
-      <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-white/10 py-4 px-6">
+      <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
         <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative">
               <select
-                className="appearance-none bg-surface border border-white/10 text-white pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
+                className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
                 value={filters.brand}
                 onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
               >
@@ -142,7 +142,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
             <div className="relative">
               <select
-                className="appearance-none bg-surface border border-white/10 text-white pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
+                className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
                 value={filters.flavorProfile}
                 onChange={(e) => setFilters(prev => ({ ...prev, flavorProfile: e.target.value as any }))}
               >
@@ -153,22 +153,22 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               </select>
             </div>
 
-            <div className="flex bg-surface rounded-lg p-1 border border-white/10">
+            <div className="flex bg-surface rounded-lg p-1 border border-black/10">
               <button
                 onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-white/10 text-white' : 'text-text-tertiary hover:text-white'}`}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
               >
                 All
               </button>
               <button
                 onClick={() => setFilters(p => ({ ...p, nicotine: 'nicotine' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-white/10 text-white' : 'text-text-tertiary hover:text-white'}`}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
               >
                 Nicotine
               </button>
               <button
                 onClick={() => setFilters(p => ({ ...p, nicotine: 'zero' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-white/10 text-white' : 'text-text-tertiary hover:text-white'}`}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
               >
                 Zero
               </button>
@@ -192,7 +192,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               placeholder="Search flavors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface border border-white/10 text-white pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
+              className="w-full bg-surface border border-black/10 text-text-primary pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
             />
           </div>
 
@@ -218,7 +218,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map(product => (
-              <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-gold-subtle rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+              <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
                 {/* Admin Controls */}
                 {isAdmin && (
                   <div className="absolute top-4 right-4 z-20">
@@ -228,22 +228,22 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                         e.stopPropagation();
                         setActiveMenuId(activeMenuId === product.id ? null : product.id);
                       }}
-                      className="p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-sm"
+                      className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
                     >
                       <MoreVertical className="w-4 h-4" />
                     </button>
 
                     {activeMenuId === product.id && (
-                      <div className="absolute right-0 mt-2 w-32 bg-surface border border-white/10 rounded-lg shadow-xl overflow-hidden z-30">
+                      <div className="absolute right-0 mt-2 w-32 bg-surface border border-black/10 rounded-lg shadow-xl overflow-hidden z-30">
                         <button
                           onClick={(e) => handleEditProduct(e, product)}
-                          className="w-full text-left px-4 py-2 text-xs text-secondary hover:text-white hover:bg-white/5 flex items-center gap-2"
+                          className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
                         >
                           <Edit className="w-3 h-3" /> Edit
                         </button>
                         <button
                           onClick={(e) => handleDeleteProduct(e, product.id)}
-                          className="w-full text-left px-4 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2"
+                          className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
                         >
                           <Trash className="w-3 h-3" /> Delete
                         </button>
@@ -255,24 +255,24 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 <div className="flex justify-between items-start mb-6">
                   <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
                   {product.stockQuantity <= 0 || !product.inStock ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-white/5 text-text-tertiary border border-white/10 uppercase">Out of Stock</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-black/5 text-text-tertiary border border-black/10 uppercase">Out of Stock</span>
                   ) : product.stockQuantity < (product.lowStockThreshold || 10) ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-500 border border-orange-500/20 uppercase">Low Stock: {product.stockQuantity}</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-600 border border-orange-500/20 uppercase">Low Stock: {product.stockQuantity}</span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20 uppercase">In Stock</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-600 border border-green-500/20 uppercase">In Stock</span>
                   )}
                 </div>
 
-                <div className="aspect-square bg-black/20 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
+                <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
                   <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
+                <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
                 <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
 
                 <div className="flex flex-wrap gap-2 mt-auto">
-                  <span className="px-2 py-1 bg-elevated rounded border border-white/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
-                  <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-white/5 text-text-secondary'}`}>{product.nicotine}</span>
+                  <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
+                  <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
                 </div>
               </Link>
             ))}

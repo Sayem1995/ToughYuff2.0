@@ -194,10 +194,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-surface border border-white/10 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                <div className="sticky top-0 bg-surface border-b border-white/10 p-4 flex justify-between items-center z-10">
-                    <h2 className="text-xl font-bold text-white">{initialData ? 'Edit Product' : 'Add New Product'}</h2>
-                    <button onClick={onCancel} className="text-text-tertiary hover:text-white p-1">
+            <div className="bg-surface border border-black/10 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                <div className="sticky top-0 bg-surface border-b border-black/10 p-4 flex justify-between items-center z-10">
+                    <h2 className="text-xl font-bold text-text-primary">{initialData ? 'Edit Product' : 'Add New Product'}</h2>
+                    <button onClick={onCancel} className="text-text-tertiary hover:text-text-primary p-1">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
@@ -206,7 +206,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Basic Info */}
                         <div className="space-y-4">
-                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Basic Info</h3>
+                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-black/5 pb-2">Basic Info</h3>
 
                             <div>
                                 <label className="block text-sm text-text-secondary mb-1">Product Name</label>
@@ -216,7 +216,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                     placeholder="e.g. Strawberry Ice"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                    className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                     required
                                 />
                             </div>
@@ -227,7 +227,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                     name="brandId"
                                     value={formData.brandId}
                                     onChange={handleBrandChange}
-                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                    className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                 >
                                     {brands.map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
@@ -241,7 +241,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                     name="category"
                                     value={formData.category || ''}
                                     onChange={handleChange}
-                                    className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                    className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                 >
                                     <option value="">Select Category</option>
                                     {categories.map(c => (
@@ -258,7 +258,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                         name="puffCount"
                                         value={formData.puffCount}
                                         onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                        className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                     />
                                 </div>
                                 <div>
@@ -268,7 +268,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                         name="nicotine"
                                         value={formData.nicotine}
                                         onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                        className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                     />
                                 </div>
                             </div>
@@ -287,7 +287,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
 
                         {/* Inventory & Pricing */}
                         <div className="space-y-4">
-                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-white/5 pb-2">Pricing & Availability</h3>
+                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider border-b border-black/5 pb-2">Pricing & Availability</h3>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -298,7 +298,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                         name="price"
                                         value={formData.price}
                                         onChange={handleChange}
-                                        className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                        className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                                     />
                                 </div>
                                 <div>
@@ -319,8 +319,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                                 }}
                                                 className="sr-only peer"
                                             />
-                                            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                                            <span className="ml-3 text-sm font-medium text-white">
+                                            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                            <span className="ml-3 text-sm font-medium text-text-primary">
                                                 {formData.inStock ? 'In Stock' : 'Out of Stock'}
                                             </span>
                                         </label>
@@ -335,7 +335,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                 name="channel"
                                 value={formData.channel}
                                 onChange={handleChange}
-                                className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none"
+                                className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             >
                                 <option value="store">In-Store Only</option>
                                 <option value="online">Online Only</option>
@@ -355,7 +355,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                     onClick={() => handleFlavorProfileChange(profile)}
                                     className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${formData.flavorProfile?.includes(profile)
                                         ? 'bg-gold text-black border-gold'
-                                        : 'bg-transparent text-text-secondary border-white/10 hover:border-gold/50'
+                                        : 'bg-transparent text-text-secondary border-black/10 hover:border-gold/50'
                                         }`}
                                 >
                                     {profile}
@@ -372,7 +372,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                             value={formData.description}
                             onChange={handleChange}
                             rows={3}
-                            className="w-full bg-background border border-white/10 rounded px-3 py-2 text-white focus:border-gold outline-none resize-none"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none resize-none"
                         />
                     </div>
 
@@ -380,7 +380,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                     <div>
                         <label className="block text-sm text-text-secondary mb-1">Product Image</label>
                         <div className="flex items-start gap-4">
-                            <div className="w-24 h-24 bg-black/20 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden relative group">
+                            <div className="w-24 h-24 bg-black/5 rounded-lg border border-black/10 flex items-center justify-center overflow-hidden relative group">
                                 {formData.image ? (
                                     <>
                                         <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
@@ -417,7 +417,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                 )}
                             </div>
                             <div className="flex-1">
-                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
+                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-sm text-text-primary transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
                                     <Upload className="w-4 h-4" />
                                     {uploading ? 'Uploading...' : formData.image ? 'Change Image' : 'Upload Image'}
                                     <input
@@ -431,17 +431,17 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                     />
                                 </label>
                                 <p className="text-xs text-text-tertiary mt-2">Recommended: Square JPG/PNG, max 2MB.</p>
-                                {uploadSuccess && !uploading && <p className="text-xs text-green-400 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
+                                {uploadSuccess && !uploading && <p className="text-xs text-green-500 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
                             </div>
                         </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-black/5">
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="px-6 py-2 text-text-secondary hover:text-white transition-colors"
+                            className="px-6 py-2 text-text-secondary hover:text-text-primary transition-colors"
                         >
                             Cancel
                         </button>
