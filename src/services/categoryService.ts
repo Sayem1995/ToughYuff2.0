@@ -18,7 +18,7 @@ import { Category, StoreId } from '../../types';
 const CATEGORIES_COLLECTION = 'categories';
 
 export const DEFAULT_CATEGORIES = [
-    'DISPOSABLE VAPE',
+    'DISPOSABLE VAPES',
     'THC DISPOSABLES',
     'THC CARTRIDGES',
     'THC & DELTA GUMMIES',

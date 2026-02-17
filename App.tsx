@@ -104,7 +104,7 @@ const App: React.FC = () => {
 
       // Ensure required categories exist
       CategoryService.ensureCategories(currentStore as any, [
-        'DISPOSABLE VAPE',
+        'DISPOSABLE VAPES',
         'THC DISPOSABLES',
         'THC CARTRIDGES',
         'THC & DELTA GUMMIES',
