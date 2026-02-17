@@ -142,7 +142,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
                   <div>
                     <p className="mb-4">{product.description}</p>
                     <div className="flex flex-wrap gap-2">
-                      {(product.flavorProfile || []).map(p => (
+                      {(Array.isArray(product.flavorProfile) ? product.flavorProfile : []).map(p => (
                         <span key={p} className="text-xs font-medium bg-black/5 text-text-secondary px-3 py-1 rounded-full">
                           {p}
                         </span>
@@ -153,7 +153,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
               </AccordionItem>
 
               <AccordionItem title="Features">
-                {product.features && product.features.length > 0 ? (
+                {Array.isArray(product.features) && product.features.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
                     {product.features.map((feature, i) => (
                       <li key={i}>{feature}</li>
