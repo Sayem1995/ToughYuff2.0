@@ -84,8 +84,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     })
   );
 
-  // View State
-  const [activeTab, setActiveTab] = useState<'products' | 'brands' | 'categories'>('products');
+  // View State - activeTab can be 'products', 'categories', or a category slug
+  const [activeTab, setActiveTab] = useState<string>('products');
 
   // Combine static BRANDS with dynamic ones
   const allBrands = React.useMemo(() => {
@@ -131,7 +131,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     if (active.id !== over?.id) {
       if (!over) return;
 
-      if (activeTab === 'brands') {
+      if (activeTab !== 'products' && activeTab !== 'categories') {
         if (active.id !== over.id) {
           const oldIndex = sidebarBrands.findIndex((b) => b.id === active.id);
           const newIndex = sidebarBrands.findIndex((b) => b.id === over.id);
@@ -142,7 +142,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           setBrandOrder(newOrderIds); // Optimistic UI
           BrandService.saveBrandOrder(newOrderIds, currentStore);
         }
-      } else if (activeTab === 'categories') {
+      }
+      if (activeTab === 'categories') {
         if (active.id !== over.id) {
           const oldIndex = dynamicCategories.findIndex((c) => c.id === active.id);
           const newIndex = dynamicCategories.findIndex((c) => c.id === over.id);
@@ -394,17 +395,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           >
             <Package className="w-4 h-4" /> Products
           </button>
-          <button
-            onClick={() => setActiveTab('brands')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'brands' ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
-          >
-            <CheckSquare className="w-4 h-4" /> Disposable Vapes
-          </button>
+          {dynamicCategories.map(category => (
+            <button
+              key={category.id}
+              onClick={() => setActiveTab(category.slug)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
+            >
+              <CheckSquare className="w-4 h-4" /> {category.name}
+            </button>
+          ))}
+
+          <div className="my-2 border-t border-white/5 mx-4" />
+
           <button
             onClick={() => setActiveTab('categories')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-gold text-black' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
           >
-            <BarChart className="w-4 h-4" /> Categories
+            <BarChart className="w-4 h-4" /> Manage Categories
           </button>
         </div>
 
@@ -420,7 +427,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         {/* Header */}
         <header className="h-[72px] border-b border-white/10 flex items-center justify-between px-8 bg-surface/50 backdrop-blur-sm">
           <h2 className="text-xl font-bold text-white capitalize">
-            {activeTab === 'brands' ? 'Disposable Vapes' : activeTab} Management
+            {activeTab === 'products' ? 'Products Management' :
+              activeTab === 'categories' ? 'Category Management' :
+                `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
           </h2>
           <div className="flex items-center gap-4">
             {activeTab === 'products' && (
@@ -431,12 +440,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 <Plus className="w-4 h-4" /> Add Product
               </button>
             )}
-            {activeTab === 'brands' && (
+            {activeTab !== 'products' && activeTab !== 'categories' && (
               <button
-                onClick={() => { setEditingBrand(undefined); setShowBrandForm(true); }}
+                onClick={() => {
+                  const currentCat = dynamicCategories.find(c => c.slug === activeTab);
+                  setEditingBrand({ category: currentCat?.slug } as any); // Pre-fill category
+                  setShowBrandForm(true);
+                }}
                 className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                title={`Add ${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
               >
-                <Plus className="w-4 h-4" /> Add Disposable Vape
+                <Plus className="w-4 h-4" /> Add Item
               </button>
             )}
             {activeTab === 'categories' && (
@@ -706,30 +720,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           )}
 
           {/* BRANDS VIEW */}
-          {activeTab === 'brands' && (
+          {activeTab !== 'products' && activeTab !== 'categories' && (
             <div className="bg-surface rounded-xl border border-white/5 p-6">
-              <h3 className="text-xl font-bold mb-4">Manage Disposable Vapes ({dynamicBrands.length})</h3>
+              <h3 className="text-xl font-bold mb-4">
+                Manage {dynamicCategories.find(c => c.slug === activeTab)?.name} Items ({
+                  sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).length
+                })
+              </h3>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={sidebarBrands.map(b => b.id)}
+                  items={sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).map(b => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-2">
-                    {sidebarBrands.map(brand => (
-                      <SortableBrandItem
-                        key={brand.id}
-                        id={brand.id}
-                        name={brand.name}
-                        isActive={false} // Not filtering here, just managing
-                        onClick={() => handleEditBrand(brand)}
-                        onEdit={() => handleEditBrand(brand)}
-                        onDelete={() => handleDeleteBrand(brand.id)}
-                      />
-                    ))}
+                    {sidebarBrands
+                      .filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')) // Default legacy brands to disposable-vape
+                      .map(brand => (
+                        <SortableBrandItem
+                          key={brand.id}
+                          id={brand.id}
+                          name={brand.name}
+                          isActive={false} // Not filtering here, just managing
+                          onClick={() => handleEditBrand(brand)}
+                          onEdit={() => handleEditBrand(brand)}
+                          onDelete={() => handleDeleteBrand(brand.id)}
+                        />
+                      ))}
                   </div>
                 </SortableContext>
               </DndContext>

@@ -47,6 +47,7 @@ export interface Brand {
   puffRange: string; // e.g., "8000 Puffs"
   description: string;
   image: string;
+  category?: string; // slug of the category
 }
 
 export type FlavorProfile = 'Fruity' | 'Menthol' | 'Dessert' | 'Tobacco' | 'Ice' | 'Drink' | 'Candy';
