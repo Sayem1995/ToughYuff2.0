@@ -222,12 +222,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
     // Sort
     result.sort((a, b) => {
+      const priceA = a.price || 0;
+      const priceB = b.price || 0;
+      const stockA = a.stockQuantity || 0;
+      const stockB = b.stockQuantity || 0;
+      const nameA = a.name || '';
+      const nameB = b.name || '';
+
       switch (filters.sort) {
-        case 'priceHigh': return b.price - a.price;
-        case 'priceLow': return a.price - b.price;
-        case 'stockHigh': return b.stockQuantity - a.stockQuantity;
-        case 'stockLow': return a.stockQuantity - b.stockQuantity;
-        default: return a.name.localeCompare(b.name);
+        case 'priceHigh': return priceB - priceA;
+        case 'priceLow': return priceA - priceB;
+        case 'stockHigh': return stockB - stockA;
+        case 'stockLow': return stockA - stockB;
+        default: return nameA.localeCompare(nameB);
       }
     });
 
