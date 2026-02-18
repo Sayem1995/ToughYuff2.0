@@ -13,6 +13,9 @@ interface SortableCategoryItemProps {
 }
 
 export const SortableCategoryItem: React.FC<SortableCategoryItemProps> = ({ category, onClick, onEdit, onDelete, isActive }) => {
+    // Safety check
+    if (!category || !category.id) return null;
+
     const {
         attributes,
         listeners,

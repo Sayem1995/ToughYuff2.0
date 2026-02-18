@@ -439,9 +439,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
 
         <div className="p-4 mt-auto border-t border-black/5 space-y-2">
-          <button onClick={handleRepairCategories} className="w-full flex items-center gap-2 text-text-secondary hover:text-gold text-xs">
-            <BarChart className="w-3 h-3" /> Repair Categories
-          </button>
           <button onClick={onLogout} className="w-full flex items-center gap-2 text-text-secondary hover:text-text-primary text-sm">
             <LogOut className="w-4 h-4" /> Logout
           </button>
@@ -790,7 +787,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           {
             activeTab === 'categories' && (
               <div className="bg-surface rounded-xl border border-black/5 p-6">
-                <h3 className="text-xl font-bold mb-4">Manage Categories ({dynamicCategories.length})</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold">Manage Categories ({dynamicCategories.length})</h3>
+                  <button
+                    onClick={handleRepairCategories}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-xs font-bold transition-colors"
+                  >
+                    <BarChart className="w-3 h-3" /> Repair Defaults
+                  </button>
+                </div>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
