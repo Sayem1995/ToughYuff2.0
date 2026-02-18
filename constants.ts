@@ -305,6 +305,15 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'geekbar-pulsex', name: 'Sour Fcuking Fab', code: '(GB PX)' },
 ];
 
+export const THC_BRANDS: Brand[] = [
+  { id: 'muha-meds', name: 'Muha Meds', tagline: 'Premium THC Experience', puffRange: '2000mg', description: 'High quality THC disposables.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Muha+Meds', category: 'thc-disposables' },
+  { id: 'mellow-fellow', name: 'Mellow Fellow', tagline: 'Chill Vibes Only', puffRange: '2000mg', description: 'Expertly crafted blends for relaxation.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Mellow+Fellow', category: 'thc-disposables' },
+  { id: 'mad-labs', name: 'Mad Labs', tagline: 'Innovation in every hit', puffRange: '2000mg', description: 'Cutting edge extraction technology.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Mad+Labs', category: 'thc-disposables' },
+  { id: 'california-honey', name: 'California Honey', tagline: 'Golden Standard', puffRange: '1000mg', description: 'Pure and potent California honey oil.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=California+Honey', category: 'thc-disposables' },
+  { id: 'big-chiefs', name: 'Big Chiefs', tagline: 'Stay Big', puffRange: '1000mg', description: 'Authentic and verified premium extracts.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Big+Chiefs', category: 'thc-disposables' },
+  { id: 'exodus', name: 'Exodus', tagline: 'Movement of the People', puffRange: '2000mg', description: 'High potency blends for the experienced user.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Exodus', category: 'thc-disposables' }
+];
+
 const getProfile = (name: string): string[] => {
   const profiles = [];
   if (name.toLowerCase().includes('ice') || name.toLowerCase().includes('frozen') || name.toLowerCase().includes('cool') || name.toLowerCase().includes('menthol')) profiles.push('Ice');

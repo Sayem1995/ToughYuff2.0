@@ -385,6 +385,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleSeedTHCBrands = async () => {
+    if (!confirm("Add default THC brands (Muha Meds, Mellow Fellow, etc.)?")) return;
+    try {
+      const { THC_BRANDS } = await import('../constants');
+      await BrandService.ensureBrands(THC_BRANDS, currentStore as any);
+
+      // Refresh brands
+      const fetchedBrands = await BrandService.getAllBrands(currentStore as any);
+      const fetchedOrder = await BrandService.getBrandOrder(currentStore as any);
+      setDynamicBrands(fetchedBrands);
+      setBrandOrder(fetchedOrder);
+
+      alert("Brands added successfully!");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to add brands.");
+    }
+  };
+
   const handleBrandClick = (brandId: string) => {
     setFilters(prev => ({ ...prev, brand: brandId }));
     setActiveTab('products');
@@ -464,17 +483,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               </button>
             )}
             {activeTab !== 'products' && activeTab !== 'categories' && (
-              <button
-                onClick={() => {
-                  const currentCat = dynamicCategories.find(c => c.slug === activeTab);
-                  setEditingBrand({ category: currentCat?.slug } as any); // Pre-fill category
-                  setShowBrandForm(true);
-                }}
-                className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
-                title={`Add ${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
-              >
-                <Plus className="w-4 h-4" /> Add Item
-              </button>
+              <>
+                {activeTab === 'thc-disposables' && (
+                  <button
+                    onClick={handleSeedTHCBrands}
+                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Add Default Brands
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    const currentCat = dynamicCategories.find(c => c.slug === activeTab);
+                    setEditingBrand({ category: currentCat?.slug } as any); // Pre-fill category
+                    setShowBrandForm(true);
+                  }}
+                  className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                  title={`Add ${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
+                >
+                  <Plus className="w-4 h-4" /> Add Item
+                </button>
+              </>
             )}
             {activeTab === 'categories' && (
               <button

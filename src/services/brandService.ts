@@ -100,5 +100,40 @@ export const BrandService = {
             console.error("Error fetching brand order:", error);
             return [];
         }
+    },
+
+    // Seed/Ensure brands exist
+    ensureBrands: async (brands: Brand[], storeId: string): Promise<void> => {
+        try {
+            const existingBrands = await BrandService.getAllBrands(storeId);
+            const existingIds = new Set(existingBrands.map(b => b.id));
+
+            for (const brand of brands) {
+                if (!existingIds.has(brand.id)) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { id, ...brandData } = brand;
+                    // We want to preserve the ID if possible, or let Firestore generate one?
+                    // Actually, for these specific brands, the ID in constants is 'muha-meds' etc.
+                    // But addDoc generates a random ID.
+                    // If we want to strictly keep IDs, we should use setDoc with specific ID.
+                    // Existing addBrand uses addDoc.
+                    // Let's modify logic to use setDoc if we want valid IDs, OR just let it generate.
+                    // The 'id' in constants is useful for matching. 
+                    // Let's use setDoc to enforce the ID from constants.
+
+                    const { setDoc, doc } = await import('firebase/firestore');
+                    const docRef = doc(db, BRANDS_COLLECTION, brand.id); // Use the ID from the constant
+                    await setDoc(docRef, {
+                        ...brandData,
+                        storeId,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error seeding brands:", error);
+            throw error;
+        }
     }
 };
