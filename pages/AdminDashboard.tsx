@@ -465,8 +465,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
             >
               <Package className="w-4 h-4" />
-              {/* Format Name: Title Case if all caps */}
-              <span className="capitalize">{category.name.toLowerCase()}</span>
+              <span className="capitalize">{(category.name || '').toLowerCase()}</span>
             </button>
           ))}
 
@@ -775,8 +774,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
                   {/* Uncategorized Products (Fallback) */}
                   {(() => {
-                    const knownBrandIds = new Set(allBrands.map(b => b.id));
-                    const uncategorized = filteredAndSorted.filter(p => !knownBrandIds.has(p.brandId));
+                    // Safe mapping
+                    const knownBrandIds = new Set(allBrands.filter(b => b && b.id).map(b => b.id));
+                    const uncategorized = filteredAndSorted.filter(p => p && p.brandId && !knownBrandIds.has(p.brandId));
                     if (uncategorized.length === 0) return null;
 
                     return (
@@ -792,9 +792,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                           {uncategorized.map(product => (
-                            <div key={product.id} className="p-4 rounded-xl border bg-white border-red-200 opacity-75">
-                              <h3 className="font-bold text-text-primary text-sm mb-2">{product.name}</h3>
-                              <p className="text-xs text-text-tertiary">Brand ID: {product.brandId}</p>
+                            <div key={product.id || Math.random()} className="p-4 rounded-xl border bg-white border-red-200 opacity-75">
+                              <h3 className="font-bold text-text-primary text-sm mb-2">{product.name || 'Unknown Product'}</h3>
+                              <p className="text-xs text-text-tertiary">Brand ID: {product.brandId || 'N/A'}</p>
                               <button onClick={() => handleDeleteProduct(product.id)} className="mt-2 text-red-500 text-xs flex items-center gap-1"><Trash2 className="w-3 h-3" /> Delete</button>
                             </div>
                           ))}
