@@ -38,7 +38,10 @@ const AdminTHCProductForm: React.FC<AdminTHCProductFormProps> = ({ initialData, 
 
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            setFormData({
+                ...initialData,
+                category: 'thc-disposables' // Ensure category is set correctly for subsequent edits
+            });
         }
     }, [initialData]);
 
@@ -62,6 +65,8 @@ const AdminTHCProductForm: React.FC<AdminTHCProductFormProps> = ({ initialData, 
             ...prev,
             brandId,
             brandName: brand?.name || '',
+            // If switching brands, we are still in THC form, so category remains 'thc-disposables'
+            category: 'thc-disposables'
         }));
     };
 

@@ -154,10 +154,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           // App.tsx will update props when Firestore updates.
 
           // Update order property and save
-          const reorderedForSave = newOrderedCategories.map((cat, index) => ({
-            ...cat,
-            order: index,
-          }));
+          const reorderedForSave = newOrderedCategories.map((cat, index) => {
+            // Ensure cat is an object before spreading, though dynamicCategories are Categories.
+            // The error might be due to TS inference. We cast to any to be safe or explicit Category.
+            return { ...cat, order: index };
+          });
           CategoryService.reorderCategories(reorderedForSave);
         }
       } else if (activeTab !== 'products') {
@@ -293,7 +294,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
-    if (product.category === 'thc-disposables') {
+
+    // Check if product is THC, either directly or via Brand relationship
+    let isTHC = product.category === 'thc-disposables';
+
+    // Fallback: Check Brand if Product Category is missing/mismatch
+    if (!isTHC && product.brandId) {
+      const brand = allBrands.find(b => b.id === product.brandId);
+      if (brand?.category === 'thc-disposables') {
+        isTHC = true;
+      }
+    }
+
+    if (isTHC) {
       setShowTHCForm(true);
     } else {
       setShowForm(true);
