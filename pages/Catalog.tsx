@@ -5,6 +5,8 @@ import { Filter, Search, MoreVertical, Edit, Trash } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
+// import { ProductCard } from '../components/ProductCard'; // Removed
+import { THCProductCard } from '../components/THCProductCard';
 
 import { Category } from '../types';
 
@@ -209,59 +211,63 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map(product => (
-              <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
-                {/* Admin Controls */}
-                {isAdmin && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setActiveMenuId(activeMenuId === product.id ? null : product.id);
-                      }}
-                      className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
-                    >
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {filteredProducts.map((product) => (
+              product.category === 'thc-disposables' ? (
+                <THCProductCard key={product.id} product={product} />
+              ) : (
+                <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+                  {/* Admin Controls */}
+                  {isAdmin && (
+                    <div className="absolute top-4 right-4 z-20">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setActiveMenuId(activeMenuId === product.id ? null : product.id);
+                        }}
+                        className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
 
-                    {activeMenuId === product.id && (
-                      <div className="absolute right-0 mt-2 w-32 bg-surface border border-black/10 rounded-lg shadow-xl overflow-hidden z-30">
-                        <button
-                          onClick={(e) => handleEditProduct(e, product)}
-                          className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
-                        >
-                          <Edit className="w-3 h-3" /> Edit
-                        </button>
-                        <button
-                          onClick={(e) => handleDeleteProduct(e, product.id)}
-                          className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
-                        >
-                          <Trash className="w-3 h-3" /> Delete
-                        </button>
-                      </div>
-                    )}
+                      {activeMenuId === product.id && (
+                        <div className="absolute right-0 mt-2 w-32 bg-surface border border-black/10 rounded-lg shadow-xl overflow-hidden z-30">
+                          <button
+                            onClick={(e) => handleEditProduct(e, product)}
+                            className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
+                          >
+                            <Edit className="w-3 h-3" /> Edit
+                          </button>
+                          <button
+                            onClick={(e) => handleDeleteProduct(e, product.id)}
+                            className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
+                          >
+                            <Trash className="w-3 h-3" /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
+                    {/* Stock Status Removed */}
                   </div>
-                )}
 
-                <div className="flex justify-between items-start mb-6">
-                  <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
-                  {/* Stock Status Removed */}
-                </div>
+                  <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  </div>
 
-                <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                </div>
+                  <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
+                  <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
 
-                <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
-
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
-                  <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
-                </div>
-              </Link>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
+                    <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
+                  </div>
+                </Link>
+              )
             ))}
           </div>
         )}

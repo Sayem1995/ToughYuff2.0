@@ -31,6 +31,9 @@ export interface Product {
 
   // Metadata
   image: string;
+  images?: string[]; // Multiple images
+  strength?: string; // e.g. "1860mg"
+  count?: string;    // e.g. "30ct"
   channel: 'online' | 'store' | 'both';
   category?: string;
   sku?: string;

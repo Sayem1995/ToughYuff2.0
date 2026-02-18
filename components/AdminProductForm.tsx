@@ -480,14 +480,48 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                         </div>
                     </div>
 
+
+                    {/* THC Specifics */}
+                    {formData.category === 'thc-disposables' && (
+                        <div className="space-y-4 pt-4 border-t border-black/5">
+                            <h3 className="text-gold font-bold text-sm uppercase tracking-wider">THC Product Details</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-text-secondary mb-1">Strength</label>
+                                    <input
+                                        type="text"
+                                        name="strength"
+                                        placeholder="e.g. 1860mg"
+                                        value={formData.strength || ''}
+                                        onChange={handleChange}
+                                        className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-text-secondary mb-1">Count</label>
+                                    <input
+                                        type="text"
+                                        name="count"
+                                        placeholder="e.g. 30ct"
+                                        value={formData.count || ''}
+                                        onChange={handleChange}
+                                        className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Image Upload */}
                     <div>
-                        <label className="block text-sm text-text-secondary mb-1">Product Image</label>
-                        <div className="flex items-start gap-4">
+                        <label className="block text-sm text-text-secondary mb-1">Product Images (First is Main)</label>
+
+                        {/* Main Image */}
+                        <div className="flex items-start gap-4 mb-4">
                             <div className="w-24 h-24 bg-black/5 rounded-lg border border-black/10 flex items-center justify-center overflow-hidden relative group">
                                 {formData.image ? (
                                     <>
-                                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                        <img src={formData.image} alt="Main" className="w-full h-full object-cover" />
                                         <button
                                             type="button"
                                             onClick={() => { setFormData(prev => ({ ...prev, image: '' })); setUploadSuccess(false); }}
@@ -498,32 +532,13 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                         </button>
                                     </>
                                 ) : (
-                                    <span className="text-xs text-text-tertiary">No Image</span>
-                                )}
-                                {uploading && (
-                                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 z-20">
-                                        <Loader2 className="w-6 h-6 text-gold animate-spin mb-2" />
-                                        <div className="w-full bg-white/20 h-1 rounded-full overflow-hidden mb-2">
-                                            <div
-                                                className="bg-gold h-full transition-all duration-300"
-                                                style={{ width: `${uploadProgress}%` }}
-                                            />
-                                        </div>
-                                        <span className="text-[10px] text-white mb-2">{uploadProgress}%</span>
-                                        <button
-                                            type="button"
-                                            onClick={handleCancelUpload}
-                                            className="text-[10px] text-red-400 hover:text-white underline"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
+                                    <span className="text-xs text-text-tertiary">Main</span>
                                 )}
                             </div>
                             <div className="flex-1">
                                 <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-sm text-text-primary transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
                                     <Upload className="w-4 h-4" />
-                                    {uploading ? 'Uploading...' : formData.image ? 'Change Image' : 'Upload Image'}
+                                    {uploading ? 'Uploading...' : 'Upload Main Image'}
                                     <input
                                         type="file"
                                         className="hidden"
@@ -534,11 +549,87 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                         disabled={uploading}
                                     />
                                 </label>
-                                <p className="text-xs text-text-tertiary mt-2">Recommended: Square JPG/PNG, max 2MB.</p>
-                                {uploadSuccess && !uploading && <p className="text-xs text-green-500 mt-1 flex items-center gap-1">Image uploaded successfully!</p>}
                             </div>
                         </div>
+
+                        {/* Gallery Images */}
+                        <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
+                            {(formData.images || []).map((img, idx) => (
+                                <div key={idx} className="w-20 h-20 bg-black/5 rounded-lg border border-black/10 flex items-center justify-center overflow-hidden relative group">
+                                    <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newImages = [...(formData.images || [])];
+                                            newImages.splice(idx, 1);
+                                            setFormData(prev => ({ ...prev, images: newImages }));
+                                        }}
+                                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* Upload Additional */}
+                            <label className={`cursor-pointer w-20 h-20 bg-black/5 hover:bg-black/10 border border-dashed border-black/20 rounded-lg flex flex-col items-center justify-center gap-1 text-xs text-text-tertiary hover:text-text-primary transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
+                                <Upload className="w-4 h-4" />
+                                <span>+ Add</span>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files?.[0]) {
+                                            // Handle additional upload logic differently or reuse?
+                                            // Let's reuse but verify if we need to know WHICH one.
+                                            // Since handleImageUpload sets 'image' directly, we need a separate handler or a flag.
+                                            // Let's modify handleImageUpload or make a new one.
+                                            // Actually, let's just make a specialized one right here for simplicity.
+                                            const file = e.target.files[0];
+                                            if (file.size > 5 * 1024 * 1024) { return alert("Too large"); }
+
+                                            setUploading(true);
+                                            const storageRef = ref(storage, `products/gallery/${Date.now()}_${file.name}`);
+                                            const task = uploadBytesResumable(storageRef, file);
+
+                                            task.on('state_changed',
+                                                (snap) => {
+                                                    const p = (snap.bytesTransferred / snap.totalBytes) * 100;
+                                                    setUploadProgress(Math.round(p));
+                                                },
+                                                (err) => {
+                                                    console.error(err);
+                                                    setUploading(false);
+                                                    alert("Upload failed");
+                                                },
+                                                () => {
+                                                    getDownloadURL(task.snapshot.ref).then((url) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            images: [...(prev.images || []), url]
+                                                        }));
+                                                        setUploading(false);
+                                                    });
+                                                }
+                                            );
+                                        }
+                                    }}
+                                    disabled={uploading}
+                                />
+                            </label>
+                        </div>
+
+                        {uploading && (
+                            <div className="mt-2 w-full bg-black/5 h-1 rounded-full overflow-hidden">
+                                <div
+                                    className="bg-gold h-full transition-all duration-300"
+                                    style={{ width: `${uploadProgress}%` }}
+                                />
+                            </div>
+                        )}
                     </div>
+
 
                     {/* Actions */}
                     <div className="flex justify-end gap-3 pt-4 border-t border-black/5">

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
 import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus } from 'lucide-react';
+import { useStore } from '../src/context/StoreContext';
+import { THCProductDetail } from '../components/THCProductDetail';
 
-interface ProductDetailProps {
-  products: Product[];
-}
-
+// Helper component for Accordion
 const AccordionItem = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -26,19 +25,32 @@ const AccordionItem = ({ title, children, icon: Icon }: { title: string, childre
   );
 };
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ products }) => {
+export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const product = products.find(p => p.id === id);
+  const { products, addToCart } = useStore();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
-          <Link to="/catalog" className="text-gold hover:underline">Back to Catalog</Link>
-        </div>
-      </div>
-    );
+  // Existing state for standard view
+  const [selectedImage, setSelectedImage] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+
+  useEffect(() => {
+    const found = products.find(p => p.id === id);
+    if (found) {
+      setProduct(found);
+      setSelectedImage(found.image);
+    }
+    setLoading(false);
+  }, [id, products]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div></div>;
+  if (!product) return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
+
+  // THC View Check
+  if (product.category === 'thc-disposables') {
+    return <THCProductDetail product={product} />;
   }
 
   // Find related
