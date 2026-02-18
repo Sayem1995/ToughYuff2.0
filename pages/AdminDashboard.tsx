@@ -636,6 +636,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 {/* Grouped Products View */}
                 <div className="divide-y divide-black/5">
                   {allBrands.map(brand => {
+                    if (!brand || !brand.id) return null; // Safe check
                     // Filter products for this brand from the global filtered list
                     const brandProducts = filteredAndSorted.filter(p => p.brandId === brand.id);
 
@@ -665,77 +666,80 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
                         {/* Products Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                          {brandProducts.map(product => (
-                            <div
-                              key={product.id}
-                              className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-surface border-black/5 shadow-sm hover:border-gold/30 hover:shadow-md' : 'bg-red-50 border-red-200 opacity-75'}`}
-                            >
-                              {/* Status Indicator Dot */}
-                              <div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+                          {brandProducts.map(product => {
+                            if (!product) return null;
+                            return (
+                              <div
+                                key={product.id || Math.random()}
+                                className={`group relative p-4 rounded-xl border transition-all duration-300 ${product.inStock ? 'bg-surface border-black/5 shadow-sm hover:border-gold/30 hover:shadow-md' : 'bg-red-50 border-red-200 opacity-75'}`}
+                              >
+                                {/* Status Indicator Dot */}
+                                <div className={`absolute top-3 right-3 w-2 h-2 rounded-full z-10 ${product.inStock ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
 
-                              {/* Product Image */}
-                              <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
-                                {product.image ? (
-                                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                                ) : brand.image ? (
-                                  <img src={brand.image} alt={brand.name} className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 transition-all" />
-                                ) : (
-                                  <div className="text-text-tertiary text-xs">No Image</div>
-                                )}
-                                {/* Overlay Edit Button */}
-                                <button
-                                  onClick={() => handleEditProduct(product)}
-                                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
-                                >
-                                  <span className="bg-black/60 px-3 py-1 rounded text-xs backdrop-blur-sm border border-white/20">Edit Image</span>
-                                </button>
-                              </div>
-
-                              <div className="flex justify-between items-start mb-3 pr-4">
-                                <h3 className="font-bold text-text-primary text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>
-                              </div>
-
-                              <div className="flex flex-col gap-3 mt-auto">
-                                {/* Quick Stock Toggle */}
-                                <button
-                                  onClick={() => handleQuickStockToggle(product)}
-                                  className={`w-full py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${product.inStock
-                                    ? 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100'
-                                    : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
-                                    }`}
-                                >
-                                  {product.inStock ? (
-                                    <>
-                                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                      IN STOCK
-                                    </>
+                                {/* Product Image */}
+                                <div className="w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center relative group-hover:scale-[1.02] transition-transform">
+                                  {product.image ? (
+                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                  ) : brand.image ? (
+                                    <img src={brand.image} alt={brand.name} className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 transition-all" />
                                   ) : (
-                                    <>
-                                      <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                      OUT OF STOCK
-                                    </>
+                                    <div className="text-text-tertiary text-xs">No Image</div>
                                   )}
-                                </button>
-
-                                {/* Actions */}
-                                <div className="flex gap-2">
+                                  {/* Overlay Edit Button */}
                                   <button
                                     onClick={() => handleEditProduct(product)}
-                                    className="flex-1 py-1.5 bg-black/5 hover:bg-black/10 border border-black/5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1"
+                                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
                                   >
-                                    <Edit2 className="w-3 h-3" /> Edit
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteProduct(product.id)}
-                                    className="px-2 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-500 hover:text-red-700 transition-colors"
-                                    title="Delete Product"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
+                                    <span className="bg-black/60 px-3 py-1 rounded text-xs backdrop-blur-sm border border-white/20">Edit Image</span>
                                   </button>
                                 </div>
+
+                                <div className="flex justify-between items-start mb-3 pr-4">
+                                  <h3 className="font-bold text-text-primary text-sm line-clamp-2 min-h-[2.5em]" title={product.name}>{product.name}</h3>
+                                </div>
+
+                                <div className="flex flex-col gap-3 mt-auto">
+                                  {/* Quick Stock Toggle */}
+                                  <button
+                                    onClick={() => handleQuickStockToggle(product)}
+                                    className={`w-full py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${product.inStock
+                                      ? 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100'
+                                      : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
+                                      }`}
+                                  >
+                                    {product.inStock ? (
+                                      <>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                        IN STOCK
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        OUT OF STOCK
+                                      </>
+                                    )}
+                                  </button>
+
+                                  {/* Actions */}
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => handleEditProduct(product)}
+                                      className="flex-1 py-1.5 bg-black/5 hover:bg-black/10 border border-black/5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1"
+                                    >
+                                      <Edit2 className="w-3 h-3" /> Edit
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteProduct(product.id)}
+                                      className="px-2 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-red-500 hover:text-red-700 transition-colors"
+                                      title="Delete Product"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
 
                           {/* Add New Product Card - Directly at the end of the grid */}
                           <button
