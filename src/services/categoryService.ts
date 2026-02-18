@@ -21,15 +21,42 @@ export const DEFAULT_CATEGORIES = [
     'DISPOSABLE VAPES',
     'THC DISPOSABLES',
     'THC CARTRIDGES',
-    'THC & DELTA GUMMIES',
+    'EDIBLES',
     'PRE ROLLS',
     'HOOKAH FLAVORS',
     'NICOTINE POUCHES',
     'PODS',
-    'WRAPS AND BLUNTS'
+    'WRAPS AND BLUNTS',
+    'CIGARETTES'
 ];
 
 export const CategoryService = {
+    // Rename a category by name (useful for migrations)
+    renameCategoryByName: async (storeId: StoreId, oldName: string, newName: string): Promise<void> => {
+        try {
+            const categories = await CategoryService.getAllCategories(storeId);
+            const target = categories.find(c => c.name.toLowerCase() === oldName.toLowerCase());
+
+            if (target) {
+                // Check if new name already exists
+                const exists = categories.find(c => c.name.toLowerCase() === newName.toLowerCase());
+                if (exists) {
+                    console.warn(`Cannot rename '${oldName}' to '${newName}' because '${newName}' already exists.`);
+                    return;
+                }
+
+                const docRef = doc(db, CATEGORIES_COLLECTION, target.id);
+                await updateDoc(docRef, {
+                    name: newName,
+                    slug: newName.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+                    updatedAt: serverTimestamp()
+                });
+                console.log(`Renamed category '${oldName}' to '${newName}'`);
+            }
+        } catch (error) {
+            console.error("Error renaming category:", error);
+        }
+    },
     // Fetch all categories for a store, ordered by 'order'
     getAllCategories: async (storeId: StoreId): Promise<Category[]> => {
         try {

@@ -102,18 +102,24 @@ const App: React.FC = () => {
 
       setCategories(cats);
 
-      // Ensure required categories exist
-      CategoryService.ensureCategories(currentStore as any, [
-        'DISPOSABLE VAPES',
-        'THC DISPOSABLES',
-        'THC CARTRIDGES',
-        'THC & DELTA GUMMIES',
-        'PRE ROLLS',
-        'HOOKAH FLAVORS',
-        'NICOTINE POUCHES',
-        'PODS',
-        'WRAPS AND BLUNTS'
-      ]).catch(err => console.error("Ensure categories failed", err));
+      // Rename 'THC & DELTA GUMMIES' to 'EDIBLES' if it exists (Migration)
+      CategoryService.renameCategoryByName(currentStore as any, 'THC & DELTA GUMMIES', 'EDIBLES')
+        .then(() => {
+          // Ensure required categories exist
+          return CategoryService.ensureCategories(currentStore as any, [
+            'DISPOSABLE VAPES',
+            'THC DISPOSABLES',
+            'THC CARTRIDGES',
+            'EDIBLES', // Renamed from Gummies
+            'PRE ROLLS',
+            'HOOKAH FLAVORS',
+            'NICOTINE POUCHES',
+            'PODS',
+            'WRAPS AND BLUNTS',
+            'CIGARETTES' // New Category
+          ]);
+        })
+        .catch(err => console.error("Category init failed", err));
 
     }, (error) => {
       console.error("Category sync error (likely missing index):", error);
