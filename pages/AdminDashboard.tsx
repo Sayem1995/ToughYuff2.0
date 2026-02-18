@@ -154,11 +154,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           // App.tsx will update props when Firestore updates.
 
           // Update order property and save
-          const reorderedForSave = newOrderedCategories.map((cat, index) => {
-            // Ensure cat is an object before spreading, though dynamicCategories are Categories.
-            // The error might be due to TS inference. We cast to any to be safe or explicit Category.
-            return { ...cat, order: index };
-          });
+          const reorderedForSave = newOrderedCategories.map((cat: any, index: number) => ({
+            ...cat,
+            order: index,
+          }));
           CategoryService.reorderCategories(reorderedForSave);
         }
       } else if (activeTab !== 'products') {
@@ -203,8 +202,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const filteredAndSorted = React.useMemo(() => {
     let result = products.filter(p => {
       // Search
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.brandName.toLowerCase().includes(search.toLowerCase());
+      const searchLower = search.toLowerCase();
+      const nameMatch = (p.name || '').toLowerCase().includes(searchLower);
+      const brandMatch = (p.brandName || '').toLowerCase().includes(searchLower);
+
+      const matchesSearch = nameMatch || brandMatch;
       if (!matchesSearch) return false;
 
       // Brand Filter
