@@ -368,11 +368,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   };
 
   const handleRepairCategories = async () => {
-    if (!confirm("This will ensure all default categories exist. Continue?")) return;
+    if (!confirm("This will rename 'Gummies' to 'Edibles' and ensure 'Cigarettes' exists. Continue?")) return;
     try {
       const { DEFAULT_CATEGORIES, CategoryService } = await import('../src/services/categoryService');
+
+      // 1. Try to rename Gummies -> Edibles
+      await CategoryService.renameCategoryByName(currentStore as any, 'THC & DELTA GUMMIES', 'EDIBLES');
+
+      // 2. Ensure all defaults (including Cigarettes) exist
       await CategoryService.ensureCategories(currentStore as any, DEFAULT_CATEGORIES);
-      alert("Categories repaired successfully! The sidebar should update shortly.");
+
+      alert("Categories updated successfully! Please refresh the page to see changes.");
     } catch (e) {
       console.error(e);
       alert("Failed to repair categories.");
