@@ -8,7 +8,9 @@ import { SystemStatus } from '../components/SystemStatus';
 import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
+import AdminTHCProductForm from '../components/AdminTHCProductForm';
 import AdminBrandForm from '../components/AdminBrandForm';
+
 import AdminCategoryForm from '../components/AdminCategoryForm';
 import { SortableBrandItem } from '../components/SortableBrandItem';
 import { SortableCategoryItem } from '../components/SortableCategoryItem';
@@ -29,8 +31,11 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { BRANDS } from '../constants';
-
 import { useStore } from '../src/context/StoreContext';
+
+
+// ... (existing imports)
+
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -45,6 +50,7 @@ interface FilterState {
   status: 'all' | 'inStock' | 'lowStock' | 'outOfStock';
   sort: 'name' | 'priceHigh' | 'priceLow' | 'stockHigh' | 'stockLow';
 }
+
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, connectionError, products, categories }) => {
   const { currentStore, switchStore } = useStore();
@@ -64,6 +70,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
   // Modal State
   const [showForm, setShowForm] = useState(false);
+  const [showTHCForm, setShowTHCForm] = useState(false);
   const [showBrandForm, setShowBrandForm] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
 
@@ -286,7 +293,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
-    setShowForm(true);
+    if (product.category === 'thc-disposables') {
+      setShowTHCForm(true);
+    } else {
+      setShowForm(true);
+    }
   };
 
   const handleEditBrand = (brand: Brand) => {
@@ -495,8 +506,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 <button
                   onClick={() => {
                     const currentCat = dynamicCategories.find(c => c.slug === activeTab);
-                    setEditingBrand({ category: currentCat?.slug } as any); // Pre-fill category
-                    setShowBrandForm(true);
+                    // Use type assertion to bypass strict checks for partial updates if needed, 
+                    // or better yet, ensure setEditingProduct accepts Partial<Product>
+                    setEditingProduct({ category: currentCat?.slug } as any);
+
+                    if (activeTab === 'thc-disposables') {
+                      setShowTHCForm(true);
+                    } else {
+                      setShowForm(true);
+                    }
                   }}
                   className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
                   title={`Add ${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
@@ -858,7 +876,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         showForm && (
           <AdminProductForm
             initialData={editingProduct}
-            brands={sidebarBrands}
+            brands={allBrands} // Use allBrands which includes dynamic ones
             categories={dynamicCategories}
             onSave={handleSaveProduct}
             onCancel={() => {
@@ -870,9 +888,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       }
 
       {
+        showTHCForm && (
+          <AdminTHCProductForm
+            initialData={editingProduct}
+            brands={allBrands}
+            onSave={handleSaveProduct}
+            onCancel={() => {
+              setShowTHCForm(false);
+              setEditingProduct(undefined);
+            }}
+          />
+        )
+      }
+
+      {
         showBrandForm && (
           <AdminBrandForm
             initialData={editingBrand}
+            onSave={handleSaveBrand}
             onCancel={() => {
               setShowBrandForm(false);
               setEditingBrand(undefined);
