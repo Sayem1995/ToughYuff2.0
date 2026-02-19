@@ -105,7 +105,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
       // Search
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
-        return product.name.toLowerCase().includes(q) || product.brandName.toLowerCase().includes(q);
+        const name = (product.name || '').toLowerCase();
+        const brand = (product.brandName || '').toLowerCase();
+        return name.includes(q) || brand.includes(q);
       }
 
       return true;

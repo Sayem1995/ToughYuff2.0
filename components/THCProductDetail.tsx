@@ -103,7 +103,7 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         {/* Extra Trust Badges */}
                         <div className="mt-auto pt-8 border-t border-black/5 space-y-4">
                             <p className="font-bold text-xs uppercase tracking-wider flex items-center gap-2">
-                                <span>{product.brandName.toLowerCase().replace(/\s+/g, '-')}</span>
+                                <span>{(product.brandName || '').toLowerCase().replace(/\s+/g, '-')}</span>
                                 <span className="px-2 py-0.5 bg-black/5 text-[10px] rounded">Bolt</span>
                             </p>
                             <p className="text-xs font-bold flex items-center gap-2 text-green-600">
