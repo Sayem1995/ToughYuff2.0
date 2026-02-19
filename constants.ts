@@ -314,6 +314,13 @@ export const THC_BRANDS: Brand[] = [
   { id: 'exodus', name: 'Exodus', tagline: 'Movement of the People', puffRange: '2000mg', description: 'High potency blends for the experienced user.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Exodus', category: 'thc-disposables' }
 ];
 
+export const EDIBLE_BRANDS: Brand[] = [
+  { id: '4ever-gummies', name: '4ever Gummies', tagline: 'Gummies That Last', puffRange: '', description: 'Premium edible gummies for a lasting experience.', image: 'https://placehold.co/600x600/2d1b69/ffffff?text=4ever+Gummies', category: 'edibles' },
+  { id: 'truemoola', name: 'Truemoola', tagline: 'True Quality, True Value', puffRange: '', description: 'High quality edibles at the best value.', image: 'https://placehold.co/600x600/2d1b69/ffffff?text=Truemoola', category: 'edibles' },
+  { id: 'fun-cube', name: 'Fun Cube', tagline: 'Fun in Every Bite', puffRange: '', description: 'Delicious cube-shaped edibles for every occasion.', image: 'https://placehold.co/600x600/2d1b69/ffffff?text=Fun+Cube', category: 'edibles' },
+  { id: 'polka-dot-shroom-bar', name: 'Polka Dot Shroom Bar', tagline: 'A Magical Experience', puffRange: '', description: 'Premium shroom bars with a unique twist.', image: 'https://placehold.co/600x600/2d1b69/ffffff?text=Polka+Dot', category: 'edibles' }
+];
+
 const getProfile = (name: string): string[] => {
   const profiles = [];
   if (name.toLowerCase().includes('ice') || name.toLowerCase().includes('frozen') || name.toLowerCase().includes('cool') || name.toLowerCase().includes('menthol')) profiles.push('Ice');

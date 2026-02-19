@@ -444,6 +444,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleSeedEdibleBrands = async () => {
+    if (!confirm("Add default Edible brands (4ever Gummies, Truemoola, Fun Cube, Polka Dot Shroom Bar)?")) return;
+    try {
+      const { EDIBLE_BRANDS } = await import('../constants');
+      await BrandService.ensureBrands(EDIBLE_BRANDS, currentStore as any);
+
+      // Refresh brands
+      const fetchedBrands = await BrandService.getAllBrands(currentStore as any);
+      const fetchedOrder = await BrandService.getBrandOrder(currentStore as any);
+      setDynamicBrands(fetchedBrands);
+      setBrandOrder(fetchedOrder);
+
+      alert("Edible brands added successfully!");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to add edible brands.");
+    }
+  };
+
   const handleBrandClick = (brandId: string) => {
     setFilters(prev => ({ ...prev, brand: brandId }));
     setActiveTab('products');
@@ -531,15 +550,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     <Plus className="w-4 h-4" /> Add Default Brands
                   </button>
                 )}
+                {activeTab === 'edibles' && (
+                  <button
+                    onClick={handleSeedEdibleBrands}
+                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Add Default Brands
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     const currentCat = dynamicCategories.find(c => c.slug === activeTab);
-                    // Use type assertion to bypass strict checks for partial updates if needed, 
-                    // or better yet, ensure setEditingProduct accepts Partial<Product>
                     setEditingProduct({ category: currentCat?.slug } as any);
 
                     if (activeTab === 'thc-disposables') {
                       setShowTHCForm(true);
+                    } else if (activeTab === 'edibles') {
+                      setShowEdiblesForm(true);
                     } else {
                       setShowForm(true);
                     }
