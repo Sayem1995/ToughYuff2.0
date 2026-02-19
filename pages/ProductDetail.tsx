@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
 import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus } from 'lucide-react';
-import { useStore } from '../src/context/StoreContext';
 import { THCProductDetail } from '../components/THCProductDetail';
 
 // Helper component for Accordion
@@ -25,9 +24,12 @@ const AccordionItem = ({ title, children, icon: Icon }: { title: string, childre
   );
 };
 
-export const ProductDetail: React.FC = () => {
+interface ProductDetailProps {
+  products: Product[];
+}
+
+export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) => {
   const { id } = useParams<{ id: string }>();
-  const { products, addToCart } = useStore();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
