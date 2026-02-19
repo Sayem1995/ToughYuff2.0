@@ -307,15 +307,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     setEditingProduct(product);
 
     // Check if product is THC, Edibles, or standard
-    let isTHC = product.category === 'thc-disposables';
-    let isEdibles = (product.category || '').toLowerCase().includes('edible');
+    const productCategory = (product.category || '').toLowerCase();
+    let isTHC = productCategory === 'thc-disposables';
+    let isEdibles = productCategory.includes('edible');
+
+    // Also check the category NAME from dynamicCategories (handles old slugs after rename)
+    if (!isEdibles && product.category) {
+      const cat = dynamicCategories.find(c => c.slug === product.category);
+      if (cat && (cat.name || '').toLowerCase().includes('edible')) {
+        isEdibles = true;
+      }
+    }
 
     // Fallback: Check Brand if Product Category is missing/mismatch
     if (!isTHC && !isEdibles && product.brandId) {
       const brand = allBrands.find(b => b.id === product.brandId);
       if (brand?.category === 'thc-disposables') {
         isTHC = true;
-      } else if (brand?.category === 'edibles') {
+      } else if ((brand?.category || '').toLowerCase().includes('edible')) {
         isEdibles = true;
       }
     }
@@ -550,22 +559,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     <Plus className="w-4 h-4" /> Add Default Brands
                   </button>
                 )}
-                {activeTab.toLowerCase().includes('edible') && (
-                  <button
-                    onClick={handleSeedEdibleBrands}
-                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
-                  >
-                    <Plus className="w-4 h-4" /> Add Default Brands
-                  </button>
-                )}
+                {(() => {
+                  const activeCatName = (dynamicCategories.find(c => c.slug === activeTab)?.name || '').toLowerCase();
+                  return activeCatName.includes('edible');
+                })() && (
+                    <button
+                      onClick={handleSeedEdibleBrands}
+                      className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" /> Add Default Brands
+                    </button>
+                  )}
                 <button
                   onClick={() => {
                     const currentCat = dynamicCategories.find(c => c.slug === activeTab);
+                    const catName = (currentCat?.name || '').toLowerCase();
                     setEditingProduct({ category: currentCat?.slug } as any);
 
                     if (activeTab === 'thc-disposables') {
                       setShowTHCForm(true);
-                    } else if (activeTab.toLowerCase().includes('edible')) {
+                    } else if (catName.includes('edible') || activeTab.toLowerCase().includes('edible')) {
                       setShowEdiblesForm(true);
                     } else {
                       setShowForm(true);
