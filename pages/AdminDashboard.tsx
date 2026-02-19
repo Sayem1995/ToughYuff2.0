@@ -308,7 +308,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
     // Check if product is THC, Edibles, or standard
     let isTHC = product.category === 'thc-disposables';
-    let isEdibles = product.category === 'edibles';
+    let isEdibles = (product.category || '').toLowerCase().includes('edible');
 
     // Fallback: Check Brand if Product Category is missing/mismatch
     if (!isTHC && !isEdibles && product.brandId) {
@@ -550,7 +550,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     <Plus className="w-4 h-4" /> Add Default Brands
                   </button>
                 )}
-                {activeTab === 'edibles' && (
+                {activeTab.toLowerCase().includes('edible') && (
                   <button
                     onClick={handleSeedEdibleBrands}
                     className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
@@ -565,7 +565,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
                     if (activeTab === 'thc-disposables') {
                       setShowTHCForm(true);
-                    } else if (activeTab === 'edibles') {
+                    } else if (activeTab.toLowerCase().includes('edible')) {
                       setShowEdiblesForm(true);
                     } else {
                       setShowForm(true);
