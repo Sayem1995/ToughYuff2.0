@@ -7,6 +7,7 @@ import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 // import { ProductCard } from '../components/ProductCard'; // Removed
 import { THCProductCard } from '../components/THCProductCard';
+import { EdiblesProductCard } from '../components/EdiblesProductCard';
 
 import { Category } from '../types';
 
@@ -217,6 +218,8 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             {filteredProducts.map((product) => (
               product.category === 'thc-disposables' ? (
                 <THCProductCard key={product.id} product={product} />
+              ) : product.category === 'edibles' ? (
+                <EdiblesProductCard key={product.id} product={product} />
               ) : (
                 <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
                   {/* Admin Controls */}

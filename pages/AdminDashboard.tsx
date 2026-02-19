@@ -9,6 +9,7 @@ import { migrateDataToFirestore } from '../src/utils/migration';
 
 import AdminProductForm from '../components/AdminProductForm';
 import AdminTHCProductForm from '../components/AdminTHCProductForm';
+import AdminEdiblesProductForm from '../components/AdminEdiblesProductForm';
 import AdminBrandForm from '../components/AdminBrandForm';
 
 import AdminCategoryForm from '../components/AdminCategoryForm';
@@ -71,6 +72,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   // Modal State
   const [showForm, setShowForm] = useState(false);
   const [showTHCForm, setShowTHCForm] = useState(false);
+  const [showEdiblesForm, setShowEdiblesForm] = useState(false);
   const [showBrandForm, setShowBrandForm] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
 
@@ -304,18 +306,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
 
-    // Check if product is THC, either directly or via Brand relationship
+    // Check if product is THC, Edibles, or standard
     let isTHC = product.category === 'thc-disposables';
+    let isEdibles = product.category === 'edibles';
 
     // Fallback: Check Brand if Product Category is missing/mismatch
-    if (!isTHC && product.brandId) {
+    if (!isTHC && !isEdibles && product.brandId) {
       const brand = allBrands.find(b => b.id === product.brandId);
       if (brand?.category === 'thc-disposables') {
         isTHC = true;
+      } else if (brand?.category === 'edibles') {
+        isEdibles = true;
       }
     }
 
-    if (isTHC) {
+    if (isEdibles) {
+      setShowEdiblesForm(true);
+    } else if (isTHC) {
       setShowTHCForm(true);
     } else {
       setShowForm(true);
@@ -921,6 +928,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             onSave={handleSaveProduct}
             onCancel={() => {
               setShowTHCForm(false);
+              setEditingProduct(undefined);
+            }}
+          />
+        )
+      }
+
+      {
+        showEdiblesForm && (
+          <AdminEdiblesProductForm
+            initialData={editingProduct}
+            brands={allBrands}
+            onSave={handleSaveProduct}
+            onCancel={() => {
+              setShowEdiblesForm(false);
               setEditingProduct(undefined);
             }}
           />

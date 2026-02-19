@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
 import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus } from 'lucide-react';
 import { THCProductDetail } from '../components/THCProductDetail';
+import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
 
 // Helper component for Accordion
 const AccordionItem = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => {
@@ -53,6 +54,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
   // THC View Check
   if (product.category === 'thc-disposables') {
     return <THCProductDetail product={product} />;
+  }
+
+  // Edibles View Check
+  if (product.category === 'edibles') {
+    return <EdiblesProductDetail product={product} />;
   }
 
   // Find related
