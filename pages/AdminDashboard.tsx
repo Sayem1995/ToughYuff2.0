@@ -802,7 +802,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                                 brandName: brand.name,
                                 inStock: true
                               } as any);
-                              setShowForm(true);
+                              // Route to the correct form based on brand category
+                              const brandCat = (brand.category || '').toLowerCase();
+                              if (brandCat.includes('edible')) {
+                                setShowEdiblesForm(true);
+                              } else if (brandCat === 'thc-disposables') {
+                                setShowTHCForm(true);
+                              } else {
+                                setShowForm(true);
+                              }
                             }}
                             className="group relative p-4 rounded-xl border border-dashed border-black/10 bg-black/5 hover:bg-black/10 hover:border-gold/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] gap-4"
                           >
