@@ -217,6 +217,21 @@ const AdminTHCProductForm: React.FC<AdminTHCProductFormProps> = ({ initialData, 
                                     placeholder="Product description..."
                                 />
                             </div>
+
+                            <div>
+                                <label className="block text-sm text-text-secondary mb-1">Available Strains (one per line)</label>
+                                <textarea
+                                    value={(formData.strains || []).join('\n')}
+                                    onChange={(e) => {
+                                        const lines = e.target.value.split('\n');
+                                        setFormData(prev => ({ ...prev, strains: lines }));
+                                    }}
+                                    rows={6}
+                                    className="w-full bg-background border border-black/10 rounded-lg px-3 py-3 text-text-primary focus:border-[#3b0764] outline-none resize-none text-sm"
+                                    placeholder={"Arctic Frost (Hybrid)\nGrape Soda (Indica)\nLime Haze (Sativa)"}
+                                />
+                                <p className="text-xs text-text-tertiary mt-1">Format: Strain Name (Type) — e.g. Arctic Frost (Hybrid)</p>
+                            </div>
                         </div>
 
                         {/* Right Column: Images & Inventory */}

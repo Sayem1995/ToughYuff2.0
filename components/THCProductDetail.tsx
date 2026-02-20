@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface THCProductDetailProps {
@@ -11,6 +11,8 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
     const allImages = [product.image, ...(product.images || [])].filter(Boolean);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedFlavor, setSelectedFlavor] = useState('');
+    const [quantity, setQuantity] = useState(1);
+    const [activeTab, setActiveTab] = useState<'description' | 'loyalty'>('description');
 
     const prevImage = () => setCurrentImageIndex(i => (i - 1 + allImages.length) % allImages.length);
     const nextImage = () => setCurrentImageIndex(i => (i + 1) % allImages.length);
@@ -40,17 +42,32 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
             ].filter(Boolean)),
     ];
 
+    // Group strains into chunks of 3 for the grid display
+    const strains = product.strains || [];
+    const strainGroups: string[][] = [];
+    for (let i = 0; i < strains.length; i += 3) {
+        strainGroups.push(strains.slice(i, i + 3));
+    }
+
+    // Get current day name for shipping message
+    const getShippingDay = () => {
+        const now = new Date();
+        const day = now.getDay(); // 0=Sun, 1=Mon...6=Sat
+        // If before Fri 5pm, ships same/next business day. Weekend → Monday
+        if (day === 5) return 'Monday'; // Friday → Monday
+        if (day === 6) return 'Monday'; // Saturday → Monday
+        if (day === 0) return 'Monday'; // Sunday → Monday
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[(day + 1) % 7]; // Next day
+    };
+
     return (
         <div className="min-h-screen bg-white text-gray-900">
             {/* Breadcrumb */}
             <div className="max-w-7xl mx-auto px-4 py-3 text-xs text-gray-500 flex items-center gap-1.5 flex-wrap">
                 <Link to="/" className="hover:text-[#3b0764] transition-colors">Home</Link>
                 <BreadcrumbArrow className="w-3 h-3 text-gray-400" />
-                <Link to="/catalog" className="hover:text-[#3b0764] transition-colors">Shop</Link>
-                <BreadcrumbArrow className="w-3 h-3 text-gray-400" />
-                <Link to={`/catalog?category=${product.category}`} className="hover:text-[#3b0764] transition-colors">
-                    {categoryLabel}
-                </Link>
+                <Link to="/catalog" className="hover:text-[#3b0764] transition-colors">Products</Link>
                 <BreadcrumbArrow className="w-3 h-3 text-gray-400" />
                 <span className="text-gray-800 font-medium">{fullTitle}</span>
             </div>
@@ -94,8 +111,8 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                                         key={idx}
                                         onClick={() => setCurrentImageIndex(idx)}
                                         className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all bg-[#f9f9f9] p-1 ${currentImageIndex === idx
-                                                ? 'border-[#3b0764]'
-                                                : 'border-gray-200 hover:border-[#3b0764]/40'
+                                            ? 'border-[#3b0764]'
+                                            : 'border-gray-200 hover:border-[#3b0764]/40'
                                             }`}
                                     >
                                         <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-contain" />
@@ -113,14 +130,14 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                                 <Star
                                     key={i}
                                     className="w-4 h-4 text-orange-400"
-                                    fill={i <= 4 ? '#fb923c' : 'none'}
+                                    fill={i <= 5 ? '#fb923c' : 'none'}
                                 />
                             ))}
-                            <span className="text-sm text-gray-500 ml-1">0 Reviews</span>
+                            <span className="text-sm text-[#fb923c] ml-1 font-medium">2 Reviews</span>
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">
+                        <h1 className="text-2xl md:text-3xl font-bold text-[#2d1b69] leading-tight mb-4">
                             {fullTitle}
                         </h1>
 
@@ -142,8 +159,8 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         )}
 
                         {/* SELECT FLAVOR */}
-                        <div className="mb-8">
-                            <label className="block text-xs font-bold text-[#3b0764] uppercase tracking-widest mb-2">
+                        <div className="mb-6">
+                            <label className="block text-xs font-bold text-white bg-[#3b0764] uppercase tracking-widest mb-2 px-3 py-1.5 w-fit rounded-sm">
                                 Select Flavor
                             </label>
                             <div className="relative">
@@ -152,12 +169,10 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                                     onChange={(e) => setSelectedFlavor(e.target.value)}
                                     className="w-full appearance-none border border-gray-300 rounded-lg px-4 py-3 pr-10 text-sm text-gray-700 bg-white focus:border-[#3b0764] focus:ring-1 focus:ring-[#3b0764]/20 outline-none font-medium cursor-pointer"
                                 >
-                                    <option value="">Choose An Option</option>
-                                    {/* Flavor profile options */}
+                                    <option value="">CHOOSE AN OPTION</option>
                                     {Array.isArray(product.flavorProfile) && product.flavorProfile.map((flavor, i) => (
                                         <option key={i} value={flavor}>{flavor}</option>
                                     ))}
-                                    {/* Fallback if no flavor profile */}
                                     {(!Array.isArray(product.flavorProfile) || product.flavorProfile.length === 0) && (
                                         <option value="default">{product.name}</option>
                                     )}
@@ -166,41 +181,125 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                             </div>
                         </div>
 
+                        {/* Quantity + Add to Cart */}
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                    className="w-12 h-12 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                >
+                                    <Minus className="w-4 h-4" />
+                                </button>
+                                <div className="w-16 h-12 flex items-center justify-center font-bold text-sm border-x border-gray-300">
+                                    {quantity}
+                                </div>
+                                <button
+                                    onClick={() => setQuantity(q => q + 1)}
+                                    className="w-12 h-12 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            <button className="flex-1 bg-[#3b0764] hover:bg-[#4c1d95] text-white font-bold py-3.5 rounded-lg uppercase tracking-wider text-sm transition-colors shadow-md hover:shadow-lg">
+                                Add to Cart
+                            </button>
+                        </div>
+
+                        {/* Trust Badges */}
+                        <div className="pt-5 border-t border-gray-100 space-y-3">
+                            <p className="font-bold text-xs uppercase tracking-wider flex items-center gap-2 text-gray-500">
+                                <span>Secure checkout powered by</span>
+                                <span className="px-2 py-0.5 bg-gray-900 text-white text-[10px] rounded font-bold tracking-wider">→ Bolt</span>
+                            </p>
+                            <p className="text-xs font-bold flex items-center gap-2 text-green-600">
+                                <Truck className="w-4 h-4" />
+                                ORDER NOW! SHIPS ON {getShippingDay().toUpperCase()}
+                                {' '}
+                                <span className="text-gray-400 underline font-normal cursor-pointer">terms apply</span>
+                            </p>
+                        </div>
+
                         {/* Category & Brand Meta */}
-                        <div className="text-xs text-gray-500 space-y-1 pt-4 border-t border-gray-100">
+                        <div className="text-xs text-gray-500 space-y-1 pt-4 border-t border-gray-100 mt-4">
                             <p>
-                                <span className="font-semibold text-gray-700">Category: </span>
-                                {categoryLabel}
+                                <span className="font-semibold text-gray-700">Categories: </span>
+                                Disposable Vapes, THC-A Products, Vapes
                             </p>
                             <p>
                                 <span className="font-semibold text-gray-700">Brand: </span>
                                 {product.brandName}
                             </p>
-                            {product.strength && (
-                                <p>
-                                    <span className="font-semibold text-gray-700">Strength: </span>
-                                    {product.strength}
-                                </p>
-                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* ── Description / About Tabs ── */}
-                <div className="mt-16 border-t border-gray-200 pt-10">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">{fullTitle}</h2>
-                    {product.description && (
-                        <p className="text-gray-600 leading-relaxed mb-4">{product.description}</p>
-                    )}
-                    {product.aboutText && (
-                        <p className="text-gray-600 leading-relaxed mb-4">{product.aboutText}</p>
-                    )}
-                    {Array.isArray(product.features) && product.features.length > 0 && (
-                        <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                            {product.features.map((f, i) => <li key={i}>{f}</li>)}
-                        </ul>
-                    )}
+                {/* ── Description / Loyalty Tabs ── */}
+                <div className="mt-16">
+                    <div className="flex items-center gap-0 border-b border-gray-200">
+                        <button
+                            onClick={() => setActiveTab('description')}
+                            className={`px-8 py-4 text-sm font-bold uppercase tracking-wider transition-colors rounded-t-lg ${activeTab === 'description'
+                                ? 'bg-[#3b0764] text-white'
+                                : 'bg-gray-100 text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Description
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('loyalty')}
+                            className={`px-8 py-4 text-sm font-bold uppercase tracking-wider transition-colors rounded-t-lg ${activeTab === 'loyalty'
+                                ? 'bg-[#3b0764] text-white'
+                                : 'bg-gray-100 text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Loyalty Points
+                        </button>
+                    </div>
+                    <div className="py-8 text-gray-600 leading-relaxed max-w-4xl">
+                        {activeTab === 'description' && (
+                            <div className="space-y-4">
+                                <h3 className="text-xl font-bold text-gray-900">{fullTitle}</h3>
+                                {product.description && <p>{product.description}</p>}
+                                {product.aboutText && <p>{product.aboutText}</p>}
+                                {Array.isArray(product.features) && product.features.length > 0 && (
+                                    <ul className="list-disc pl-5 space-y-1">
+                                        {product.features.map((f, i) => <li key={i}>{f}</li>)}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
+                        {activeTab === 'loyalty' && (
+                            <div>
+                                <p>Earn points with every purchase at our store!</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* ── Available Strains Grid ── */}
+                {strains.length > 0 && (
+                    <div className="mt-12 mb-8">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-6">Available Strains</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {strainGroups.map((group, gIdx) => (
+                                <div
+                                    key={gIdx}
+                                    className="border border-gray-200 rounded-lg p-4 space-y-1"
+                                >
+                                    {group.map((strain, sIdx) => (
+                                        <React.Fragment key={sIdx}>
+                                            <p className="text-sm text-gray-800 font-medium">{strain}</p>
+                                            {sIdx < group.length - 1 && (
+                                                <div className="border-b border-gray-100 my-1" />
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

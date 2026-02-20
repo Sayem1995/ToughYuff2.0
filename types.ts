@@ -28,6 +28,7 @@ export interface Product {
   aboutText?: string; // Content for "About [Brand]"
   flavorText?: string; // Content for "Flavor" section
   features?: string[]; // List of features
+  strains?: string[];  // e.g. ["Arctic Frost (Hybrid)", "Grape Soda (Indica)"]
 
   // Metadata
   image: string;
