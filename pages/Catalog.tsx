@@ -79,6 +79,13 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     setEditingProduct(undefined);
   };
 
+  const availableBrands = useMemo(() => {
+    if (filters.category === 'all') return brands;
+    const categoryProducts = products.filter(p => p.category === filters.category);
+    const validBrandIds = new Set(categoryProducts.map(p => p.brandId));
+    return brands.filter(b => validBrandIds.has(b.id));
+  }, [brands, products, filters.category]);
+
   // Filter Logic
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
@@ -137,11 +144,20 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             <div className="relative">
               <select
                 className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
-                value={filters.brand}
-                onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
+                value={filters.category}
+                onChange={(e) => {
+                  setFilters(prev => ({ ...prev, category: e.target.value, brand: 'all' }));
+                  const params = new URLSearchParams(searchParams);
+                  if (e.target.value === 'all') {
+                    params.delete('category');
+                  } else {
+                    params.set('category', e.target.value);
+                  }
+                  setSearchParams(params);
+                }}
               >
-                <option value="all">All Brands</option>
-                {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                <option value="all">Select Categories</option>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
               <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -149,14 +165,15 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             <div className="relative">
               <select
                 className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
-                value={filters.flavorProfile}
-                onChange={(e) => setFilters(prev => ({ ...prev, flavorProfile: e.target.value as any }))}
+                value={filters.brand}
+                onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
               >
-                <option value="all">All Profiles</option>
-                {['Fruity', 'Menthol', 'Dessert', 'Ice', 'Tobacco'].map(p => (
-                  <option key={p} value={p}>{p}</option>
+                <option value="all">Select Brand</option>
+                {availableBrands.map(b => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
                 ))}
               </select>
+              <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
             <div className="flex bg-surface rounded-lg p-1 border border-black/10">
