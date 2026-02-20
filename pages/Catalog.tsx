@@ -82,10 +82,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const availableBrands = useMemo(() => {
     if (filters.category === 'all') return brands;
     const selectedCategory = categories.find(c => c.id === filters.category);
+    const isDisposableCategory = selectedCategory && selectedCategory.slug && selectedCategory.slug.includes('disposable');
 
     // Fallback: Products that are in this category (check both ID and slug to be safe)
     const categoryProducts = products.filter(p => {
+      // Legacy data fallback: If a product has no category, it defaults to 'disposable-vapes'
+      if (!p.category && isDisposableCategory) return true;
       if (!p.category) return false;
+
       const matchesId = p.category === filters.category;
       const matchesSlug = selectedCategory ? p.category === selectedCategory.slug : false;
       return matchesId || matchesSlug;
@@ -93,6 +97,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const validBrandIds = new Set(categoryProducts.map(p => p.brandId));
 
     return brands.filter(b => {
+      // Legacy data fallback: If a brand has no category, it defaults to 'disposable-vapes'
+      if (!b.category && isDisposableCategory) return true;
+
       // 1. Check if the brand explicitly belongs to this category via the category "slug"
       if (selectedCategory && b.category === selectedCategory.slug) return true;
       // 2. Fallback check: Alternatively, check if the brand has the category ID directly (in case data model is mixed)
@@ -108,10 +115,17 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
       // Category Filter (NEW)
       if (filters.category !== 'all') {
         const selectedCat = categories.find(c => c.id === filters.category);
-        const matchesId = product.category === filters.category;
-        const matchesSlug = selectedCat ? product.category === selectedCat.slug : false;
+        const isDisposableCategory = selectedCat && selectedCat.slug && selectedCat.slug.includes('disposable');
 
-        if (!matchesId && !matchesSlug) return false;
+        // Legacy data fallback: If product has no category, assume it's a disposable
+        if (!product.category && isDisposableCategory) {
+          // It counts as a match for disposable categories
+        } else {
+          const matchesId = product.category === filters.category;
+          const matchesSlug = selectedCat ? product.category === selectedCat.slug : false;
+
+          if (!matchesId && !matchesSlug) return false;
+        }
       }
 
       // Brand Filter
