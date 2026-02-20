@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand, Category } from '../types';
-import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon } from 'lucide-react';
+import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { BrandService } from '../src/services/brandService';
@@ -57,6 +57,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const { currentStore, switchStore } = useStore();
   const [search, setSearch] = useState('');
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Note: We use 'products' from props directly.
   // App.tsx handles the fetching and real-time updates.
@@ -478,9 +479,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   };
 
   return (
-    <div className="flex h-screen bg-background text-text-primary overflow-hidden">
+    <div className="flex h-screen bg-background text-text-primary overflow-hidden relative">
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-black/5 bg-surface flex flex-col">
+      <aside className={`
+        fixed md:relative inset-y-0 left-0 z-50 transform 
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
+        md:translate-x-0 transition-transform duration-300 ease-in-out
+        w-64 border-r border-black/5 bg-surface flex flex-col shadow-2xl md:shadow-none
+      `}>
 
         {/* Sidebar Header */}
         <div className="p-6 border-b border-black/5">
@@ -496,7 +510,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           {dynamicCategories.map(category => (
             <button
               key={category.id}
-              onClick={() => setActiveTab(category.slug)}
+              onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
             >
               <Package className="w-4 h-4" />
@@ -508,21 +522,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           {/* Fallback/Utility for All Products if needed, or just Manage Categories */}
           <button
-            onClick={() => setActiveTab('products')}
+            onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
           >
             <CheckSquare className="w-4 h-4" /> All Items (Inventory)
           </button>
 
           <button
-            onClick={() => setActiveTab('categories')}
+            onClick={() => { setActiveTab('categories'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
           >
             <BarChart className="w-4 h-4" /> Manage Categories
           </button>
 
           <button
-            onClick={() => setActiveTab('brands')}
+            onClick={() => { setActiveTab('brands'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'brands' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
           >
             <Package className="w-4 h-4" /> Manage Brands
@@ -541,14 +555,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {/* Main Content */}
       < main className="flex-1 flex flex-col min-w-0" >
         {/* Header */}
-        < header className="h-[72px] border-b border-black/5 flex items-center justify-between px-8 bg-surface/50 backdrop-blur-sm" >
-          <h2 className="text-xl font-bold text-text-primary capitalize">
-            {activeTab === 'products' ? 'Products Management' :
-              activeTab === 'categories' ? 'Category Management' :
-                activeTab === 'brands' ? 'Brand Management' :
-                  `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
-          </h2>
-          <div className="flex items-center gap-4">
+        <header className="h-[72px] border-b border-black/5 flex items-center justify-between px-4 md:px-8 bg-surface/50 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 -ml-2 text-text-secondary hover:text-text-primary md:hidden"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className="text-xl font-bold text-text-primary capitalize truncate max-w-[200px] md:max-w-none">
+              {activeTab === 'products' ? 'Products Management' :
+                activeTab === 'categories' ? 'Category Management' :
+                  activeTab === 'brands' ? 'Brand Management' :
+                    `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 md:gap-4">
             {activeTab === 'products' && (
               <button
                 onClick={() => { setEditingProduct(undefined); setShowForm(true); }}
@@ -616,20 +638,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               </button>
             )}
           </div>
-        </header >
+        </header>
 
         {/* Content Area */}
-        < div className="flex-1 overflow-y-auto p-8" >
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
 
           {/* PRODUCT VIEW */}
           {
             activeTab === 'products' && (
               <>
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                   <div>
-                    <h1 className="text-3xl font-bold">Item Manager <span className="text-sm font-normal text-text-tertiary">({products.length} items)</span></h1>
+                    <h1 className="text-2xl md:text-3xl font-bold">Item Manager <span className="text-sm font-normal text-text-tertiary">({products.length} items)</span></h1>
                   </div>
-                  <div className="flex gap-4 items-center">
+                  <div className="flex gap-4 items-center w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                     {connectionError && (
                       <span className="text-xs text-red-400 bg-red-900/10 px-3 py-1 rounded-full border border-red-500/20">
                         {connectionError}
@@ -720,7 +742,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     return (
                       <div key={brand.id} className="p-6">
                         {/* Brand Header */}
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2">
                           <div className="flex items-center gap-4">
                             {brand.image && <img src={brand.image} alt={brand.name} className="w-10 h-10 rounded-lg object-cover bg-black/5" />}
                             <div>
