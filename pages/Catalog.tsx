@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
-import { Filter, Search, MoreVertical, Edit, Trash } from 'lucide-react';
+import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
-// import { ProductCard } from '../components/ProductCard'; // Removed
 import { THCProductCard } from '../components/THCProductCard';
 import { EdiblesProductCard } from '../components/EdiblesProductCard';
-
 import { Category } from '../types';
 
 interface CatalogProps {
@@ -28,13 +26,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     category: initialCategory,
     flavorProfile: 'all',
     nicotine: initialNic,
-    // availability: false, // Removed filter, now enforced
   });
 
   // Sync URL with filters
   React.useEffect(() => {
-    if (searchParams.get('category') !== filters.category) {
-      setFilters(prev => ({ ...prev, category: searchParams.get('category') || 'all' }));
+    const urlCategory = searchParams.get('category') || 'all';
+    const urlBrand = searchParams.get('brand') || 'all';
+    if (urlCategory !== filters.category || urlBrand !== filters.brand) {
+      setFilters(prev => ({ ...prev, category: urlCategory, brand: urlBrand }));
     }
   }, [searchParams]);
 
@@ -79,92 +78,128 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     setEditingProduct(undefined);
   };
 
+  // Helper: does a product belong to a given category?
+  const productMatchesCategory = (product: Product, categoryId: string) => {
+    if (categoryId === 'all') return true;
+    const selectedCat = categories.find(c => c.id === categoryId);
+    const isDisposable = selectedCat?.slug?.includes('disposable');
+    if (!product.category && isDisposable) return true;
+    if (!product.category) return false;
+    return product.category === categoryId || product.category === selectedCat?.slug;
+  };
+
+  // Brands visible for the selected category
   const availableBrands = useMemo(() => {
     if (filters.category === 'all') return brands;
     const selectedCategory = categories.find(c => c.id === filters.category);
-    const isDisposableCategory = selectedCategory && selectedCategory.slug && selectedCategory.slug.includes('disposable');
+    const isDisposable = selectedCategory?.slug?.includes('disposable');
 
-    // Fallback: Products that are in this category (check both ID and slug to be safe)
-    const categoryProducts = products.filter(p => {
-      // Legacy data fallback: If a product has no category, it defaults to 'disposable-vapes'
-      if (!p.category && isDisposableCategory) return true;
-      if (!p.category) return false;
-
-      const matchesId = p.category === filters.category;
-      const matchesSlug = selectedCategory ? p.category === selectedCategory.slug : false;
-      return matchesId || matchesSlug;
-    });
-    const validBrandIds = new Set(categoryProducts.map(p => p.brandId));
+    const categoryProductBrandIds = new Set(
+      products.filter(p => productMatchesCategory(p, filters.category)).map(p => p.brandId)
+    );
 
     return brands.filter(b => {
-      // Legacy data fallback: If a brand has no category, it defaults to 'disposable-vapes'
-      if (!b.category && isDisposableCategory) return true;
-
-      // 1. Check if the brand explicitly belongs to this category via the category "slug"
+      if (!b.category && isDisposable) return true;
       if (selectedCategory && b.category === selectedCategory.slug) return true;
-      // 2. Fallback check: Alternatively, check if the brand has the category ID directly (in case data model is mixed)
       if (b.category === filters.category) return true;
-      // 3. Fallback: Does this brand have any products currently listed under this category?
-      return validBrandIds.has(b.id);
+      return categoryProductBrandIds.has(b.id);
     });
   }, [brands, products, filters.category, categories]);
 
-  // Filter Logic
+  // Filtered products (only when a brand is selected)
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Category Filter (NEW)
-      if (filters.category !== 'all') {
-        const selectedCat = categories.find(c => c.id === filters.category);
-        const isDisposableCategory = selectedCat && selectedCat.slug && selectedCat.slug.includes('disposable');
-
-        // Legacy data fallback: If product has no category, assume it's a disposable
-        if (!product.category && isDisposableCategory) {
-          // It counts as a match for disposable categories
-        } else {
-          const matchesId = product.category === filters.category;
-          const matchesSlug = selectedCat ? product.category === selectedCat.slug : false;
-
-          if (!matchesId && !matchesSlug) return false;
-        }
-      }
-
-      // Brand Filter
+      if (!productMatchesCategory(product, filters.category)) return false;
       if (filters.brand !== 'all' && product.brandId !== filters.brand) return false;
-
-      // Flavor Profile
       if (filters.flavorProfile !== 'all' && !product.flavorProfile.includes(filters.flavorProfile)) return false;
-
-      // Nicotine
       if (filters.nicotine === 'zero' && !product.isNicotineFree) return false;
       if (filters.nicotine === 'nicotine' && product.isNicotineFree) return false;
-
-      // Availability - ALWAYS ENFORCE IN STOCK for frontend
       if (!product.inStock) return false;
-      // if (filters.availability && !product.inStock) return false;
-
-      // Search
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const name = (product.name || '').toLowerCase();
         const brand = (product.brandName || '').toLowerCase();
         return name.includes(q) || brand.includes(q);
       }
-
       return true;
     });
-  }, [products, filters, searchQuery]);
+  }, [products, filters, searchQuery, categories]);
+
+  const selectedBrandObj = brands.find(b => b.id === filters.brand);
+  const selectedCategoryObj = categories.find(c => c.id === filters.category);
+
+  // View mode:
+  // 'all'    - no category selected → show all products
+  // 'brands' - category selected but no brand → show brand cards
+  // 'products' - category + brand selected → show products
+  const viewMode = filters.category === 'all'
+    ? 'all'
+    : filters.brand === 'all'
+      ? 'brands'
+      : 'products';
+
+  const handleCategoryChange = (categoryId: string) => {
+    setFilters(prev => ({ ...prev, category: categoryId, brand: 'all' }));
+    const params = new URLSearchParams(searchParams);
+    if (categoryId === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', categoryId);
+    }
+    params.delete('brand');
+    setSearchParams(params);
+  };
+
+  const handleBrandSelect = (brandId: string) => {
+    setFilters(prev => ({ ...prev, brand: brandId }));
+    const params = new URLSearchParams(searchParams);
+    if (brandId === 'all') {
+      params.delete('brand');
+    } else {
+      params.set('brand', brandId);
+    }
+    setSearchParams(params);
+  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Strip */}
       <div className="pt-12 pb-12 px-6 border-b border-black/5 bg-elevated/50">
         <div className="max-w-[1200px] mx-auto">
+          {/* Breadcrumb */}
+          {viewMode !== 'all' && (
+            <div className="flex items-center gap-2 text-sm text-text-tertiary mb-3">
+              <button onClick={() => handleCategoryChange('all')} className="hover:text-gold transition-colors">All</button>
+              {selectedCategoryObj && (
+                <>
+                  <span>/</span>
+                  <button
+                    onClick={() => handleBrandSelect('all')}
+                    className={`hover:text-gold transition-colors ${viewMode === 'brands' ? 'text-text-primary' : ''}`}
+                  >
+                    {selectedCategoryObj.name}
+                  </button>
+                </>
+              )}
+              {viewMode === 'products' && selectedBrandObj && (
+                <>
+                  <span>/</span>
+                  <span className="text-text-primary">{selectedBrandObj.name}</span>
+                </>
+              )}
+            </div>
+          )}
+
           <h1 className="text-4xl font-bold mb-2 text-text-primary">
-            {filters.category !== 'all'
-              ? categories.find(c => c.id === filters.category)?.name || 'Products'
-              : 'All Vapes & Flavors'}
+            {viewMode === 'all' && 'All Vapes & Flavors'}
+            {viewMode === 'brands' && (selectedCategoryObj?.name || 'Brands')}
+            {viewMode === 'products' && (selectedBrandObj?.name || 'Products')}
           </h1>
-          <p className="text-text-secondary">Filter by brand, flavor profile, and nicotine level.</p>
+          <p className="text-text-secondary">
+            {viewMode === 'all' && 'Select a category to browse brands.'}
+            {viewMode === 'brands' && 'Choose a brand to see all available products.'}
+            {viewMode === 'products' && `All ${selectedBrandObj?.name || ''} products.`}
+          </p>
         </div>
       </div>
 
@@ -173,20 +208,12 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
         <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
           <div className="flex flex-wrap gap-3 items-center">
+            {/* Category Dropdown */}
             <div className="relative">
               <select
                 className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
                 value={filters.category}
-                onChange={(e) => {
-                  setFilters(prev => ({ ...prev, category: e.target.value, brand: 'all' }));
-                  const params = new URLSearchParams(searchParams);
-                  if (e.target.value === 'all') {
-                    params.delete('category');
-                  } else {
-                    params.set('category', e.target.value);
-                  }
-                  setSearchParams(params);
-                }}
+                onChange={(e) => handleCategoryChange(e.target.value)}
               >
                 <option value="all">Select Categories</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -194,128 +221,80 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
-            <div className="relative">
-              <select
-                className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
-                value={filters.brand}
-                onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
+            {/* Back to brands button when viewing products */}
+            {viewMode === 'products' && (
+              <button
+                onClick={() => handleBrandSelect('all')}
+                className="flex items-center gap-1 text-sm text-text-secondary hover:text-gold transition-colors border border-black/10 px-3 py-2 rounded-lg bg-surface"
               >
-                <option value="all">Select Brand</option>
-                {availableBrands.map(b => (
-                  <option key={b.id} value={b.id}>{b.name}</option>
-                ))}
-              </select>
-              <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+                <ArrowLeft className="w-4 h-4" />
+                Back to Brands
+              </button>
+            )}
 
-            <div className="flex bg-surface rounded-lg p-1 border border-black/10">
-              <button
-                onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setFilters(p => ({ ...p, nicotine: 'nicotine' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
-              >
-                Nicotine
-              </button>
-              <button
-                onClick={() => setFilters(p => ({ ...p, nicotine: 'zero' }))}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
-              >
-                Zero
-              </button>
-            </div>
-
-            {/* Availability Filter Removed - Always In Stock */}
+            {/* Nicotine toggle — only shown when browsing products */}
+            {viewMode === 'products' && (
+              <div className="flex bg-surface rounded-lg p-1 border border-black/10">
+                <button
+                  onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setFilters(p => ({ ...p, nicotine: 'nicotine' }))}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                >
+                  Nicotine
+                </button>
+                <button
+                  onClick={() => setFilters(p => ({ ...p, nicotine: 'zero' }))}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                >
+                  Zero
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="relative w-full lg:w-64">
-            <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search flavors..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface border border-black/10 text-text-primary pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
-            />
-          </div>
+          {/* Search — only shown when browsing products */}
+          {viewMode === 'products' && (
+            <div className="relative w-full lg:w-64">
+              <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search flavors..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-surface border border-black/10 text-text-primary pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
+              />
+            </div>
+          )}
 
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Main Content */}
       <div className="max-w-[1200px] mx-auto px-6 py-12">
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
-            <button
-              onClick={() => {
-                setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', category: 'all' } as any);
-                setSearchQuery('');
-                setSearchParams({});
-              }}
-              className="mt-4 text-gold hover:underline"
-            >
-              Clear all filters
-            </button>
-          </div>
-        ) : (
+
+        {/* ALL VIEW: when no category selected, show all products */}
+        {viewMode === 'all' && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-            {filteredProducts.map((product) => (
+            {products.filter(p => p.inStock).map((product) => (
               product.category === 'thc-disposables' ? (
                 <THCProductCard key={product.id} product={product} />
               ) : product.category === 'edibles' ? (
                 <EdiblesProductCard key={product.id} product={product} />
               ) : (
                 <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
-                  {/* Admin Controls */}
-                  {isAdmin && (
-                    <div className="absolute top-4 right-4 z-20">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setActiveMenuId(activeMenuId === product.id ? null : product.id);
-                        }}
-                        className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-
-                      {activeMenuId === product.id && (
-                        <div className="absolute right-0 mt-2 w-32 bg-surface border border-black/10 rounded-lg shadow-xl overflow-hidden z-30">
-                          <button
-                            onClick={(e) => handleEditProduct(e, product)}
-                            className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
-                          >
-                            <Edit className="w-3 h-3" /> Edit
-                          </button>
-                          <button
-                            onClick={(e) => handleDeleteProduct(e, product.id)}
-                            className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
-                          >
-                            <Trash className="w-3 h-3" /> Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
                   <div className="flex justify-between items-start mb-6">
                     <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
-                    {/* Stock Status Removed */}
                   </div>
-
                   <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                   </div>
-
                   <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
                   <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
-
                   <div className="flex flex-wrap gap-2 mt-auto">
                     <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
                     <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
@@ -325,24 +304,126 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
             ))}
           </div>
         )}
+
+        {/* BRANDS VIEW: category selected, show brand cards */}
+        {viewMode === 'brands' && (
+          availableBrands.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-text-tertiary text-lg">No brands found for this category.</p>
+              <button onClick={() => handleCategoryChange('all')} className="mt-4 text-gold hover:underline">
+                Clear category
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {availableBrands.map((brand) => (
+                <button
+                  key={brand.id}
+                  onClick={() => handleBrandSelect(brand.id)}
+                  className="group bg-card-bg border border-black/5 rounded-xl p-6 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg text-left"
+                >
+                  <div className="aspect-square bg-black/5 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+                    <img src={brand.image} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  </div>
+                  <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
+                  <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
+                  <p className="text-sm text-text-secondary mt-2 line-clamp-2">{brand.tagline}</p>
+                </button>
+              ))}
+            </div>
+          )
+        )}
+
+        {/* PRODUCTS VIEW: category + brand selected, show products */}
+        {viewMode === 'products' && (
+          filteredProducts.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
+              <button
+                onClick={() => {
+                  setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', category: filters.category } as any);
+                  setSearchQuery('');
+                }}
+                className="mt-4 text-gold hover:underline"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+              {filteredProducts.map((product) => (
+                product.category === 'thc-disposables' ? (
+                  <THCProductCard key={product.id} product={product} />
+                ) : product.category === 'edibles' ? (
+                  <EdiblesProductCard key={product.id} product={product} />
+                ) : (
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+                    {/* Admin Controls */}
+                    {isAdmin && (
+                      <div className="absolute top-4 right-4 z-20">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === product.id ? null : product.id);
+                          }}
+                          className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
+                        >
+                          <MoreVertical className="w-4 h-4" />
+                        </button>
+                        {activeMenuId === product.id && (
+                          <div className="absolute right-0 mt-2 w-32 bg-surface border border-black/10 rounded-lg shadow-xl overflow-hidden z-30">
+                            <button
+                              onClick={(e) => handleEditProduct(e, product)}
+                              className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
+                            >
+                              <Edit className="w-3 h-3" /> Edit
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteProduct(e, product.id)}
+                              className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            >
+                              <Trash className="w-3 h-3" /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
+                    </div>
+                    <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    </div>
+                    <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
+                    <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
+                      <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
+                    </div>
+                  </Link>
+                )
+              ))}
+            </div>
+          )
+        )}
+
       </div>
 
       {/* Admin Edit Modal */}
-      {
-        showEditForm && (
-          <AdminProductForm
-            initialData={editingProduct}
-            brands={brands}
-            categories={categories}
-            onSave={handleSaveProduct}
-            onCancel={() => {
-              setShowEditForm(false);
-              setEditingProduct(undefined);
-            }}
-          />
-        )
-      }
-    </div >
+      {showEditForm && (
+        <AdminProductForm
+          initialData={editingProduct}
+          brands={brands}
+          categories={categories}
+          onSave={handleSaveProduct}
+          onCancel={() => {
+            setShowEditForm(false);
+            setEditingProduct(undefined);
+          }}
+        />
+      )}
+    </div>
   );
 };
 
