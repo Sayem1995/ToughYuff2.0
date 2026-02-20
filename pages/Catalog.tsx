@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
-import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft } from 'lucide-react';
+import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
@@ -129,16 +129,16 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const selectedCategoryObj = categories.find(c => c.id === filters.category);
 
   // View mode:
-  // 'all'    - no category selected → show all products
-  // 'brands' - category selected but no brand → show brand cards
-  // 'products' - category + brand selected → show products
+  // 'categories' - no category selected → show category cards
+  // 'brands'     - category selected but no brand → show brand cards
+  // 'products'   - category + brand selected → show products
   const viewMode = filters.category === 'all'
-    ? 'all'
+    ? 'categories'
     : filters.brand === 'all'
       ? 'brands'
       : 'products';
 
-  const handleCategoryChange = (categoryId: string) => {
+  const handleCategorySelect = (categoryId: string) => {
     setFilters(prev => ({ ...prev, category: categoryId, brand: 'all' }));
     const params = new URLSearchParams(searchParams);
     if (categoryId === 'all') {
@@ -161,21 +161,43 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     setSearchParams(params);
   };
 
+  // Count products per category for the category cards
+  const productCountByCategory = useMemo(() => {
+    const counts: Record<string, number> = {};
+    categories.forEach(cat => {
+      counts[cat.id] = products.filter(p => productMatchesCategory(p, cat.id) && p.inStock).length;
+    });
+    return counts;
+  }, [products, categories]);
+
+  // Count products per brand for the brand cards
+  const productCountByBrand = useMemo(() => {
+    const counts: Record<string, number> = {};
+    availableBrands.forEach(brand => {
+      counts[brand.id] = products.filter(
+        p => p.brandId === brand.id && productMatchesCategory(p, filters.category) && p.inStock
+      ).length;
+    });
+    return counts;
+  }, [products, availableBrands, filters.category]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Strip */}
       <div className="pt-12 pb-12 px-6 border-b border-black/5 bg-elevated/50">
         <div className="max-w-[1200px] mx-auto">
           {/* Breadcrumb */}
-          {viewMode !== 'all' && (
+          {viewMode !== 'categories' && (
             <div className="flex items-center gap-2 text-sm text-text-tertiary mb-3">
-              <button onClick={() => handleCategoryChange('all')} className="hover:text-gold transition-colors">All</button>
+              <button onClick={() => handleCategorySelect('all')} className="hover:text-gold transition-colors">
+                All Categories
+              </button>
               {selectedCategoryObj && (
                 <>
                   <span>/</span>
                   <button
                     onClick={() => handleBrandSelect('all')}
-                    className={`hover:text-gold transition-colors ${viewMode === 'brands' ? 'text-text-primary' : ''}`}
+                    className={`hover:text-gold transition-colors ${viewMode === 'brands' ? 'text-text-primary font-medium' : ''}`}
                   >
                     {selectedCategoryObj.name}
                   </button>
@@ -184,45 +206,32 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               {viewMode === 'products' && selectedBrandObj && (
                 <>
                   <span>/</span>
-                  <span className="text-text-primary">{selectedBrandObj.name}</span>
+                  <span className="text-text-primary font-medium">{selectedBrandObj.name}</span>
                 </>
               )}
             </div>
           )}
 
           <h1 className="text-4xl font-bold mb-2 text-text-primary">
-            {viewMode === 'all' && 'All Vapes & Flavors'}
+            {viewMode === 'categories' && 'Browse by Category'}
             {viewMode === 'brands' && (selectedCategoryObj?.name || 'Brands')}
             {viewMode === 'products' && (selectedBrandObj?.name || 'Products')}
           </h1>
           <p className="text-text-secondary">
-            {viewMode === 'all' && 'Select a category to browse brands.'}
+            {viewMode === 'categories' && 'Choose a category to explore available brands.'}
             {viewMode === 'brands' && 'Choose a brand to see all available products.'}
             {viewMode === 'products' && `All ${selectedBrandObj?.name || ''} products.`}
           </p>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
-        <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
+      {/* Filter Bar — only shown in products view */}
+      {viewMode === 'products' && (
+        <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
+          <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
-          <div className="flex flex-wrap gap-3 items-center">
-            {/* Category Dropdown */}
-            <div className="relative">
-              <select
-                className="appearance-none bg-surface border border-black/10 text-text-primary pl-4 pr-10 py-2 rounded-lg focus:border-gold focus:outline-none text-sm"
-                value={filters.category}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-              >
-                <option value="all">Select Categories</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <Filter className="w-4 h-4 text-text-tertiary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            {/* Back to brands button when viewing products */}
-            {viewMode === 'products' && (
+            <div className="flex flex-wrap gap-3 items-center">
+              {/* Back to brands button */}
               <button
                 onClick={() => handleBrandSelect('all')}
                 className="flex items-center gap-1 text-sm text-text-secondary hover:text-gold transition-colors border border-black/10 px-3 py-2 rounded-lg bg-surface"
@@ -230,10 +239,8 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 <ArrowLeft className="w-4 h-4" />
                 Back to Brands
               </button>
-            )}
 
-            {/* Nicotine toggle — only shown when browsing products */}
-            {viewMode === 'products' && (
+              {/* Nicotine toggle */}
               <div className="flex bg-surface rounded-lg p-1 border border-black/10">
                 <button
                   onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
@@ -254,11 +261,9 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                   Zero
                 </button>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Search — only shown when browsing products */}
-          {viewMode === 'products' && (
+            {/* Search */}
             <div className="relative w-full lg:w-64">
               <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -269,40 +274,70 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 className="w-full bg-surface border border-black/10 text-text-primary pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
               />
             </div>
-          )}
 
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Brands view: back button in a lighter bar */}
+      {viewMode === 'brands' && (
+        <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-3 px-6">
+          <div className="max-w-[1200px] mx-auto">
+            <button
+              onClick={() => handleCategorySelect('all')}
+              className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-gold transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Categories
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-[1200px] mx-auto px-6 py-12">
 
-        {/* ALL VIEW: when no category selected, show all products */}
-        {viewMode === 'all' && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-            {products.filter(p => p.inStock).map((product) => (
-              product.category === 'thc-disposables' ? (
-                <THCProductCard key={product.id} product={product} />
-              ) : product.category === 'edibles' ? (
-                <EdiblesProductCard key={product.id} product={product} />
-              ) : (
-                <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
+        {/* CATEGORIES VIEW: show category cards */}
+        {viewMode === 'categories' && (
+          categories.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-text-tertiary text-lg">No categories found.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategorySelect(category.id)}
+                  className="group bg-card-bg border border-black/5 rounded-xl p-6 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg text-left"
+                >
+                  {/* Category image or icon placeholder */}
+                  <div className="aspect-square bg-black/5 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+                    {category.image ? (
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2 text-text-tertiary">
+                        <Tag className="w-10 h-10 opacity-40" />
+                      </div>
+                    )}
                   </div>
-                  <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                  </div>
-                  <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                  <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
-                    <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
-                  </div>
-                </Link>
-              )
-            ))}
-          </div>
+                  <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">
+                    {category.name}
+                  </h3>
+                  {category.description && (
+                    <p className="text-sm text-text-secondary mt-1 line-clamp-2">{category.description}</p>
+                  )}
+                  <p className="text-xs text-text-tertiary mt-2">
+                    {productCountByCategory[category.id] ?? 0} products
+                  </p>
+                </button>
+              ))}
+            </div>
+          )
         )}
 
         {/* BRANDS VIEW: category selected, show brand cards */}
@@ -310,8 +345,8 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
           availableBrands.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-text-tertiary text-lg">No brands found for this category.</p>
-              <button onClick={() => handleCategoryChange('all')} className="mt-4 text-gold hover:underline">
-                Clear category
+              <button onClick={() => handleCategorySelect('all')} className="mt-4 text-gold hover:underline">
+                Back to categories
               </button>
             </div>
           ) : (
@@ -326,8 +361,15 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                     <img src={brand.image} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                   </div>
                   <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
-                  <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
-                  <p className="text-sm text-text-secondary mt-2 line-clamp-2">{brand.tagline}</p>
+                  {brand.puffRange && (
+                    <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
+                  )}
+                  {brand.tagline && (
+                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{brand.tagline}</p>
+                  )}
+                  <p className="text-xs text-text-tertiary mt-2 font-medium">
+                    {productCountByBrand[brand.id] ?? 0} products
+                  </p>
                 </button>
               ))}
             </div>
@@ -341,7 +383,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               <p className="text-text-tertiary text-lg">No products found matching your filters.</p>
               <button
                 onClick={() => {
-                  setFilters({ brand: 'all', flavorProfile: 'all', nicotine: 'all', category: filters.category } as any);
+                  setFilters({ brand: filters.brand, flavorProfile: 'all', nicotine: 'all', category: filters.category } as any);
                   setSearchQuery('');
                 }}
                 className="mt-4 text-gold hover:underline"
@@ -352,7 +394,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
               {filteredProducts.map((product) => (
-                product.category === 'thc-disposables' ? (
+                (product.category === 'thc-disposables' || product.category === 'thc-cartridges') ? (
                   <THCProductCard key={product.id} product={product} />
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />

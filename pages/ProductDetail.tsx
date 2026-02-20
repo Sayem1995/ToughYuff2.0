@@ -51,8 +51,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div></div>;
   if (!product) return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
 
-  // THC View Check
-  if (product.category === 'thc-disposables') {
+  // THC View Check — covers both disposables and cartridges
+  if (product.category === 'thc-disposables' || product.category === 'thc-cartridges') {
     return <THCProductDetail product={product} />;
   }
 

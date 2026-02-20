@@ -48,6 +48,8 @@ export interface Category {
   name: string; // e.g., "DISPOSABLE VAPE"
   order: number;
   slug: string; // url-friendly
+  image?: string; // optional cover image URL
+  description?: string; // optional short description shown on category card
 }
 
 export interface Brand {

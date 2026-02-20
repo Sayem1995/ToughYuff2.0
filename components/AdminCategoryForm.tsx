@@ -10,11 +10,15 @@ interface AdminCategoryFormProps {
 
 const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSave, onCancel }) => {
     const [name, setName] = useState('');
+    const [image, setImage] = useState('');
+    const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (initialData) {
             setName(initialData.name);
+            setImage(initialData.image || '');
+            setDescription(initialData.description || '');
         }
     }, [initialData]);
 
@@ -35,15 +39,12 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                 .replace(/\s+/g, '-')
                 .replace(/[^\w-]+/g, '');
 
-            // We don't handle order here, it's handled by list position or defaults to end
             const dataToSave = {
                 name: name.trim(),
                 slug,
-                // Order will be handled by the caller or backend defaults
-                // For simplicity, we can pass 0 or current max + 1 if needed, 
-                // but usually resizing the list updates the order.
-                // Let's assume the caller handles order if it's a new item, or preserves it if editing.
-                order: initialData ? initialData.order : 999
+                order: initialData ? initialData.order : 999,
+                ...(image.trim() ? { image: image.trim() } : {}),
+                ...(description.trim() ? { description: description.trim() } : {}),
             } as any;
 
             await onSave(dataToSave);
@@ -66,9 +67,10 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                    {/* Category Name */}
                     <div>
-                        <label className="block text-sm text-text-secondary mb-1">Category Name</label>
+                        <label className="block text-sm text-text-secondary mb-1">Category Name <span className="text-red-400">*</span></label>
                         <input
                             type="text"
                             value={name}
@@ -77,6 +79,35 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                             className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             required
                             autoFocus
+                        />
+                    </div>
+
+                    {/* Image URL */}
+                    <div>
+                        <label className="block text-sm text-text-secondary mb-1">Image URL <span className="text-text-tertiary text-xs">(optional)</span></label>
+                        <input
+                            type="url"
+                            value={image}
+                            onChange={(e) => setImage(e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
+                        />
+                        {image && (
+                            <div className="mt-2 w-16 h-16 rounded-lg overflow-hidden border border-black/10 bg-black/5">
+                                <img src={image} alt="preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                        <label className="block text-sm text-text-secondary mb-1">Description <span className="text-text-tertiary text-xs">(optional)</span></label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="A short description of this category..."
+                            rows={3}
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none resize-none text-sm"
                         />
                     </div>
 

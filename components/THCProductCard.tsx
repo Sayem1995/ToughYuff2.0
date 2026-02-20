@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../types';
 import { useNavigate } from 'react-router-dom';
+import { Star } from 'lucide-react';
 
 interface THCProductCardProps {
     product: Product;
@@ -9,58 +10,79 @@ interface THCProductCardProps {
 export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
     const navigate = useNavigate();
 
+    // Build the card title: "Brand Name Product Name | size"
+    const titleParts = [product.brandName, product.name].filter(Boolean).join(' ');
+    const sizePart = [product.count, product.strength].filter(Boolean).join(' ');
+    const fullTitle = sizePart ? `${titleParts} | ${sizePart}` : titleParts;
+
+    // Category display label
+    const categoryLabel =
+        product.category === 'thc-disposables'
+            ? 'THC Disposables'
+            : product.category === 'thc-cartridges'
+                ? 'THC Cartridges'
+                : product.category || 'THC Products';
+
     return (
         <div
             onClick={() => navigate(`/product/${product.id}`)}
-            className="group cursor-pointer flex flex-col items-center bg-surface rounded-[2rem] p-6 transition-all duration-300 hover:shadow-xl border border-transparent hover:border-purple-100"
+            className="group cursor-pointer flex flex-col bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#3b0764]/30"
         >
-            {/* Strain/Flavor Label if applicable */}
             {/* Image */}
-            <div className="w-full aspect-[4/5] mb-6 relative overflow-hidden rounded-2xl bg-[#fafafa]">
+            <div className="w-full aspect-square bg-[#fafafa] overflow-hidden flex items-center justify-center p-4 relative">
                 <img
                     src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                    alt={product.name || 'Product'}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
-                {/* Quick Badges */}
-                <div className="absolute top-3 left-3 flex flex-col gap-2">
-                    {product.strength && (
-                        <span className="bg-black/90 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                            {product.strength}
-                        </span>
-                    )}
-                    {product.count && (
-                        <span className="bg-purple-600/90 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">
-                            {product.count}
-                        </span>
-                    )}
-                </div>
+                {/* Badges */}
+                {(product.strength || product.count) && (
+                    <div className="absolute top-2 left-2 flex flex-col gap-1">
+                        {product.strength && (
+                            <span className="bg-[#3b0764]/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                {product.strength}
+                            </span>
+                        )}
+                        {product.count && (
+                            <span className="bg-black/80 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                {product.count}
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Content */}
-            <div className="text-center w-full space-y-2">
-                {/* Rating or Brand */}
-                <div className="flex items-center justify-center gap-1">
+            <div className="p-4 flex flex-col flex-grow">
+                {/* Stars */}
+                <div className="flex items-center gap-1 mb-2">
                     {[1, 2, 3, 4, 5].map(i => (
-                        <svg key={i} className="w-3 h-3 text-orange-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                        <Star
+                            key={i}
+                            className="w-3 h-3 text-orange-400"
+                            fill={i <= 4 ? '#fb923c' : 'none'}
+                        />
                     ))}
-                    <span className="text-[10px] text-gray-400 ml-1">4 Reviews</span>
+                    <span className="text-xs text-gray-400 ml-1">0 Reviews</span>
                 </div>
 
-                <h3 className="font-bold text-lg text-text-primary leading-tight min-h-[3rem] line-clamp-2">
-                    {product.brandName} {product.name}
-                    {product.strength ? ` | ${product.strength}` : ''}
+                {/* Title */}
+                <h3 className="font-bold text-sm text-gray-900 leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
+                    {fullTitle}
                 </h3>
 
-                <p className="text-text-secondary text-sm">{product.category === 'thc-disposables' ? 'THC Edibles & Vapes' : 'Product'}</p>
+                {/* Category label */}
+                <p className="text-xs text-gray-500 mb-2">{categoryLabel}</p>
 
-                <div className="font-bold text-lg text-text-primary py-1">
+                {/* Price */}
+                <div className="font-bold text-base text-gray-900 mb-3">
                     ${product.price ? product.price.toFixed(2) : '0.00'}
                 </div>
 
-                {/* Select Options Button */}
+                {/* Button */}
                 <button
-                    className="w-full bg-[#3b0764] hover:bg-[#581c87] text-white font-bold py-3 rounded-lg uppercase tracking-wider text-sm transition-colors mt-2"
+                    onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}
+                    className="w-full bg-[#3b0764] hover:bg-[#4c1d95] text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest transition-colors mt-auto"
                 >
                     Select Options
                 </button>
