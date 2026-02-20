@@ -492,7 +492,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         </div>
 
         {/* Navigation Tabs */}
-        <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2 flex-1 overflow-y-auto">
           {dynamicCategories.map(category => (
             <button
               key={category.id}
