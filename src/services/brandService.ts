@@ -3,7 +3,7 @@ import {
     getDocs,
     getDoc,
     addDoc,
-    updateDoc,
+    setDoc,
     deleteDoc,
     doc,
     query,
@@ -52,10 +52,10 @@ export const BrandService = {
     updateBrand: async (id: string, updates: Partial<Brand>): Promise<void> => {
         try {
             const docRef = doc(db, BRANDS_COLLECTION, id);
-            await updateDoc(docRef, {
+            await setDoc(docRef, {
                 ...updates,
                 updatedAt: serverTimestamp()
-            });
+            }, { merge: true });
         } catch (error) {
             console.error("Error updating brand:", error);
             throw error;
@@ -77,7 +77,6 @@ export const BrandService = {
     saveBrandOrder: async (order: string[], storeId: string): Promise<void> => {
         try {
             const settingsRef = doc(db, 'settings', `brandOrder_${storeId}`);
-            const { setDoc } = await import('firebase/firestore');
             await setDoc(settingsRef, { order }, { merge: true });
         } catch (error) {
             console.error("Error saving brand order:", error);
