@@ -83,8 +83,13 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     if (filters.category === 'all') return brands;
     const selectedCategory = categories.find(c => c.id === filters.category);
 
-    // Fallback: Products that are in this category
-    const categoryProducts = products.filter(p => p.category === filters.category);
+    // Fallback: Products that are in this category (check both ID and slug to be safe)
+    const categoryProducts = products.filter(p => {
+      if (!p.category) return false;
+      const matchesId = p.category === filters.category;
+      const matchesSlug = selectedCategory ? p.category === selectedCategory.slug : false;
+      return matchesId || matchesSlug;
+    });
     const validBrandIds = new Set(categoryProducts.map(p => p.brandId));
 
     return brands.filter(b => {
@@ -102,9 +107,11 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     return products.filter(product => {
       // Category Filter (NEW)
       if (filters.category !== 'all') {
-        // If product has no category, it might belong to 'Disposable Vape' by default if we haven't migrated yet.
-        // For now, loose match or strictly match if product.category exists.
-        if (product.category !== filters.category) return false;
+        const selectedCat = categories.find(c => c.id === filters.category);
+        const matchesId = product.category === filters.category;
+        const matchesSlug = selectedCat ? product.category === selectedCat.slug : false;
+
+        if (!matchesId && !matchesSlug) return false;
       }
 
       // Brand Filter
