@@ -520,6 +520,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           >
             <BarChart className="w-4 h-4" /> Manage Categories
           </button>
+
+          <button
+            onClick={() => setActiveTab('brands')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'brands' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+          >
+            <Package className="w-4 h-4" /> Manage Brands
+          </button>
         </div>
 
 
@@ -538,7 +545,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <h2 className="text-xl font-bold text-text-primary capitalize">
             {activeTab === 'products' ? 'Products Management' :
               activeTab === 'categories' ? 'Category Management' :
-                `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
+                activeTab === 'brands' ? 'Brand Management' :
+                  `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
           </h2>
           <div className="flex items-center gap-4">
             {activeTab === 'products' && (
@@ -597,6 +605,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
               >
                 <Plus className="w-4 h-4" /> Add Category
+              </button>
+            )}
+            {activeTab === 'brands' && (
+              <button
+                onClick={() => { setEditingBrand(undefined); setShowBrandForm(true); }}
+                className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add Brand
               </button>
             )}
           </div>
@@ -907,6 +923,65 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     </div>
                   </SortableContext>
                 </DndContext>
+              </div>
+            )
+          }
+
+          {/* BRANDS MANAGEMENT VIEW */}
+          {
+            activeTab === 'brands' && (
+              <div className="bg-surface rounded-xl border border-black/5 p-6">
+                <h3 className="text-xl font-bold mb-6">All Brands ({allBrands.length})</h3>
+                {allBrands.length === 0 ? (
+                  <p className="text-text-tertiary text-center py-12">No brands found. Click "Add Brand" to create one.</p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {allBrands.map(brand => (
+                      <div key={brand.id} className="group bg-background border border-black/5 rounded-xl overflow-hidden hover:border-gold/30 hover:shadow-md transition-all">
+                        {/* Brand Image */}
+                        <div className="aspect-square bg-black/5 overflow-hidden flex items-center justify-center relative">
+                          {brand.image ? (
+                            <img src={brand.image} alt={brand.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          ) : (
+                            <div className="flex flex-col items-center gap-1 text-text-tertiary">
+                              <Package className="w-8 h-8 opacity-30" />
+                              <span className="text-xs opacity-50">No Image</span>
+                            </div>
+                          )}
+                          {/* Overlay edit shortcut */}
+                          <button
+                            onClick={() => handleEditBrand(brand)}
+                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold"
+                          >
+                            Edit Image
+                          </button>
+                        </div>
+                        {/* Info */}
+                        <div className="p-3">
+                          <h4 className="font-bold text-sm text-text-primary truncate">{brand.name}</h4>
+                          {brand.category && (
+                            <p className="text-xs text-text-tertiary mt-0.5 truncate capitalize">{brand.category.replace(/-/g, ' ')}</p>
+                          )}
+                          {/* Actions */}
+                          <div className="flex gap-2 mt-3">
+                            <button
+                              onClick={() => handleEditBrand(brand)}
+                              className="flex-1 py-1.5 bg-black/5 hover:bg-black/10 border border-black/5 rounded text-xs font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1"
+                            >
+                              <Edit2 className="w-3 h-3" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBrand(brand.id)}
+                              className="px-2 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded text-red-500 transition-colors"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )
           }
