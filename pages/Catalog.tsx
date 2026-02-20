@@ -81,10 +81,17 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
   const availableBrands = useMemo(() => {
     if (filters.category === 'all') return brands;
+    const selectedCategory = categories.find(c => c.id === filters.category);
     const categoryProducts = products.filter(p => p.category === filters.category);
     const validBrandIds = new Set(categoryProducts.map(p => p.brandId));
-    return brands.filter(b => validBrandIds.has(b.id));
-  }, [brands, products, filters.category]);
+    return brands.filter(b => {
+      // Check if brand is explicitly linked via category slug or id
+      if (selectedCategory && b.category === selectedCategory.slug) return true;
+      if (b.category === filters.category) return true;
+      // Fallback: Check if brand produces any products currently in this category
+      return validBrandIds.has(b.id);
+    });
+  }, [brands, products, filters.category, categories]);
 
   // Filter Logic
   const filteredProducts = useMemo(() => {
