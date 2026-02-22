@@ -241,7 +241,7 @@ const App: React.FC = () => {
       <Routes>
         {/* Public Routes - Gated by Passcode */}
         <Route path="/" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Home brands={displayBrands} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Home brands={displayBrands} categories={categories} /></Layout>
         } />
         <Route path="/catalog" element={
           !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Catalog products={products} brands={displayBrands} categories={categories} /></Layout>

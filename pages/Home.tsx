@@ -1,19 +1,56 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Wind, Ban } from 'lucide-react';
 import { FloatingGallery } from '../components/FloatingGallery';
 
 interface HomeProps {
   brands?: any[];
+  categories?: any[];
 }
 
-const Home: React.FC<HomeProps> = ({ brands = [] }) => {
-  // If no dynamic brands are passed/loaded yet, we might want to fall back or show nothing.
-  // But App.tsx logic ensures we have at least the ones matching products.
-
+const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
   // Use passed brands, or if empty (and loading), maybe show empty or skeleton.
   // For now, let's use what's passed.
   const displayBrands = brands.length > 0 ? brands : [];
+
+  // Group brands by category ID
+  const groupedBrands = useMemo(() => {
+    const groups: Record<string, typeof brands> = {};
+    const uncategorized: typeof brands = [];
+
+    // Pre-deduplicate categories to find the normalized names
+    const categoryMap = new Map<string, string>(); // slug/id -> name
+    categories.forEach(c => {
+      if (c.slug) categoryMap.set(c.slug, c.name);
+      if (c.id) categoryMap.set(c.id, c.name);
+    });
+
+    displayBrands.forEach(brand => {
+      // Default legacy brands with no category to 'disposable-vapes' (or 'disposable-vape' based on whatever slug is used)
+      let catId = brand.category;
+      if (!catId) catId = 'disposable-vapes';
+
+      const catName = categoryMap.get(catId) || categoryMap.get('disposable-vapes') || 'Disposable Vapes';
+
+      if (!groups[catName]) {
+        groups[catName] = [];
+      }
+      groups[catName].push(brand);
+    });
+
+    // Deduplicate brands within each group by name
+    Object.keys(groups).forEach(key => {
+      const seen = new Set();
+      groups[key] = groups[key].filter(b => {
+        const name = (b.name || '').toLowerCase().trim();
+        if (seen.has(name)) return false;
+        seen.add(name);
+        return true;
+      });
+    });
+
+    return groups;
+  }, [displayBrands, categories]);
 
   return (
     <div className="overflow-hidden">
@@ -71,25 +108,32 @@ const Home: React.FC<HomeProps> = ({ brands = [] }) => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayBrands.map((brand) => (
-              <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-black/5 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-semibold text-text-primary mb-2">{brand.name}</h3>
-                  <p className="text-text-secondary text-sm h-10">{brand.tagline}</p>
-                </div>
+          <div className="space-y-16">
+            {Object.entries(groupedBrands).map(([groupName, groupBrands]) => (
+              <div key={groupName}>
+                <h3 className="text-3xl font-bold mb-8 text-text-primary capitalize">{groupName}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {groupBrands.map((brand) => (
+                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-black/5 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
+                      <div className="mb-4">
+                        <h3 className="text-2xl font-semibold text-text-primary mb-2">{brand.name}</h3>
+                        <p className="text-text-secondary text-sm h-10">{brand.tagline}</p>
+                      </div>
 
-                <div className="flex flex-wrap gap-2 mb-8">
-                  <span className="bg-elevated text-gold text-xs px-2 py-1 rounded border border-gold/20">{brand.puffRange}</span>
-                  {brand.id.includes('nonic') && (
-                    <span className="bg-blue-50 text-accent-blue text-xs px-2 py-1 rounded border border-accent-blue/20">Zero Nicotine</span>
-                  )}
-                </div>
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        <span className="bg-elevated text-gold text-xs px-2 py-1 rounded border border-gold/20">{brand.puffRange}</span>
+                        {brand.id.includes('nonic') && (
+                          <span className="bg-blue-50 text-accent-blue text-xs px-2 py-1 rounded border border-accent-blue/20">Zero Nicotine</span>
+                        )}
+                      </div>
 
-                <div className="flex items-center text-gold text-sm font-bold tracking-wide group-hover:gap-2 transition-all">
-                  View Flavors <ArrowRight className="w-4 h-4 ml-1" />
+                      <div className="flex items-center text-gold text-sm font-bold tracking-wide group-hover:gap-2 transition-all">
+                        View Products <ArrowRight className="w-4 h-4 ml-1" />
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
