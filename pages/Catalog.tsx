@@ -170,14 +170,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
   const selectedCategoryObj = categories.find(c => c.id === filters.category);
 
   // View mode:
-  // 'categories' - no category selected → show category cards
+  // 'categories' - no category selected and no brand selected → show category cards
   // 'brands'     - category selected but no brand → show brand cards
-  // 'products'   - category + brand selected → show products
-  const viewMode = filters.category === 'all'
-    ? 'categories'
-    : filters.brand === 'all'
-      ? 'brands'
-      : 'products';
+  // 'products'   - brand selected (regardless of category) → show products
+  const viewMode = filters.brand !== 'all'
+    ? 'products'
+    : filters.category === 'all'
+      ? 'categories'
+      : 'brands';
 
   const handleCategorySelect = (categoryId: string) => {
     setFilters(prev => ({ ...prev, category: categoryId, brand: 'all' }));
@@ -272,13 +272,13 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
           <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
             <div className="flex flex-wrap gap-3 items-center">
-              {/* Back to brands button */}
+              {/* Back to brands/categories button */}
               <button
                 onClick={() => handleBrandSelect('all')}
                 className="flex items-center gap-1 text-sm text-text-secondary hover:text-gold transition-colors border border-black/10 px-3 py-2 rounded-lg bg-surface"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Brands
+                {filters.category === 'all' ? 'Back to Categories' : 'Back to Brands'}
               </button>
 
               {/* Nicotine toggle */}
