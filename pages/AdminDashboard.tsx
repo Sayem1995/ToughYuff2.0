@@ -85,9 +85,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [dynamicBrands, setDynamicBrands] = useState<Brand[]>([]);
   const [brandOrder, setBrandOrder] = useState<string[]>([]);
 
-  // Use props.categories directly
-  // Sort them by order for display and deduplicate by name globally
-  const dynamicCategories = React.useMemo(() => {
+  // Sort them by order for display and deduplicate by name globally for the sidebar
+  const sidebarCategories = React.useMemo(() => {
     const sorted = [...categories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
 
     const seenNames = new Set();
@@ -100,6 +99,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       seenNames.add(name);
       return true;
     });
+  }, [categories]);
+
+  // Use the full list of categories for the management view so admins can edit/delete all of them
+  const allCategories = React.useMemo(() => {
+    return [...categories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
   }, [categories]);
 
   // Sensors for Drag & Drop
@@ -182,10 +186,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
       if (activeTab === 'categories') {
         if (active.id !== over.id) {
-          const oldIndex = dynamicCategories.findIndex((c) => c.id === active.id);
-          const newIndex = dynamicCategories.findIndex((c) => c.id === over.id);
+          const oldIndex = allCategories.findIndex((c) => c.id === active.id);
+          const newIndex = allCategories.findIndex((c) => c.id === over.id);
 
-          const newOrderedCategories = arrayMove(dynamicCategories, oldIndex, newIndex);
+          const newOrderedCategories = arrayMove(allCategories, oldIndex, newIndex);
           // With props, we can't set state locally. We just fire the service call.
           // App.tsx will update props when Firestore updates.
 
@@ -345,9 +349,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     let isTHC = productCategory === 'thc-disposables';
     let isEdibles = productCategory.includes('edible');
 
-    // Also check the category NAME from dynamicCategories (handles old slugs after rename)
+    // Also check the category NAME from allCategories (handles old slugs after rename)
     if (!isEdibles && product.category) {
-      const cat = dynamicCategories.find(c => c.slug === product.category);
+      const cat = allCategories.find(c => c.slug === product.category);
       if (cat && (cat.name || '').toLowerCase().includes('edible')) {
         isEdibles = true;
       }
@@ -424,7 +428,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       await CategoryService.updateCategory(editingCategory.id, data);
     } else {
       // Assign an order to new categories
-      const newOrder = dynamicCategories.length > 0 ? Math.max(...dynamicCategories.map(c => c.order || 0)) + 1 : 0;
+      const newOrder = allCategories.length > 0 ? Math.max(...allCategories.map(c => c.order || 0)) + 1 : 0;
       await CategoryService.addCategory({ ...data, storeId: currentStore, order: newOrder });
     }
     setShowCategoryForm(false);
@@ -567,16 +571,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         {/* Navigation Tabs */}
         <div className="p-4 space-y-2 flex-1 overflow-y-auto">
           {(() => {
-            // Deduplicate categories by normalized name to prevent duplicate sidebar tabs
-            const seenNames = new Set();
-            const uniqueCategories = dynamicCategories.filter(cat => {
-              const name = (cat.name || '').toLowerCase().trim();
-              if (seenNames.has(name)) return false;
-              seenNames.add(name);
-              return true;
-            });
-
-            return uniqueCategories.map(category => (
+            return sidebarCategories.map(category => (
               <button
                 key={category.id}
                 onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
@@ -637,7 +632,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               {activeTab === 'products' ? 'Products Management' :
                 activeTab === 'categories' ? 'Category Management' :
                   activeTab === 'brands' ? 'Brand Management' :
-                    `${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
+                    `${sidebarCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
             </h2>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
@@ -660,7 +655,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                   </button>
                 )}
                 {(() => {
-                  const activeCatName = (dynamicCategories.find(c => c.slug === activeTab)?.name || '').toLowerCase();
+                  const activeCatName = (sidebarCategories.find(c => c.slug === activeTab)?.name || '').toLowerCase();
                   return activeCatName.includes('edible');
                 })() && (
                     <button
@@ -672,7 +667,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                   )}
                 <button
                   onClick={() => {
-                    const currentCat = dynamicCategories.find(c => c.slug === activeTab);
+                    const currentCat = sidebarCategories.find(c => c.slug === activeTab);
                     const catName = (currentCat?.name || '').toLowerCase();
                     setEditingProduct({ category: currentCat?.slug } as any);
 
@@ -685,7 +680,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     }
                   }}
                   className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
-                  title={`Add ${dynamicCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
+                  title={`Add ${sidebarCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
                 >
                   <Plus className="w-4 h-4" /> Add Item
                 </button>
@@ -991,7 +986,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             activeTab !== 'products' && activeTab !== 'categories' && (
               <div className="bg-surface rounded-xl border border-black/5 p-6">
                 <h3 className="text-xl font-bold mb-4">
-                  Manage {dynamicCategories.find(c => c.slug === activeTab)?.name} Items ({
+                  Manage {sidebarCategories.find(c => c.slug === activeTab)?.name} Items ({
                     sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).length
                   })
                 </h3>
@@ -1089,7 +1084,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             activeTab === 'categories' && (
               <div className="bg-surface rounded-xl border border-black/5 p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-bold">Manage Categories ({dynamicCategories.length})</h3>
+                  <h3 className="text-xl font-bold">Manage Categories ({allCategories.length})</h3>
                   <button
                     onClick={handleRepairCategories}
                     className="flex items-center gap-2 px-3 py-1.5 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-xs font-bold transition-colors"
@@ -1103,11 +1098,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={dynamicCategories.map(c => c.id)}
+                    items={allCategories.map(c => c.id)}
                     strategy={verticalListSortingStrategy}
                   >
                     <div className="space-y-2">
-                      {dynamicCategories.map(category => (
+                      {allCategories.map(category => (
                         <SortableCategoryItem
                           key={category.id}
                           id={category.id}
@@ -1131,7 +1126,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <AdminProductForm
             initialData={editingProduct}
             brands={allBrands} // Use allBrands which includes dynamic ones
-            categories={dynamicCategories}
+            categories={allCategories}
             onSave={handleSaveProduct}
             onCancel={() => {
               setShowForm(false);
@@ -1146,6 +1141,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <AdminTHCProductForm
             initialData={editingProduct}
             brands={allBrands}
+            categories={allCategories}
             onSave={handleSaveProduct}
             onCancel={() => {
               setShowTHCForm(false);
@@ -1160,6 +1156,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           <AdminEdiblesProductForm
             initialData={editingProduct}
             brands={allBrands}
+            categories={allCategories}
             onSave={handleSaveProduct}
             onCancel={() => {
               setShowEdiblesForm(false);
@@ -1182,6 +1179,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         )
       }
 
+      {
+        showCategoryForm && (
+          <AdminCategoryForm
+            initialData={editingCategory}
+            onSave={handleSaveCategory}
+            onCancel={() => {
+              setShowCategoryForm(false);
+              setEditingCategory(undefined);
+            }}
+            allCategories={allCategories}
+          />
+        )
+      }
       <SystemStatus />
     </div >
   );
