@@ -392,7 +392,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
   const handleSaveBrand = async (data: Omit<Brand, 'id'>) => {
     if (editingBrand) {
-      await BrandService.updateBrand(editingBrand.id, data);
+      // Ensure storeId is included in case this is the first time a static brand is being saved to Firestore
+      await BrandService.updateBrand(editingBrand.id, { ...data, storeId: currentStore });
     } else {
       await BrandService.addBrand({ ...data, storeId: currentStore });
     }
