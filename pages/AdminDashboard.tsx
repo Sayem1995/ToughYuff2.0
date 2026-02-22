@@ -533,16 +533,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
         {/* Navigation Tabs */}
         <div className="p-4 space-y-2 flex-1 overflow-y-auto">
-          {dynamicCategories.map(category => (
-            <button
-              key={category.id}
-              onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
-            >
-              <Package className="w-4 h-4" />
-              <span className="capitalize">{(category.name || '').toLowerCase()}</span>
-            </button>
-          ))}
+          {(() => {
+            // Deduplicate categories by normalized name to prevent duplicate sidebar tabs
+            const seenNames = new Set();
+            const uniqueCategories = dynamicCategories.filter(cat => {
+              const name = (cat.name || '').toLowerCase().trim();
+              if (seenNames.has(name)) return false;
+              seenNames.add(name);
+              return true;
+            });
+
+            return uniqueCategories.map(category => (
+              <button
+                key={category.id}
+                onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+              >
+                <Package className="w-4 h-4" />
+                <span className="capitalize">{(category.name || '').toLowerCase()}</span>
+              </button>
+            ));
+          })()}
 
           <div className="my-2 border-t border-black/5 mx-4" />
 
