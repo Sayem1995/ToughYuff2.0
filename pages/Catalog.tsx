@@ -82,8 +82,18 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const productMatchesCategory = (product: Product, categoryId: string) => {
     if (categoryId === 'all') return true;
     const selectedCat = categories.find(c => c.id === categoryId);
-    const isDisposable = selectedCat?.slug?.includes('disposable');
-    if (!product.category && isDisposable) return true;
+
+    // Make matching extremely robust for disposable vapes due to singular/plural duplicates
+    const isSelectedDisposable = selectedCat?.slug?.includes('disposable');
+    const isProductCategoryDisposable = product.category?.toLowerCase().includes('disposable');
+
+    // If the category being viewed is a 'disposable' category...
+    if (isSelectedDisposable) {
+      // Show products that are explicitly marked as some variant of 'disposable'
+      // or legacy products with no category assigned.
+      if (!product.category || isProductCategoryDisposable) return true;
+    }
+
     if (!product.category) return false;
     return product.category === categoryId || product.category === selectedCat?.slug;
   };
