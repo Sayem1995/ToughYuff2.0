@@ -126,7 +126,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     // Add static brands first
     BRANDS.forEach(b => {
       const nameKey = (b.name || '').toLowerCase().trim();
-      brandMap.set(b.id, b);
+      brandMap.set(b.id, { ...b }); // Clone to allow merging later
       nameMap.set(nameKey, b.id);
     });
 
@@ -136,13 +136,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       const nameKey = b.name.toLowerCase().trim();
       const existingId = nameMap.get(nameKey);
 
-      if (existingId && existingId !== b.id) {
-        // Found a duplicate brand with the same name! Merge it into the master.
-        const master = brandMap.get(existingId) as any;
+      if (existingId) {
+        // Found a duplicate brand or exact match! Merge dynamic properties into the master.
+        const master = brandMap.get(existingId);
         if (master) {
-          master.duplicateIds = master.duplicateIds || [];
-          if (!master.duplicateIds.includes(b.id)) {
-            master.duplicateIds.push(b.id);
+          // Merge dynamic data (like images) over the static data
+          // Prioritize non-empty string values from the dynamic brand
+          if (b.image) master.image = b.image;
+          if (b.tagline) master.tagline = b.tagline;
+          if (b.description) master.description = b.description;
+          if (b.puffRange) master.puffRange = b.puffRange;
+
+          if (existingId !== b.id) {
+            (master as any).duplicateIds = (master as any).duplicateIds || [];
+            if (!(master as any).duplicateIds.includes(b.id)) {
+              (master as any).duplicateIds.push(b.id);
+            }
           }
         }
       } else {
