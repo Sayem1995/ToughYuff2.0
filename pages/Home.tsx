@@ -71,7 +71,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
   return (
     <div className="overflow-hidden">
       {/* SECTION 2: HERO */}
-      <section className="min-h-screen pt-32 pb-20 relative bg-background flex items-center">
+      <section className="min-h-screen pt-24 lg:pt-20 pb-20 relative bg-background flex items-center">
         <div className="max-w-[1200px] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* Left Column */}
