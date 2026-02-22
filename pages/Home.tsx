@@ -30,12 +30,28 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
       let catId = brand.category;
       if (!catId) catId = 'disposable-vapes';
 
-      const catName = categoryMap.get(catId) || categoryMap.get('disposable-vapes') || 'Disposable Vapes';
+      let catName = categoryMap.get(catId) || categoryMap.get('disposable-vapes') || 'Disposable Vapes';
 
-      if (!groups[catName]) {
-        groups[catName] = [];
+      // Normalize plurals for grouping so "Disposable Vape" and "Disposable Vapes" end up in the same group.
+      // We'll use the plural "Disposable Vapes" as the standard display name if there's a conflict,
+      // but we need to group them together mathematically.
+      const normalizedCatName = catName.toLowerCase().trim().endsWith('s')
+        ? catName.slice(0, -1).toLowerCase().trim()
+        : catName.toLowerCase().trim();
+
+      // Find if we already have a group that matches this normalized name
+      let existingGroupKey = Object.keys(groups).find(k => {
+        const kNorm = k.toLowerCase().trim().endsWith('s') ? k.slice(0, -1).toLowerCase().trim() : k.toLowerCase().trim();
+        return kNorm === normalizedCatName;
+      });
+
+      // If we found a matching group, use its exact name key, else use the capitalized one we just got
+      const finalGroupName = existingGroupKey || catName;
+
+      if (!groups[finalGroupName]) {
+        groups[finalGroupName] = [];
       }
-      groups[catName].push(brand);
+      groups[finalGroupName].push(brand);
     });
 
     // Deduplicate brands within each group by name

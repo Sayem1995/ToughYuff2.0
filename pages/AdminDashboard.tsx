@@ -92,7 +92,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
     const seenNames = new Set();
     return sorted.filter(cat => {
-      const name = (cat.name || '').toLowerCase().trim();
+      let name = (cat.name || '').toLowerCase().trim();
+      // Normalize plurals (e.g., 'disposable vapes' -> 'disposable vape')
+      if (name.endsWith('s')) name = name.slice(0, -1);
+
       if (seenNames.has(name)) return false;
       seenNames.add(name);
       return true;

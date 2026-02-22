@@ -21,7 +21,10 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
     const sorted = [...rawCategories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
     const seenNames = new Set<string>();
     return sorted.filter(cat => {
-      const name = (cat.name || '').toLowerCase().trim();
+      let name = (cat.name || '').toLowerCase().trim();
+      // Normalize plurals (e.g., 'disposable vapes' -> 'disposable vape')
+      if (name.endsWith('s')) name = name.slice(0, -1);
+
       if (seenNames.has(name)) return false;
       seenNames.add(name);
       return true;
