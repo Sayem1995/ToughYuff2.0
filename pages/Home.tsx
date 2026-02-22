@@ -80,13 +80,17 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
               Premium Vape Showcase - 21+ Only
             </div>
 
-            <h1 className="text-[2.5rem] md:text-[4.5rem] font-bold leading-[1.1] tracking-tight mb-6">
-              Discover <span className="text-gold">Flavors</span><br />
-              That Hit Different
+            <h1 className="text-[3rem] md:text-[5rem] font-black leading-[1.1] tracking-tighter mb-4 text-text-primary uppercase whitespace-nowrap">
+              <span className="text-gold">Tough</span> Yuff
             </h1>
 
+            <h2 className="text-[2rem] md:text-[3rem] font-bold leading-[1.1] tracking-tight mb-6 text-white/90">
+              Discover Flavors <br className="hidden md:block" />
+              That Hit Different
+            </h2>
+
             <p className="text-text-secondary text-lg leading-relaxed max-w-[540px] mb-8">
-              TooughYuff brings together the most popular disposable vapes and zero-nicotine options from top brands – all in one clean, modern gallery.
+              Welcome to Tough Yuff. We bring together the most popular disposable vapes and zero-nicotine options from top brands – all in one clean, modern gallery.
             </p>
 
             <div className="flex items-center gap-2 text-sm font-medium text-text-primary mb-10">
