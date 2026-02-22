@@ -26,17 +26,8 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
     <nav className="fixed top-0 left-0 right-0 z-[9999] h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold/10 flex items-center">
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
-        <Link to="/" className="z-50 flex items-center gap-2">
-          {/* Logo Box - Forces black background for contrast if logo is light, or just use surface if logo is dark. 
-              Let's assume logo needs dark bg for now to be safe, or just remove bg if logo works on white. 
-              Let's try removing bg box and just showing logo. If user complains, we put it back. 
-              Actually, let's keep it but make it 'bg-black' explicitly as a design choice or use 'bg-gold' even. 
-              Let's stick to simple: No box, just logo. If logo is white text, it will be invisible. 
-              Safest: Keep the box but make it stylish. 
-          */}
-          <div className="bg-black/90 border border-white/10 rounded-lg p-1">
-            <img src="/logo.png?v=3" alt="ToughYuff" className="h-[48px] w-auto object-contain block" />
-          </div>
+        <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[48px] w-auto object-contain block py-1" />
         </Link>
 
         {/* Desktop Nav */}
@@ -136,7 +127,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
                   <div className="flex flex-col items-center mx-auto">
-                    <img src="/logo.png?v=3" alt="ToughYuff" className="h-16 w-auto object-contain mb-2" />
+                    <img src="/logo.png?v=3" alt="ToughYuff" className="h-16 w-auto object-contain mb-2 hover:opacity-80 transition-opacity" />
                     {/* Text Logo if needed, but image is likely enough based on ref */}
                     <div className="text-center">
                       <span className="block text-gold font-bold tracking-widest text-sm">TOUGH YUFF</span>
@@ -210,11 +201,8 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-surface border-t border-black/5 py-12 px-6">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="flex items-center gap-2">
-          {/* Logo Box - keeping consistent with header logic, simple wrapper or just image */}
-          <div className="bg-black/90 border border-white/10 rounded-lg p-1">
-            <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
-          </div>
+        <div className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-text-secondary">
