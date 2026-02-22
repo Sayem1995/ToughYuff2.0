@@ -27,7 +27,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
       <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[48px] w-auto object-contain block py-1" />
+          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[56px] w-auto object-contain block bg-white rounded-lg p-1.5 shadow-sm" />
         </Link>
 
         {/* Desktop Nav */}
@@ -127,7 +127,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
                   <div className="flex flex-col items-center mx-auto">
-                    <img src="/logo.png?v=3" alt="ToughYuff" className="h-16 w-auto object-contain mb-2 hover:opacity-80 transition-opacity" />
+                    <img src="/logo.png?v=3" alt="ToughYuff" className="h-20 w-auto object-contain bg-white rounded-xl p-2 mb-3 shadow-sm hover:opacity-90 transition-opacity" />
                     {/* Text Logo if needed, but image is likely enough based on ref */}
                     <div className="text-center">
                       <span className="block text-gold font-bold tracking-widest text-sm">TOUGH YUFF</span>
@@ -202,7 +202,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-surface border-t border-black/5 py-12 px-6">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <img src="/logo.png" alt="ToughYuff" className="h-16 w-auto object-contain" />
+          <img src="/logo.png" alt="ToughYuff" className="h-20 w-auto object-contain bg-white rounded-xl p-2 shadow-sm" />
         </div>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-text-secondary">
