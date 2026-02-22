@@ -15,7 +15,18 @@ interface CatalogProps {
   categories?: Category[];
 }
 
-const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [] }) => {
+const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: rawCategories = [] }) => {
+  // Deduplicate categories by normalized name to prevent showing duplicates from the database
+  const categories = useMemo(() => {
+    const sorted = [...rawCategories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
+    const seenNames = new Set<string>();
+    return sorted.filter(cat => {
+      const name = (cat.name || '').toLowerCase().trim();
+      if (seenNames.has(name)) return false;
+      seenNames.add(name);
+      return true;
+    });
+  }, [rawCategories]);
   const [searchParams, setSearchParams] = useSearchParams();
   const initialBrand = searchParams.get('brand') || 'all';
   const initialCategory = searchParams.get('category') || 'all';
@@ -82,20 +93,40 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const productMatchesCategory = (product: Product, categoryId: string) => {
     if (categoryId === 'all') return true;
     const selectedCat = categories.find(c => c.id === categoryId);
+    if (!selectedCat) return false;
 
-    // Make matching extremely robust for disposable vapes due to singular/plural duplicates
-    const isSelectedDisposable = selectedCat?.slug?.includes('disposable');
-    const isProductCategoryDisposable = product.category?.toLowerCase().includes('disposable');
+    const slug = selectedCat.slug || '';
+    const catName = (selectedCat.name || '').toLowerCase();
+    const productCat = (product.category || '').toLowerCase();
 
-    // If the category being viewed is a 'disposable' category...
-    if (isSelectedDisposable) {
-      // Show products that are explicitly marked as some variant of 'disposable'
-      // or legacy products with no category assigned.
-      if (!product.category || isProductCategoryDisposable) return true;
+    // Direct matches: product.category matches the category ID or slug
+    if (product.category === categoryId || product.category === slug) return true;
+
+    // For 'disposable vape(s)' categories: match products whose category contains 'disposable-vape' or 'disposable_vape'
+    // but NOT 'thc-disposable' (those belong to their own category)
+    if (catName.includes('disposable vape')) {
+      if (!productCat) return true; // Legacy products with no category default to disposable vapes
+      const isDisposableVape = productCat.includes('disposable-vape') || productCat.includes('disposable_vape') || productCat.includes('disposable vape');
+      const isTHC = productCat.includes('thc');
+      return isDisposableVape && !isTHC;
     }
 
-    if (!product.category) return false;
-    return product.category === categoryId || product.category === selectedCat?.slug;
+    // For 'thc disposables' categories: match products whose category contains 'thc'
+    if (catName.includes('thc')) {
+      return productCat.includes('thc');
+    }
+
+    // For 'edibles' categories
+    if (catName.includes('edible')) {
+      return productCat.includes('edible');
+    }
+
+    // For 'cigarettes' categories
+    if (catName.includes('cigarette')) {
+      return productCat.includes('cigarette');
+    }
+
+    return false;
   };
 
   // Brands visible for the selected category
