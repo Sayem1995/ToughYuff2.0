@@ -170,12 +170,18 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                                     className="w-full appearance-none border border-gray-300 rounded-lg px-4 py-3 pr-10 text-sm text-gray-700 bg-white focus:border-[#3b0764] focus:ring-1 focus:ring-[#3b0764]/20 outline-none font-medium cursor-pointer"
                                 >
                                     <option value="">CHOOSE AN OPTION</option>
-                                    {Array.isArray(product.flavorProfile) && product.flavorProfile.map((flavor, i) => (
-                                        <option key={i} value={flavor}>{flavor}</option>
-                                    ))}
-                                    {(!Array.isArray(product.flavorProfile) || product.flavorProfile.length === 0) && (
-                                        <option value="default">{product.name}</option>
-                                    )}
+                                    {(() => {
+                                        const options = (product.strains && product.strains.length > 0)
+                                            ? product.strains
+                                            : ((product.flavorProfile && product.flavorProfile.length > 0) ? product.flavorProfile : []);
+
+                                        if (options.length > 0) {
+                                            return options.map((opt, i) => (
+                                                <option key={i} value={opt}>{opt}</option>
+                                            ));
+                                        }
+                                        return <option value="default">{product.name}</option>;
+                                    })()}
                                 </select>
                                 <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                             </div>

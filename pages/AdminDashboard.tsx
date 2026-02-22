@@ -86,9 +86,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [brandOrder, setBrandOrder] = useState<string[]>([]);
 
   // Use props.categories directly
-  // Sort them by order for display
+  // Sort them by order for display and deduplicate by name globally
   const dynamicCategories = React.useMemo(() => {
-    return [...categories].sort((a, b) => (a.order || 0) - (b.order || 0) || a.name.localeCompare(b.name));
+    const sorted = [...categories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
+
+    const seenNames = new Set();
+    return sorted.filter(cat => {
+      const name = (cat.name || '').toLowerCase().trim();
+      if (seenNames.has(name)) return false;
+      seenNames.add(name);
+    });
   }, [categories]);
 
   // Sensors for Drag & Drop
@@ -103,16 +110,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   // Default to 'disposable-vape' if it exists, else 'products'
   const [activeTab, setActiveTab] = useState<string>('disposable-vapes');
 
-  // Combine static BRANDS with dynamic ones
+  // Combine static BRANDS with dynamic ones and deduplicate by Name
   const allBrands = React.useMemo(() => {
-    // Create a map to avoid duplicates if migration ran and added static brands to DB
     const brandMap = new Map<string, Brand>();
+    const nameMap = new Map<string, string>(); // name.toLowerCase() -> master ID
 
     // Add static brands first
-    BRANDS.forEach(b => brandMap.set(b.id, b));
+    BRANDS.forEach(b => {
+      const nameKey = (b.name || '').toLowerCase().trim();
+      brandMap.set(b.id, b);
+      nameMap.set(nameKey, b.id);
+    });
 
-    // Add/Overwrite with dynamic brands
-    dynamicBrands.forEach(b => brandMap.set(b.id, b));
+    // Add/Overwrite with dynamic brands, merging duplicates
+    dynamicBrands.forEach(b => {
+      if (!b.name) return;
+      const nameKey = b.name.toLowerCase().trim();
+      const existingId = nameMap.get(nameKey);
+
+      if (existingId && existingId !== b.id) {
+        // Found a duplicate brand with the same name! Merge it into the master.
+        const master = brandMap.get(existingId) as any;
+        if (master) {
+          master.duplicateIds = master.duplicateIds || [];
+          if (!master.duplicateIds.includes(b.id)) {
+            master.duplicateIds.push(b.id);
+          }
+        }
+      } else {
+        brandMap.set(b.id, b);
+        nameMap.set(nameKey, b.id);
+      }
+    });
 
     return Array.from(brandMap.values()) as Brand[];
   }, [dynamicBrands]);
