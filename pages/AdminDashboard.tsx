@@ -473,6 +473,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleFixCali = async () => {
+    if (!confirm("This will find all Cali 8000 and 20000 products that are out of stock or missing the Disposable Vapes category, and fix them. Continue?")) return;
+    try {
+      const allCali = products.filter(p => p.brandId === 'cali-ul8000' || p.brandId === 'cali-20000');
+      const toUpdate = allCali.filter(p => !p.inStock || p.category !== 'disposable-vapes');
+
+      console.log(`Found ${toUpdate.length} Cali products to fix.`);
+
+      for (const p of toUpdate) {
+        if (!p.id) continue;
+        await ProductService.updateProduct(p.id, {
+          inStock: true,
+          category: 'disposable-vapes'
+        });
+      }
+      alert(`Successfully fixed ${toUpdate.length} Cali products! They should now appear in the catalog.`);
+    } catch (e) {
+      console.error(e);
+      alert("Error fixing Cali products.");
+    }
+  };
+
   const handleBrandClick = (brandId: string) => {
     setFilters(prev => ({ ...prev, brand: brandId }));
     setActiveTab('products');
@@ -657,6 +679,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         {connectionError}
                       </span>
                     )}
+                    <button
+                      onClick={handleFixCali}
+                      className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors"
+                    >
+                      Fix Cali Products
+                    </button>
                     <button
                       onClick={handleMigrateData}
                       disabled={isMigrating}
