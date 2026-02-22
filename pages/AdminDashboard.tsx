@@ -476,19 +476,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const handleFixCali = async () => {
     if (!confirm("This will find all Cali 8000 and 20000 products that are out of stock or missing the Disposable Vapes category, and fix them. Continue?")) return;
     try {
-      const allCali = products.filter(p => p.brandId === 'cali-ul8000' || p.brandId === 'cali-20000');
-      const toUpdate = allCali.filter(p => !p.inStock || p.category !== 'disposable-vapes');
+      // Find the actual disposable category slug from the database
+      const disposableCat = categories.find(c => c.name.toLowerCase().includes('disposable vape') || c.name.toLowerCase().includes('disposables'));
+      const targetCategorySlug = disposableCat ? (disposableCat.slug || disposableCat.id) : 'disposable-vapes';
 
-      console.log(`Found ${toUpdate.length} Cali products to fix.`);
+      const allCali = products.filter(p => p.brandId === 'cali-ul8000' || p.brandId === 'cali-20000');
+      const toUpdate = allCali.filter(p => !p.inStock || p.category !== targetCategorySlug);
+
+      console.log(`Found ${toUpdate.length} Cali products to fix. Using category slug: ${targetCategorySlug}`);
 
       for (const p of toUpdate) {
         if (!p.id) continue;
         await ProductService.updateProduct(p.id, {
           inStock: true,
-          category: 'disposable-vapes'
+          category: targetCategorySlug
         });
       }
-      alert(`Successfully fixed ${toUpdate.length} Cali products! They should now appear in the catalog.`);
+      alert(`Successfully fixed ${toUpdate.length} Cali products using category '${targetCategorySlug}'. They should now appear in the catalog.`);
     } catch (e) {
       console.error(e);
       alert("Error fixing Cali products.");
