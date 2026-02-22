@@ -95,6 +95,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       const name = (cat.name || '').toLowerCase().trim();
       if (seenNames.has(name)) return false;
       seenNames.add(name);
+      return true;
     });
   }, [categories]);
 
