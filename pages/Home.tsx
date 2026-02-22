@@ -114,10 +114,10 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
                 <h3 className="text-3xl font-bold mb-8 text-text-primary capitalize">{groupName}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {groupBrands.map((brand) => (
-                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-black/5 rounded-2xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
+                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="group relative bg-card-bg border border-black/5 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 hover:border-gold hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
                       {brand.image && (
-                        <div className="aspect-square bg-black/5 rounded-xl mb-6 overflow-hidden flex items-center justify-center">
-                          <img src={brand.image} alt={brand.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <div className="h-48 bg-black/5 rounded-xl mb-5 overflow-hidden flex items-center justify-center">
+                          <img src={brand.image} alt={brand.name} className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" />
                         </div>
                       )}
                       <div className="mb-4">
