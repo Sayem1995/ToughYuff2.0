@@ -112,46 +112,39 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
 
             {/* Highlights Section */}
             <div className="mb-8">
-              <h3 className="text-xl font-bold text-text-primary mb-4">Highlights</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-50 border border-orange-100">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <Battery className="w-5 h-5 text-orange-500" />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0">
+                    <Battery className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Battery</div>
-                    <div className="font-semibold text-text-primary">{product.battery || 'Unknown'}</div>
-                  </div>
+                  <span className="text-sm text-text-primary">Battery: {product.battery || 'Unknown'}</span>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 border border-red-100">
-                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <Droplet className="w-5 h-5 text-red-500" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0">
+                    <Droplet className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Nicotine</div>
-                    <div className="font-semibold text-text-primary">{product.nicotine}</div>
-                  </div>
+                  <span className="text-sm text-text-primary">Nicotine: {product.nicotine}</span>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-pink-50 border border-pink-100">
-                  <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
-                    <Wind className="w-5 h-5 text-pink-500" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0">
+                    <Wind className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Puffs</div>
-                    <div className="font-semibold text-text-primary">{(product.puffCount || 0).toLocaleString()}+ per device</div>
-                  </div>
+                  <span className="text-sm text-text-primary">
+                    {product.brandName?.toLowerCase().includes('geek bar pulse')
+                      ? '15000-19999 puffs'
+                      : `${(product.puffCount || 0).toLocaleString()} puffs`}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 border border-green-100">
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-5 h-5 text-green-600" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0">
+                    <Zap className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <div className="text-xs text-text-tertiary uppercase font-bold tracking-wider">Charging</div>
-                    <div className="font-semibold text-text-primary">{product.isRechargeable ? 'Rechargeable' : 'Non-Rechargeable'}</div>
-                  </div>
+                  <span className="text-sm text-text-primary">
+                    {product.isRechargeable ? 'Rechargeable' : 'Non-Rechargeable'}
+                  </span>
                 </div>
               </div>
             </div>
