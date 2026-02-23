@@ -271,12 +271,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                 if (!confirm('Run Geek Bar Pulse Update Script?')) return;
                 try {
                   console.log("Running script...");
-                  const { db } = await import('../src/firebase');
-                  const { collection, getDocs, doc, updateDoc, query } = await import('firebase/firestore');
-
-                  const productsRef = collection(db, 'products');
-                  const q = query(productsRef);
-                  const snapshot = await getDocs(q);
 
                   const newFeatures = [
                     "✨ 5% Nicotine – enjoy pure flavor with 5% nicotine at all",
@@ -290,30 +284,32 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                   ];
 
                   let updatedCount = 0;
-                  for (const document of snapshot.docs) {
-                    const data = document.data();
-                    const brandId = (data.brandId || '').toLowerCase();
-                    const brandName = (data.brandName || '').toLowerCase();
-                    const name = (data.name || '').toLowerCase();
+
+                  // Use the already loaded products from props
+                  for (const product of products) {
+                    const brandId = (product.brandId || '').toLowerCase();
+                    const brandName = (product.brandName || '').toLowerCase();
+                    const name = (product.name || '').toLowerCase();
 
                     if (brandId.includes('geek-bar-pulse') || brandName.includes('geek bar pulse') || name.includes('geek bar pulse')) {
-                      await updateDoc(doc(db, 'products', document.id), { features: newFeatures });
+                      // Use ProductService which is already imported and initialized
+                      await ProductService.updateProduct(product.id as string, { features: newFeatures });
                       updatedCount++;
                     }
                   }
+
                   console.log(`Updated ${updatedCount} Geek Bar Pulse products!`);
-                  alert(`Updated ${updatedCount} Geek Bar Pulse products! Refreshing...`);
+                  alert(`Successfully updated ${updatedCount} Geek Bar Pulse products! Refreshing...`);
                   window.location.reload();
                 } catch (e: any) {
                   alert("Error running update: " + e.message);
                 }
               }}
-              className="mt-4 px-4 py-2 bg-red-600 text-white font-bold rounded"
+              className="mt-4 px-6 py-3 bg-red-600 text-white font-bold rounded-lg relative z-50 shadow-xl cursor-pointer"
             >
               RUN GEEK BAR PULSE UPDATE SCRIPT
             </button>
           )}
-
         </div>
       </div>
 
