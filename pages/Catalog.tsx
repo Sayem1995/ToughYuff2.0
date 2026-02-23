@@ -263,6 +263,57 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
             {viewMode === 'brands' && 'Choose a brand to see all available products.'}
             {viewMode === 'products' && `All ${selectedBrandObj?.name || ''} products.`}
           </p>
+
+          {/* TEMP BUTTON FOR DB SCRIPT */}
+          {isAdmin && (
+            <button
+              onClick={async () => {
+                if (!confirm('Run Geek Bar Pulse Update Script?')) return;
+                try {
+                  console.log("Running script...");
+                  const { db } = await import('../src/firebase');
+                  const { collection, getDocs, doc, updateDoc, query } = await import('firebase/firestore');
+
+                  const productsRef = collection(db, 'products');
+                  const q = query(productsRef);
+                  const snapshot = await getDocs(q);
+
+                  const newFeatures = [
+                    "✨ 5% Nicotine – enjoy pure flavor with 5% nicotine at all",
+                    "🔥 Up to 15,000 puffs in Regular Mode for long-lasting enjoyment",
+                    "⚡ Pulse Mode: 7,500 puffs for a stronger, more responsive hit",
+                    "📱 World’s first full-screen disposable vape – futuristic and eye-catching",
+                    "💨 Dual mesh coil for smooth, rich, and consistent vapor",
+                    "🔋 650mAh rechargeable battery (Type-C) – reliable power anytime",
+                    "🧠 Dual-core control system for stable performance",
+                    "👜 Compact, stylish, and easy to carry anywhere"
+                  ];
+
+                  let updatedCount = 0;
+                  for (const document of snapshot.docs) {
+                    const data = document.data();
+                    const brandId = (data.brandId || '').toLowerCase();
+                    const brandName = (data.brandName || '').toLowerCase();
+                    const name = (data.name || '').toLowerCase();
+
+                    if (brandId.includes('geek-bar-pulse') || brandName.includes('geek bar pulse') || name.includes('geek bar pulse')) {
+                      await updateDoc(doc(db, 'products', document.id), { features: newFeatures });
+                      updatedCount++;
+                    }
+                  }
+                  console.log(`Updated ${updatedCount} Geek Bar Pulse products!`);
+                  alert(`Updated ${updatedCount} Geek Bar Pulse products! Refreshing...`);
+                  window.location.reload();
+                } catch (e: any) {
+                  alert("Error running update: " + e.message);
+                }
+              }}
+              className="mt-4 px-4 py-2 bg-red-600 text-white font-bold rounded"
+            >
+              RUN GEEK BAR PULSE UPDATE SCRIPT
+            </button>
+          )}
+
         </div>
       </div>
 
