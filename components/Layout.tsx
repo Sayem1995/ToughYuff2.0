@@ -136,7 +136,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
                   <div className="flex flex-col items-center mx-auto">
-                    <Link to="/" onClick={closeMobileMenu}>
+                    <Link to="/" onClick={() => setIsOpen(false)}>
                       <div className="inline-block relative group">
                         <img src="/logo.png?v=3" alt="ToughYuff" className="h-20 w-auto object-contain bg-surface border border-black/5 rounded-xl p-2 mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:border-gold/30" />
                         <div className="absolute inset-0 bg-gradient-to-tr from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl mix-blend-overlay"></div>
