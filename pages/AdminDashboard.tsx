@@ -11,6 +11,7 @@ import AdminProductForm from '../components/AdminProductForm';
 import AdminTHCProductForm from '../components/AdminTHCProductForm';
 import AdminEdiblesProductForm from '../components/AdminEdiblesProductForm';
 import AdminBrandForm from '../components/AdminBrandForm';
+import { syncGeekBarFlavors } from '../src/utils/syncFlavors';
 
 import AdminCategoryForm from '../components/AdminCategoryForm';
 import { SortableBrandItem } from '../components/SortableBrandItem';
@@ -57,6 +58,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const { currentStore, switchStore } = useStore();
   const [search, setSearch] = useState('');
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Note: We use 'products' from props directly.
@@ -737,6 +739,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors"
                     >
                       Fix Cali Products
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!confirm("Sync Geek Bar Pulse flavors? This will update names and descriptions in Firestore.")) return;
+                        setIsSyncing(true);
+                        const res = await syncGeekBarFlavors(products);
+                        setIsSyncing(false);
+                        if (res.success) alert(`Synced ${res.count} products!`);
+                        else alert("Sync failed.");
+                      }}
+                      disabled={isSyncing}
+                      className="px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 font-bold text-sm rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {isSyncing ? 'Syncing...' : 'Sync Geek Bar Pulse Flavors'}
                     </button>
                     <button
                       onClick={handleMigrateData}
