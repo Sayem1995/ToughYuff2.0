@@ -285,22 +285,22 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
               </button>
 
               {/* Nicotine toggle */}
-              <div className="flex bg-surface rounded-lg p-1 border border-black/10">
+              <div className="flex bg-surface rounded-lg p-1 border border-black/10 shadow-sm">
                 <button
                   onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => setFilters(p => ({ ...p, nicotine: 'nicotine' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
                 >
                   Nicotine
                 </button>
                 <button
                   onClick={() => setFilters(p => ({ ...p, nicotine: 'zero' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/10 text-text-primary' : 'text-text-tertiary hover:text-text-primary'}`}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
                 >
                   Zero
                 </button>
@@ -353,15 +353,15 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className="group bg-card-bg border border-black/5 rounded-xl p-6 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg text-left"
+                  className="group bg-surface border border-black/5 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
                   {/* Category image or icon placeholder */}
-                  <div className="aspect-square bg-black/5 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
+                  <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
                     {category.image ? (
                       <img
                         src={category.image}
                         alt={category.name}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md"
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-2 text-text-tertiary">
@@ -399,10 +399,10 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                 <button
                   key={brand.id}
                   onClick={() => handleBrandSelect(brand.id)}
-                  className="group bg-card-bg border border-black/5 rounded-xl p-6 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg text-left"
+                  className="group bg-surface border border-black/5 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
-                  <div className="aspect-square bg-black/5 rounded-lg mb-4 overflow-hidden flex items-center justify-center">
-                    <img src={brand.image} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
+                    <img src={brand.image} alt={brand.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
                   </div>
                   <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
                   {brand.puffRange && (
@@ -443,7 +443,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />
                 ) : (
-                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-card-bg border border-black/5 rounded-xl p-8 transition-all hover:-translate-y-1 hover:border-gold/50 hover:shadow-lg">
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface border border-black/5 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 flex flex-col">
                     {/* Admin Controls */}
                     {isAdmin && (
                       <div className="absolute top-4 right-4 z-20">
@@ -453,7 +453,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                             e.stopPropagation();
                             setActiveMenuId(activeMenuId === product.id ? null : product.id);
                           }}
-                          className="p-2 bg-white/50 hover:bg-white/80 text-text-primary rounded-full transition-colors backdrop-blur-sm shadow-sm"
+                          className="p-2 bg-black/5 text-text-primary rounded-full transition-colors hover:bg-black/10"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
@@ -467,7 +467,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                             </button>
                             <button
                               onClick={(e) => handleDeleteProduct(e, product.id)}
-                              className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2"
+                              className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center gap-2"
                             >
                               <Trash className="w-3 h-3" /> Delete
                             </button>
@@ -475,17 +475,17 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                         )}
                       </div>
                     )}
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider">{product.brandName}</div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="text-[10px] font-bold text-gold uppercase tracking-widest bg-gold/10 px-2 py-1 rounded">{product.brandName}</div>
                     </div>
-                    <div className="aspect-square bg-black/5 rounded-lg mb-6 overflow-hidden flex items-center justify-center">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
+                      <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
                     </div>
-                    <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                    <p className="text-sm text-text-secondary line-clamp-2 mb-6">{product.description}</p>
+                    <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-gold transition-colors leading-tight line-clamp-2">{product.name}</h3>
+                    <p className="text-sm text-text-secondary line-clamp-2 mb-6 flex-grow">{product.description}</p>
                     <div className="flex flex-wrap gap-2 mt-auto">
-                      <span className="px-2 py-1 bg-elevated rounded border border-black/5 text-xs text-text-secondary">{product.puffCount} Puffs</span>
-                      <span className={`px-2 py-1 bg-elevated rounded border text-xs ${product.isNicotineFree ? 'border-accent-blue/30 text-accent-blue' : 'border-black/5 text-text-secondary'}`}>{product.nicotine}</span>
+                      <span className="px-2 py-1 bg-black/5 rounded text-[10px] uppercase tracking-wider font-bold text-text-secondary font-mono">{product.puffCount} Puffs</span>
+                      <span className={`px-2 py-1 rounded text-[10px] uppercase tracking-wider font-bold font-mono ${product.isNicotineFree ? 'bg-blue-50 text-accent-blue' : 'bg-black/5 text-text-secondary'}`}>{product.nicotine}</span>
                     </div>
                   </Link>
                 )

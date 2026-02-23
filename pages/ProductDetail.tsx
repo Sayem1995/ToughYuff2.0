@@ -75,19 +75,19 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Product Image */}
-          <div className="aspect-square bg-card-bg border border-black/5 rounded-2xl flex items-center justify-center relative overflow-hidden group hover:border-gold/30 transition-colors shadow-sm">
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-black/5" />
+          <div className="aspect-square bg-surface border border-black/5 rounded-2xl flex items-center justify-center relative overflow-hidden group hover:border-gold/30 transition-colors shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent group-hover:from-black/10 transition-colors" />
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover p-8 drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-contain p-8 drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
             />
           </div>
 
           {/* Details */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <span className="bg-elevated text-gold text-xs font-bold px-3 py-1 rounded border border-gold/20 uppercase tracking-wider">
+              <span className="bg-black/5 text-gold text-xs font-bold px-3 py-1 rounded border border-gold/20 uppercase tracking-wider">
                 {product.brandName}
               </span>
               {product.isNicotineFree && (
@@ -199,7 +199,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
             <h2 className="text-2xl font-bold mb-8 text-text-primary">More from {product.brandName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map(rel => (
-                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-card-bg border border-black/5 hover:border-gold/30 rounded-xl p-6 transition-colors shadow-sm hover:shadow-md">
+                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
                   <div className="text-lg font-bold text-text-primary mb-1">{rel.name}</div>
                   <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
                 </Link>

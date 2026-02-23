@@ -26,10 +26,10 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
     return (
         <div
             onClick={() => navigate(`/product/${product.id}`)}
-            className="group cursor-pointer flex flex-col bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#3b0764]/30"
+            className="group cursor-pointer flex flex-col bg-surface rounded-2xl border border-black/5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 hover:border-gold/30"
         >
             {/* Image */}
-            <div className="w-full aspect-square bg-[#fafafa] overflow-hidden flex items-center justify-center p-4 relative">
+            <div className="w-full aspect-square bg-gradient-to-br from-black/5 to-transparent overflow-hidden flex items-center justify-center p-4 relative group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
                 <img
                     src={product.image}
                     alt={product.name || 'Product'}
@@ -39,7 +39,7 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
                 {(product.strength || product.count) && (
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                         {product.strength && (
-                            <span className="bg-[#3b0764]/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                            <span className="bg-text-primary text-background text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
                                 {product.strength}
                             </span>
                         )}
@@ -53,36 +53,36 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
             </div>
 
             {/* Content */}
-            <div className="p-4 flex flex-col flex-grow">
+            <div className="p-6 flex flex-col flex-grow">
                 {/* Stars */}
-                <div className="flex items-center gap-1 mb-2">
+                <div className="flex items-center gap-1 mb-3">
                     {[1, 2, 3, 4, 5].map(i => (
                         <Star
                             key={i}
-                            className="w-3 h-3 text-orange-400"
-                            fill={i <= 4 ? '#fb923c' : 'none'}
+                            className="w-3.5 h-3.5 text-gold"
+                            fill={i <= 4 ? '#C9A84C' : 'none'}
                         />
                     ))}
-                    <span className="text-xs text-gray-400 ml-1">0 Reviews</span>
+                    <span className="text-xs text-text-tertiary ml-2 font-medium">0 Reviews</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="font-bold text-sm text-gray-900 leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
+                <h3 className="font-bold text-lg text-text-primary leading-tight mb-2 line-clamp-2 min-h-[3rem] group-hover:text-gold transition-colors">
                     {fullTitle}
                 </h3>
 
                 {/* Category label */}
-                <p className="text-xs text-gray-500 mb-2">{categoryLabel}</p>
+                <p className="text-sm font-medium text-text-secondary mb-4">{categoryLabel}</p>
 
                 {/* Price */}
-                <div className="font-bold text-base text-gray-900 mb-3">
+                <div className="font-bold text-xl text-text-primary mb-6">
                     ${product.price ? product.price.toFixed(2) : '0.00'}
                 </div>
 
                 {/* Button */}
                 <button
                     onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}
-                    className="w-full bg-[#3b0764] hover:bg-[#4c1d95] text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest transition-colors mt-auto"
+                    className="w-full bg-surface border border-black/10 hover:border-gold/50 hover:bg-gold/5 text-text-primary hover:text-gold font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition-all mt-auto shadow-sm"
                 >
                     Select Options
                 </button>

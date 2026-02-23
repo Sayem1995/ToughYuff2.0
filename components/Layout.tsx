@@ -32,7 +32,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className={`fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[9999] h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-white/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
+    <nav className={`fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[9999] h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-black/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
       <div className="w-full px-6 md:px-8 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -136,8 +136,12 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 pb-2">
                   <div className="flex flex-col items-center mx-auto">
-                    <img src="/logo.png?v=3" alt="ToughYuff" className="h-20 w-auto object-contain bg-white rounded-xl p-2 mb-3 shadow-sm hover:opacity-90 transition-opacity" />
-                    {/* Text Logo if needed, but image is likely enough based on ref */}
+                    <Link to="/" onClick={closeMobileMenu}>
+                      <div className="inline-block relative group">
+                        <img src="/logo.png?v=3" alt="ToughYuff" className="h-20 w-auto object-contain bg-surface border border-black/5 rounded-xl p-2 mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:border-gold/30" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl mix-blend-overlay"></div>
+                      </div>
+                    </Link>
                     <div className="text-center">
                       <span className="block text-gold font-bold tracking-widest text-sm">TOUGH YUFF</span>
                       <span className="block text-[10px] text-text-tertiary tracking-[0.2em]">VAPE STORE</span>
@@ -154,11 +158,11 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 {/* Search Bar */}
                 <div className="px-6 py-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
                     <input
                       type="text"
                       placeholder="Search for products..."
-                      className="w-full bg-white/5 border border-white/10 text-white pl-10 pr-4 py-3 rounded-full text-sm outline-none focus:border-gold/50 placeholder:text-gray-500"
+                      className="w-full bg-black/5 border border-black/10 text-text-primary pl-10 pr-4 py-3 rounded-full text-sm outline-none focus:border-gold/50 placeholder:text-text-tertiary"
                     />
                   </div>
                 </div>
@@ -193,8 +197,9 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   <Link to="/login" onClick={() => setIsOpen(false)} className="block text-center text-sm font-bold text-gold/80 mb-4 hover:text-gold tracking-widest">
                     LOGIN / REGISTER
                   </Link>
-                  <div className="text-center text-[10px] text-gray-600">
-                    © 2026 TOUGH YUFF
+                  <p className="text-xs font-bold text-text-primary uppercase tracking-wide">ToughYuff Smoke Shop</p>
+                  <div className="text-center text-[10px] text-text-secondary">
+                    <p>123 Vapor Lane, Metro City, ST 90210</p>
                   </div>
                 </div>
               </motion.div>

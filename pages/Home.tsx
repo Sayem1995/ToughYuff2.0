@@ -119,7 +119,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
       {/* SECTION 1: HERO (THE OPENING SHOT) */}
       <section className="min-h-[100dvh] pt-32 pb-20 relative bg-background flex items-center bg-gradient-to-t from-background via-background/80 to-transparent">
         {/* Cinematic dark overlay pattern could go here, but background colors handle it */}
-        <div className="absolute inset-0 bg-black/60 z-0"></div>
+        <div className="absolute inset-0 bg-white/40 z-0"></div>
         <div className="max-w-[1200px] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-end z-10 h-full pb-20">
 
           {/* Left Column - Pushed to bottom-left third */}
@@ -132,7 +132,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
               Premium <span className="text-gold">Vapes</span>
             </h1>
 
-            <h2 className="hero-stagger text-[4rem] md:text-[7rem] font-serif italic leading-[1] tracking-tight mb-8 text-white/90">
+            <h2 className="hero-stagger text-[4rem] md:text-[7rem] font-serif italic leading-[1] tracking-tight mb-8 text-black/90">
               Tough Yuff.
             </h2>
 
@@ -141,21 +141,21 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
             </p>
 
             <div className="hero-stagger flex flex-wrap gap-4">
-              <Link to="/catalog" className="bg-gold text-[#0D0D12] px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:brightness-110 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 overflow-hidden relative group">
+              <Link to="/catalog" className="bg-gold text-white px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:brightness-110 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 overflow-hidden relative group">
                 <span className="relative z-10">Browse All Brands</span>
               </Link>
             </div>
           </div>
 
           {/* Right Column */}
-          <div className="hero-stagger relative h-[600px] md:h-[800px] hidden lg:block opacity-60 mix-blend-screen">
+          <div className="hero-stagger relative h-[600px] md:h-[800px] hidden lg:block opacity-60 mix-blend-darken">
             <FloatingGallery />
           </div>
         </div>
       </section>
 
       {/* SECTION 2: THE PHILOSOPHY / MANIFESTO */}
-      <section className="py-32 bg-[#0A0A0E] relative manifesto-container border-y border-white/5">
+      <section className="py-32 bg-[#FFFFFF] relative manifesto-container border-y border-black/5">
         <div className="max-w-[1000px] mx-auto px-6 text-center">
           <p className="manifesto-text text-xl md:text-2xl text-text-tertiary font-sans mb-6">
             Most vape shops focus on: <span className="text-text-secondary line-through">cluttered menus and overwhelming choices.</span>
@@ -181,18 +181,18 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
               <div key={groupName}>
                 <h3 className="text-sm font-bold tracking-[0.2em] uppercase mb-10 text-text-tertiary flex items-center gap-4">
                   <span>{groupName}</span>
-                  <div className="flex-1 h-px bg-white/5"></div>
+                  <div className="flex-1 h-px bg-black/5"></div>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {groupBrands.map((brand) => (
-                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface border border-white/5 rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:border-gold/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface border border-black/5 rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:border-gold/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden">
                       {/* Hover Slide Background Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
 
                       <div className="relative z-10">
                         {brand.image && (
-                          <div className="h-56 bg-gradient-to-br from-black/40 to-black/10 rounded-2xl mb-8 overflow-hidden flex items-center justify-center border border-white/5 shadow-inner">
-                            <img src={brand.image} alt={brand.name} className="w-full h-full object-contain p-6 mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-700 group-hover:scale-110" />
+                          <div className="h-56 bg-gradient-to-br from-black/5 to-transparent rounded-2xl mb-8 overflow-hidden flex items-center justify-center border border-black/5 shadow-inner">
+                            <img src={brand.image} alt={brand.name} className="w-full h-full object-contain p-6 mix-blend-darken opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-700 group-hover:scale-110" />
                           </div>
                         )}
                         <div className="mb-6">
@@ -201,9 +201,9 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-10">
-                          <span className="bg-black/40 text-gold text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-gold/20 backdrop-blur-md font-mono">{brand.puffRange}</span>
+                          <span className="bg-black/5 text-gold text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-gold/20 backdrop-blur-md font-mono">{brand.puffRange}</span>
                           {brand.id.includes('nonic') && (
-                            <span className="bg-black/40 text-accent-blue text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-accent-blue/20 backdrop-blur-md font-mono">0% Nicotine</span>
+                            <span className="bg-black/5 text-accent-blue text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-accent-blue/20 backdrop-blur-md font-mono">0% Nicotine</span>
                           )}
                         </div>
 

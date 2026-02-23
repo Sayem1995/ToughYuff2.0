@@ -7,7 +7,7 @@ const About: React.FC = () => {
       <section className="pt-20 pb-20 px-6">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-          <div className="h-[500px] bg-card-bg border-2 border-dashed border-gold/30 rounded-2xl flex items-center justify-center">
+          <div className="h-[500px] bg-surface border-2 border-dashed border-gold/30 rounded-2xl flex items-center justify-center">
             <div className="text-center">
               <span className="text-gold font-bold text-xl">TooughYuff</span>
               <p className="text-text-tertiary mt-2">Store Interior / Team Photo Placeholder</p>
