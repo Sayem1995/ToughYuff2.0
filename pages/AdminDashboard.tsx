@@ -1165,8 +1165,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       {allCategories.map(category => (
                         <SortableCategoryItem
                           key={category.id}
-                          id={category.id}
-                          name={category.name}
+                          category={category}
+                          isActive={false}
+                          onClick={() => { }}
                           onEdit={() => handleEditCategory(category)}
                           onDelete={() => handleDeleteCategory(category.id)}
                         />
