@@ -263,53 +263,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
             {viewMode === 'brands' && 'Choose a brand to see all available products.'}
             {viewMode === 'products' && `All ${selectedBrandObj?.name || ''} products.`}
           </p>
-
-          {/* TEMP BUTTON FOR DB SCRIPT */}
-          {isAdmin && (
-            <button
-              onClick={async () => {
-                if (!confirm('Run Geek Bar Pulse Update Script?')) return;
-                try {
-                  console.log("Running script...");
-
-                  const newFeatures = [
-                    "✨ 5% Nicotine – enjoy pure flavor with 5% nicotine at all",
-                    "🔥 Up to 15,000 puffs in Regular Mode for long-lasting enjoyment",
-                    "⚡ Pulse Mode: 7,500 puffs for a stronger, more responsive hit",
-                    "📱 World’s first full-screen disposable vape – futuristic and eye-catching",
-                    "💨 Dual mesh coil for smooth, rich, and consistent vapor",
-                    "🔋 650mAh rechargeable battery (Type-C) – reliable power anytime",
-                    "🧠 Dual-core control system for stable performance",
-                    "👜 Compact, stylish, and easy to carry anywhere"
-                  ];
-
-                  let updatedCount = 0;
-
-                  // Use the already loaded products from props
-                  for (const product of products) {
-                    const brandId = (product.brandId || '').toLowerCase();
-                    const brandName = (product.brandName || '').toLowerCase();
-                    const name = (product.name || '').toLowerCase();
-
-                    if (brandId.includes('geek-bar-pulse') || brandName.includes('geek bar pulse') || name.includes('geek bar pulse')) {
-                      // Use ProductService which is already imported and initialized
-                      await ProductService.updateProduct(product.id as string, { features: newFeatures });
-                      updatedCount++;
-                    }
-                  }
-
-                  console.log(`Updated ${updatedCount} Geek Bar Pulse products!`);
-                  alert(`Successfully updated ${updatedCount} Geek Bar Pulse products! Refreshing...`);
-                  window.location.reload();
-                } catch (e: any) {
-                  alert("Error running update: " + e.message);
-                }
-              }}
-              className="mt-4 px-6 py-3 bg-red-600 text-white font-bold rounded-lg relative z-50 shadow-xl cursor-pointer"
-            >
-              RUN GEEK BAR PULSE UPDATE SCRIPT
-            </button>
-          )}
         </div>
       </div>
 
