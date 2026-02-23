@@ -15,21 +15,7 @@ interface CatalogProps {
   categories?: Category[];
 }
 
-const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: rawCategories = [] }) => {
-  // Deduplicate categories by normalized name to prevent showing duplicates from the database
-  const categories = useMemo(() => {
-    const sorted = [...rawCategories].sort((a, b) => (a.order || 0) - (b.order || 0) || (a.name || '').localeCompare(b.name || ''));
-    const seenNames = new Set<string>();
-    return sorted.filter(cat => {
-      let name = (cat.name || '').toLowerCase().trim();
-      // Normalize plurals (e.g., 'disposable vapes' -> 'disposable vape')
-      if (name.endsWith('s')) name = name.slice(0, -1);
-
-      if (seenNames.has(name)) return false;
-      seenNames.add(name);
-      return true;
-    });
-  }, [rawCategories]);
+const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [] }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialBrand = searchParams.get('brand') || 'all';
   const initialCategory = searchParams.get('category') || 'all';

@@ -98,9 +98,19 @@ const App: React.FC = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      setCategories(cats);
+      // Central Deduplication & Normalization
+      const seenNames = new Set<string>();
+      const deduplicatedCats = rawCats.filter(cat => {
+        let name = (cat.name || '').toLowerCase().trim();
+        if (name.endsWith('s')) name = name.slice(0, -1); // Normalize plurals
+        if (seenNames.has(name)) return false;
+        seenNames.add(name);
+        return true;
+      });
+
+      setCategories(deduplicatedCats);
 
       // Rename 'THC & DELTA GUMMIES' to 'EDIBLES' if it exists (Migration)
       CategoryService.renameCategoryByName(currentStore as any, 'THC & DELTA GUMMIES', 'EDIBLES')
@@ -140,10 +150,21 @@ const App: React.FC = () => {
       // Let's just fetch once with fallback to populate UI.
 
       getDocs(qFallback).then((snapshot) => {
-        const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Central Deduplication & Normalization
+        const seenNames = new Set<string>();
+        const deduplicatedCats = rawCats.filter(cat => {
+          let name = (cat.name || '').toLowerCase().trim();
+          if (name.endsWith('s')) name = name.slice(0, -1);
+          if (seenNames.has(name)) return false;
+          seenNames.add(name);
+          return true;
+        });
+
         // Sort in memory
-        cats.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-        setCategories(cats);
+        deduplicatedCats.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+        setCategories(deduplicatedCats);
       }).catch(e => console.error("Fallback fetch failed", e));
     });
 
