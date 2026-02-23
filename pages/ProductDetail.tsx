@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
-import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings } from 'lucide-react';
 import { THCProductDetail } from '../components/THCProductDetail';
 import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
 
@@ -151,8 +151,21 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
 
             {/* Accordions */}
             <div className="space-y-1 border-t border-black/10">
-              <AccordionItem title={`About ${product.brandName}`}>
-                {product.aboutText || product.description || `Experience the premium quality of ${product.brandName}. This product delivers exceptional performance and flavor.`}
+              <AccordionItem
+                title={
+                  <div className="flex items-center gap-2">
+                    {product.brandName?.toLowerCase().includes('geek bar pulse') && <Settings className="w-5 h-5 text-text-secondary" />}
+                    <span>About {product.brandName?.toLowerCase().includes('geek bar pulse') ? 'Geek Bar Pulse 15000' : product.brandName}</span>
+                  </div>
+                }
+              >
+                {product.brandName?.toLowerCase().includes('geek bar pulse') ? (
+                  <p className="text-text-secondary leading-relaxed">
+                    The Geek Bar Pulse 15000 {product.name.replace(/geek bar pulse 15000|geek bar pulse/i, '').trim()} disposable vape offers a whopping 15000 puffs and features a convenient USB-C charging port. It's powered by a 650mAh battery and has a comfortable duckbill mouthpiece.
+                  </p>
+                ) : (
+                  product.aboutText || product.description || `Experience the premium quality of ${product.brandName}. This product delivers exceptional performance and flavor.`
+                )}
               </AccordionItem>
 
               <AccordionItem title="Flavor">
