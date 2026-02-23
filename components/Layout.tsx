@@ -10,7 +10,16 @@ import { Category } from '../types';
 export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [showShopMenu, setShowShopMenu] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const location = useLocation();
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const links = [
     { name: 'Brands', path: '/catalog' },
@@ -23,11 +32,11 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[9999] h-[72px] bg-background/80 backdrop-blur-xl border-b border-gold/10 flex items-center">
-      <div className="max-w-[1200px] w-full mx-auto px-6 flex items-center justify-between h-full">
+    <nav className={`fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[9999] h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-white/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
+      <div className="w-full px-6 md:px-8 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[56px] w-auto object-contain block bg-white rounded-lg p-1.5 shadow-sm" />
+          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[40px] md:h-[48px] w-auto object-contain block bg-white rounded-lg p-1 shadow-sm" />
         </Link>
 
         {/* Desktop Nav */}
@@ -49,12 +58,12 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
         {/* CTA -> Shop Dropdown */}
         <div
-          className="hidden md:block relative group"
+          className="hidden md:block relative group relative"
           onMouseEnter={() => setShowShopMenu(true)}
           onMouseLeave={() => setShowShopMenu(false)}
         >
           <button
-            className="bg-gold text-white px-6 py-3 rounded-lg font-semibold text-sm hover:brightness-110 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all duration-300 flex items-center gap-2"
+            className="bg-gold text-white px-6 py-2.5 rounded-full font-serif italic text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_20px_rgba(201,168,76,0.3)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 flex items-center gap-2"
           >
             Shop <ChevronDown className="w-4 h-4" />
           </button>
