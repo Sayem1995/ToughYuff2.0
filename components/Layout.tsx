@@ -105,15 +105,17 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
         </div>
 
         {/* Mobile Header Actions */}
-        <div className="md:hidden flex items-center gap-4 z-50">
-          <StoreSelector />
-          <button
-            className="text-text-primary p-2 -mr-2"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        {!isOpen && (
+          <div className="md:hidden flex items-center gap-4 z-50">
+            <StoreSelector />
+            <button
+              className="text-text-primary p-2 -mr-2"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
+        )}
 
         {/* Mobile Nav Overlay / Sidebar */}
         <AnimatePresence>
@@ -244,7 +246,7 @@ export const Layout: React.FC<{ children: React.ReactNode; categories?: Category
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar categories={categories} />
-      <main className="flex-grow pt-[72px]">
+      <main className="flex-grow pt-[84px] md:pt-[100px]">
         {children}
       </main>
       <Footer />

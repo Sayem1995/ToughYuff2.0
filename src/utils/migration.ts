@@ -45,7 +45,7 @@ export const migrateDataToFirestore = async () => {
                 price: 19.99, // Default price
                 costPerUnit: 10.00, // Default cost
                 channel: 'both',
-                category: 'Disposable',
+                category: 'disposable-vapes',
 
                 createdAt: new Date(),
                 updatedAt: new Date()
