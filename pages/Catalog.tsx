@@ -93,9 +93,12 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
     // For 'disposable vape(s)' categories: match products whose category contains 'disposable-vape' or 'disposable_vape'
     // but NOT 'thc-disposable' (those belong to their own category)
-    if (catName.includes('disposable vape')) {
+    if (catName.includes('disposable vape') || catName.includes('disposables')) {
       if (!productCat) return true; // Legacy products with no category default to disposable vapes
-      const isDisposableVape = productCat.includes('disposable-vape') || productCat.includes('disposable_vape') || productCat.includes('disposable vape');
+      const isDisposableVape = productCat.includes('disposable-vape') ||
+        productCat.includes('disposable_vape') ||
+        productCat.includes('disposable vape') ||
+        productCat === 'disposable'; // Catch legacy 'Disposable' (lowercased)
       const isTHC = productCat.includes('thc');
       return isDisposableVape && !isTHC;
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand, Category } from '../types';
-import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X } from 'lucide-react';
+import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { BrandService } from '../src/services/brandService';
@@ -522,21 +522,32 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
-  const handleFixCali = async () => {
-    console.log("DEBUG: handleFixCali called");
-    if (!window.confirm("This will find all Cali 8000 and 20000 products that are out of stock or missing the Disposable Vapes category, and fix them. Continue?")) return;
+  const handleFixAllProducts = async () => {
+    console.log("DEBUG: handleFixAllProducts called");
+    if (!window.confirm("This will find all products (including Cali Bar, Geek Bar, etc.) that are out of stock or using the old 'Disposable' category, and fix them. Continue?")) return;
     try {
       // Find the actual disposable category slug from the database
       const disposableCat = categories.find(c => c.name.toLowerCase().includes('disposable vape') || c.name.toLowerCase().includes('disposables'));
       const targetCategorySlug = disposableCat ? (disposableCat.slug || disposableCat.id) : 'disposable-vapes';
 
-      const allCali = products.filter(p => p.brandId === 'cali-ul8000' || p.brandId === 'cali-20000');
-      const toUpdate = allCali.filter(p => !p.inStock || p.category !== targetCategorySlug);
+      // Find products that need fixing:
+      // 1. Any Cali products out of stock
+      // 2. Any product using the old 'Disposable' category (case-insensitive)
+      // 3. Any Geek Bar Pulse X product (since they are new and might have sync issues)
+      const toUpdate = products.filter(p => {
+        const isCali = p.brandId?.includes('cali');
+        const isGeekBar = p.brandId?.includes('geekbar');
+        const isOldCategory = p.category?.toLowerCase() === 'disposable';
+        const isMissingCategory = !p.category;
+        const isOutOfStock = !p.inStock;
 
-      console.log(`DEBUG: Found ${toUpdate.length} Cali products to fix.`);
+        return (isCali && isOutOfStock) || isOldCategory || isMissingCategory || (isGeekBar && p.category !== targetCategorySlug);
+      });
+
+      console.log(`DEBUG: Found ${toUpdate.length} products to fix.`);
 
       if (toUpdate.length === 0) {
-        alert("No Cali products need fixing!");
+        alert("All products look good!");
         return;
       }
 
@@ -547,10 +558,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           category: targetCategorySlug
         });
       }
-      alert(`Successfully fixed ${toUpdate.length} Cali products!`);
+      alert(`Successfully fixed ${toUpdate.length} products!`);
     } catch (e) {
-      console.error("DEBUG: Fix Cali error:", e);
-      alert("Error fixing Cali products. Check console.");
+      console.error("DEBUG: Fix All error:", e);
+      alert("Error fixing products. Check console.");
     }
   };
 
@@ -741,12 +752,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       </span>
                     )}
                     <button
-                      onClick={() => {
-                        handleFixCali();
-                      }}
-                      className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                      onClick={handleFixAllProducts}
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-bold"
                     >
-                      Fix Cali Products
+                      <ShieldAlert className="w-4 h-4" />
+                      Fix All Products
                     </button>
                     <button
                       onClick={async () => {
@@ -760,7 +770,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                         try {
                           const res = await syncGeekBarFlavors(products);
                           setIsSyncing(false);
-
                           if (res.success) {
                             console.log(`DEBUG: Success. Updated ${res.count}`);
                             // Flash button style or something to show success? 

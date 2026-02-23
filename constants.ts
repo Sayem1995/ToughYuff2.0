@@ -373,6 +373,7 @@ const generateProducts = (): Product[] => {
       storeId: 'goldmine', // Default for static data
       brandId: brand.id,
       brandName: brand.name,
+      category: brand.category || 'disposable-vapes', // Inherit from brand
       name: item.name,
       puffCount: parseInt(brand.puffRange.split(' ')[0]) || 5000,
       nicotine: isNicFree ? '0 mg (No Nicotine)' : '5%',
