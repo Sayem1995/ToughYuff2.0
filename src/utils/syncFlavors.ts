@@ -46,6 +46,7 @@ const newFlavors = [
     { name: 'Blueberry Jam', description: 'Sticky blueberry jam vibe, rich and sweet, minimal cooling.' },
     { name: 'Cherry Lemon', description: 'Sweet cherry plus sharp lemon, like sour cherry candy with a citrus edge.' },
     { name: 'Cola Slush', description: 'Fizzy cola soda slushy with caramel-cola notes and strong ice.' },
+    { name: 'Cool Mint', description: 'Clean mint/menthol, lightly sweet for cold freshness.' },
     { name: 'Dragon Fruit Lemonade', description: 'Exotic dragon fruit blended into tart lemonade, tropical and refreshing.' },
     { name: 'Grape Ice Jam / Grape Ice', description: 'Grape candy soda style with a smooth, sweet icy finish.' },
     { name: 'Grapefruit Refresher', description: 'Bright grapefruit citrus mix, tart and slightly sweet, very refreshing.' },
