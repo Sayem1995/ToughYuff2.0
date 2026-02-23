@@ -32,7 +32,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className={`fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[9999] h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-black/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
+    <nav className={`sticky top-4 md:top-6 z-[9999] mx-auto h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-black/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
       <div className="w-full px-6 md:px-8 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
