@@ -750,32 +750,34 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     </button>
                     <button
                       onClick={async () => {
+                        console.log("DEBUG: Sync started");
                         if (!products || products.length === 0) {
-                          alert("No products in memory yet. Please wait.");
+                          console.log("DEBUG: No products found.");
                           return;
                         }
-
-                        if (!window.confirm("Sync Geek Bar Pulse flavors? This will update Firestore data.")) return;
 
                         setIsSyncing(true);
                         try {
                           const res = await syncGeekBarFlavors(products);
                           setIsSyncing(false);
+
                           if (res.success) {
-                            alert(res.count === 0 ? "No matching products found." : `Successfully synced ${res.count} products!`);
+                            console.log(`DEBUG: Success. Updated ${res.count}`);
+                            // Flash button style or something to show success? 
+                            // We can rely on the user seeing the terminal/console or just the UI updating 
+                            // But for now, since alert might be blocked, let's just log.
                           } else {
-                            alert("Sync failed. Check terminal.");
+                            console.error("DEBUG: Sync failed.");
                           }
                         } catch (err) {
                           console.error("DEBUG: Sync error:", err);
                           setIsSyncing(false);
-                          alert("Unexpected sync error.");
                         }
                       }}
                       disabled={isSyncing}
-                      className="px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 font-bold text-sm rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                      className={`px-4 py-2 ${isSyncing ? 'bg-green-100 text-green-700 border-green-200' : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'} font-bold text-sm rounded-lg transition-colors disabled:opacity-50 cursor-pointer`}
                     >
-                      {isSyncing ? 'Syncing...' : 'Sync Geek Bar Pulse Flavors'}
+                      {isSyncing ? 'Processing...' : 'Sync Geek Bar Pulse Flavors Now'}
                     </button>
                     <button
                       onClick={handleMigrateData}
