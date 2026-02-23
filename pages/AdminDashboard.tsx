@@ -742,7 +742,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     )}
                     <button
                       onClick={() => {
-                        console.log("DEBUG: Fix Cali button clicked");
+                        alert("Fix Cali Clicked");
                         handleFixCali();
                       }}
                       className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors cursor-pointer"
@@ -751,7 +751,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     </button>
                     <button
                       onClick={async () => {
-                        console.log("DEBUG: Sync button clicked");
+                        alert("Sync Clicked");
                         if (!products || products.length === 0) {
                           alert("No products in memory yet. Please wait.");
                           return;

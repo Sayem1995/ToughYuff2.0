@@ -93,8 +93,8 @@ const App: React.FC = () => {
     // Subscribe to categories
     const q = query(
       collection(db, 'categories'),
-      where('storeId', '==', currentStore),
-      orderBy('order', 'asc')
+      where('storeId', '==', currentStore)
+      // Removal of orderBy to avoid index requirements
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
