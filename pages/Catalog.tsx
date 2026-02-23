@@ -452,24 +452,16 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                         )}
                       </div>
                     )}
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="text-[10px] font-bold text-gold uppercase tracking-widest bg-gold/10 px-2 py-1 rounded">{product.brandName}</div>
-                        {!product.inStock && (
-                          <div className="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-500/10 px-2 py-1 rounded">Out of Stock</div>
-                        )}
-                      </div>
+                    <div className="aspect-square bg-black/5 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-4 relative group-hover:bg-black/10 transition-colors">
+                      {!product.inStock && (
+                        <div className="absolute top-2 left-2 text-[10px] font-bold text-red-50 text-center uppercase tracking-widest bg-red-500 px-2 py-1 rounded z-10">Out of Stock</div>
+                      )}
+                      <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                     </div>
-                    <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
-                    </div>
-                    <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-gold transition-colors leading-tight line-clamp-2">{product.name}</h3>
-                    <div className="font-bold text-xl text-text-primary mb-4 pb-4 border-b border-black/5 mt-auto flex-grow flex items-end">
+                    <div className="text-sm text-text-secondary mb-1 leading-none">{product.brandName}</div>
+                    <h3 className="text-lg font-medium text-text-primary mb-2 line-clamp-2 group-hover:text-gold transition-colors">{product.name}</h3>
+                    <div className="font-bold text-lg text-text-primary mt-auto">
                       ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-black/5 rounded text-[10px] uppercase tracking-wider font-bold text-text-secondary font-mono">{product.puffCount} Puffs</span>
-                      <span className={`px-2 py-1 rounded text-[10px] uppercase tracking-wider font-bold font-mono ${product.isNicotineFree ? 'bg-blue-50 text-accent-blue' : 'bg-black/5 text-text-secondary'}`}>{product.nicotine}</span>
                     </div>
                   </Link>
                 )
