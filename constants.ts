@@ -299,24 +299,43 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'geekbar-pulse', name: 'Grape Lemon', code: '(GB P)', description: 'grape candy plus tart lemon, lemonade-style.' },
 
   // Geek Bar Pulse X
-  { brandId: 'geekbar-pulsex', name: 'Banana Taffy Freeze', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Blue Rancher', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Lime Berry Orange', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Sour Mango Pineapple', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Watermelon Ice', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Kiwi Passionfruit Guava', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Lemon Tart', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Raspberry Peach Lime', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Blue Razz Ice', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Sour Apple Ice', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Blackberry B-Pop', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Orange Fcuking Fab', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Miami Mint', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Lemon Heads', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Blackberry Blueberry', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Cool Mint', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Grapefruit Refresher', code: '(GB PX)' },
-  { brandId: 'geekbar-pulsex', name: 'Sour Fcuking Fab', code: '(GB PX)' },
+  { brandId: 'geekbar-pulsex', name: 'Banana Taffy Freeze', code: '(GB PX)', description: 'Sweet banana taffy candy with a creamy note and a strong icy finish.' },
+  { brandId: 'geekbar-pulsex', name: 'Berry Cherry Lime (Platinum Edition)', code: '(GB PX)', description: 'Mixed berry and cherry candy with a squeeze of lime, sweet-tart and slightly icy.' },
+  { brandId: 'geekbar-pulsex', name: 'Blackberry Blueberry', code: '(GB PX)', description: 'Dark blackberry and sweet blueberry mix with light cooling.' },
+  { brandId: 'geekbar-pulsex', name: 'Blackberry B-Pop', code: '(GB PX)', description: 'Bold sweet blackberry “soda/candy” style flavor, juicy and vibrant with little or no ice.' },
+  { brandId: 'geekbar-pulsex', name: 'Blue Rancher', code: '(GB PX)', description: 'Blue raspberry hard-candy profile, sweet and tangy with light or no ice.' },
+  { brandId: 'geekbar-pulsex', name: 'Blue Razz Ice', code: '(GB PX)', description: 'Classic blue raspberry candy with clear sweetness and a noticeable menthol exhale.' },
+  { brandId: 'geekbar-pulsex', name: 'Blueberry Jam', code: '(GB PX)', description: 'Sticky blueberry jam vibe, rich and sweet, minimal cooling.' },
+  { brandId: 'geekbar-pulsex', name: 'Cherry Lemon', code: '(GB PX)', description: 'Sweet cherry plus sharp lemon, like sour cherry candy with a citrus edge.' },
+  { brandId: 'geekbar-pulsex', name: 'Cola Slush', code: '(GB PX)', description: 'Fizzy cola soda slushy with caramel-cola notes and strong ice.' },
+  { brandId: 'geekbar-pulsex', name: 'Cool Mint', code: '(GB PX)', description: 'Clean mint/menthol, lightly sweet for cold freshness.' },
+  { brandId: 'geekbar-pulsex', name: 'Dragon Fruit Lemonade', code: '(GB PX)', description: 'Exotic dragon fruit blended into tart lemonade, tropical and refreshing.' },
+  { brandId: 'geekbar-pulsex', name: 'Grape Ice Jam / Grape Ice', code: '(GB PX)', description: 'Grape candy soda style with a smooth, sweet icy finish.' },
+  { brandId: 'geekbar-pulsex', name: 'Grapefruit Refresher', code: '(GB PX)', description: 'Bright grapefruit citrus mix, tart and slightly sweet, very refreshing.' },
+  { brandId: 'geekbar-pulsex', name: 'Kiwi Passionfruit Guava', code: '(GB PX)', description: 'Tropical trio of tangy kiwi, fragrant passionfruit and soft guava.' },
+  { brandId: 'geekbar-pulsex', name: 'Lemon Heads', code: '(GB PX)', description: 'Sharp lemon candy sweetness with a noticeable tart bite.' },
+  { brandId: 'geekbar-pulsex', name: 'Lemon Tart', code: '(GB PX)', description: 'Lemon dessert with a pastry/cream vibe, sweet and bakery-style.' },
+  { brandId: 'geekbar-pulsex', name: 'Lime Berry Orange', code: '(GB PX)', description: 'Lime-forward citrus with mixed berries and orange, bright and sweet-sour.' },
+  { brandId: 'geekbar-pulsex', name: 'Miami Mint', code: '(GB PX)', description: 'Straight mint/menthol with very little sweetness, crisp and cold.' },
+  { brandId: 'geekbar-pulsex', name: 'Orange Fcuking Fab', code: '(GB PX)', description: 'Bold orange plus mixed tropical fruits, juicy and candy-like.' },
+  { brandId: 'geekbar-pulsex', name: 'Orange Slush', code: '(GB PX)', description: 'Orange soda slushy, sweet and tangy with a strong icy texture.' },
+  { brandId: 'geekbar-pulsex', name: 'Peach Berry Lime Ice / Raspberry Peach Lime', code: '(GB PX)', description: 'Peach and berries with a lime kick, zesty with a medium cool finish.' },
+  { brandId: 'geekbar-pulsex', name: 'Peach Perfect Slush', code: '(GB PX)', description: 'Ripe peach slushy, juicy and sweet with heavy ice.' },
+  { brandId: 'geekbar-pulsex', name: 'Pineapple Ice', code: '(GB PX)', description: 'Bright pineapple juice flavor with a clear, cold menthol finish.' },
+  { brandId: 'geekbar-pulsex', name: 'Sour Apple Ice', code: '(GB PX)', description: 'Green apple candy, tart and sour with a noticeable ice hit.' },
+  { brandId: 'geekbar-pulsex', name: 'Sour Fcuking Fab', code: '(GB PX)', description: 'Tropical fruit base with a strong sour candy twist, intense and loud.' },
+  { brandId: 'geekbar-pulsex', name: 'Sour Mango Pineapple', code: '(GB PX)', description: 'Mango and pineapple base with sour candy and a refreshing chill.' },
+  { brandId: 'geekbar-pulsex', name: 'Sour Pink Dust (Platinum Edition)', code: '(GB PX)', description: 'Pink candy sherbet style with a heavy sour sugar vibe.' },
+  { brandId: 'geekbar-pulsex', name: 'Sour Straws', code: '(GB PX)', description: 'Rainbow sour candy straw style, mixed fruit with strong tartness.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry B-Pop', code: '(GB PX)', description: 'Sweet strawberry candy or soda style, juicy and straightforward.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Banana Ice', code: '(GB PX)', description: 'Smooth strawberry-banana smoothie vibe with a cool exhale.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Colada', code: '(GB PX)', description: 'Strawberry layered into a creamy pineapple + coconut mix.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Jam', code: '(GB PX)', description: 'Rich dessert-style strawberry jam, sweet with minimal cooling.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Kiwi Ice', code: '(GB PX)', description: 'Sweet strawberry with tangy kiwi and a noticeable icy finish.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Mango', code: '(GB PX)', description: 'Juicy mango with ripe strawberry, smooth tropical blend with light chill.' },
+  { brandId: 'geekbar-pulsex', name: 'Strawberry Watermelon', code: '(GB PX)', description: 'Sweet watermelon juice/candy mix with a clean, cold menthol finish.' },
+  { brandId: 'geekbar-pulsex', name: 'White Peach Raspberry', code: '(GB PX)', description: 'Soft white peach with tart raspberry, refined and lightly cooled.' },
+  { brandId: 'geekbar-pulsex', name: 'Wild Cherry Slush', code: '(GB PX)', description: 'Bold cherry slushy flavor, sweet with a slush-style icy kick.' },
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -372,7 +391,16 @@ const generateProducts = (): Product[] => {
       isRechargeable: (item as any).isRechargeable ?? true,
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
-      features: ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
+      features: brand.id === 'geekbar-pulsex'
+        ? [
+          'Up to 25,000 puffs (Regular Mode)',
+          'Pulse Mode for a powerful hit',
+          'World’s first 3D curved screen',
+          'Dual mesh coil for consistent vapor',
+          'Fast charging & pre-filled',
+          'Sleek premium tech design'
+        ]
+        : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };
