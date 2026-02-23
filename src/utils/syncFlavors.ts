@@ -74,6 +74,9 @@ export const syncGeekBarFlavors = async (products: Product[]) => {
                     await updateDoc(doc(db, 'products', product.id), {
                         flavorText: matchingFlavor.description,
                         name: matchingFlavor.name,
+                        battery: '650 mAh',
+                        nicotine: '5%',
+                        isRechargeable: true,
                         updatedAt: new Date()
                     });
                     updatedCount++;

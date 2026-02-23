@@ -263,7 +263,8 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'airbar-diamond', name: 'Clear', code: '(AD)' },
 
   // Geek Bar Pulse
-  { brandId: 'geekbar-pulse', name: 'Watermelon Ice', code: '(GB P)', description: 'sweet, juicy watermelon with a medium–strong menthol/ice' },
+  // Geek Bar Pulse
+  { brandId: 'geekbar-pulse', name: 'Watermelon Ice', code: '(GB P)', description: 'sweet, juicy watermelon with a medium–strong menthol/ice', battery: '650 mAh', nicotine: '5%', isRechargeable: true },
   { brandId: 'geekbar-pulse', name: 'Blue Razz Ice', code: '(GB P)', description: 'blue raspberry candy (sweet + tart), plus a clear icy exhale.' },
   { brandId: 'geekbar-pulse', name: 'Miami Mint', code: '(GB P)', description: 'clean peppermint + a bit of spearmint, smooth but very cool, like mint gum.' },
   { brandId: 'geekbar-pulse', name: 'Strawberry B-Pop', code: '(GB P)', description: 'strawberry candy/lollipop with some bubblegum sweetness and light ice.' },
@@ -367,8 +368,8 @@ const generateProducts = (): Product[] => {
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
       // New defaults
-      battery: '650mAh',
-      isRechargeable: true,
+      battery: (item as any).battery || '650 mAh',
+      isRechargeable: (item as any).isRechargeable ?? true,
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
       features: ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']

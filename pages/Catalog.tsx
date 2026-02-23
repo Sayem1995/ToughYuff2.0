@@ -325,12 +325,12 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
               <p className="text-text-tertiary text-lg">No categories found.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {[...categories].sort((a, b) => (a.name || '').localeCompare(b.name || '')).map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className="group bg-surface border border-black/5 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface border border-black/5 shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
                   {/* Category image or icon placeholder */}
                   <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
@@ -346,7 +346,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                       </div>
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">
+                  <h3 className="text-base font-bold text-text-primary group-hover:text-gold transition-colors">
                     {category.name}
                   </h3>
                   {category.description && (
@@ -371,17 +371,17 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {availableBrands.map((brand) => (
                 <button
                   key={brand.id}
                   onClick={() => handleBrandSelect(brand.id)}
-                  className="group bg-surface border border-black/5 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface border border-black/5 shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
                   <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
                     <img src={brand.image} alt={brand.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
                   </div>
-                  <h3 className="text-lg font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
+                  <h3 className="text-base font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
                   {brand.puffRange && (
                     <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
                   )}
@@ -413,14 +413,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-8">
               {filteredProducts.map((product) => (
                 (product.category === 'thc-disposables' || product.category === 'thc-cartridges') ? (
                   <THCProductCard key={product.id} product={product} />
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />
                 ) : (
-                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface border border-black/5 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 flex flex-col">
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface border border-black/5 rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 flex flex-col">
                     {/* Admin Controls */}
                     {isAdmin && (
                       <div className="absolute top-4 right-4 z-20">
@@ -459,8 +459,8 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                       <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                     </div>
                     <div className="text-sm text-text-secondary mb-1 leading-none">{product.brandName}</div>
-                    <h3 className="text-lg font-medium text-text-primary mb-2 line-clamp-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                    <div className="font-bold text-lg text-text-primary mt-auto">
+                    <h3 className="text-base font-medium text-text-primary mb-1 line-clamp-2 group-hover:text-gold transition-colors">{product.name}</h3>
+                    <div className="font-bold text-base text-text-primary mt-auto">
                       ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
                     </div>
                   </Link>

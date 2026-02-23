@@ -42,9 +42,9 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
             </div>
 
             {/* Content */}
-            <div className="p-4 flex flex-col flex-grow">
-                <div className="text-sm text-text-secondary mb-1 leading-none">{product.brandName}</div>
-                <h3 className="text-lg font-medium text-text-primary mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+            <div className="p-3 flex flex-col flex-grow">
+                <div className="text-xs text-text-secondary mb-1 leading-none">{product.brandName}</div>
+                <h3 className="text-base font-medium text-text-primary mb-1 line-clamp-2 group-hover:text-gold transition-colors">
                     {product.name}
                 </h3>
                 <div className="font-bold text-lg text-text-primary mt-auto">

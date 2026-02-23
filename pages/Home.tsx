@@ -183,15 +183,15 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
                   <span>{groupName}</span>
                   <div className="flex-1 h-px bg-black/5"></div>
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {groupBrands.map((brand) => (
-                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface border border-black/5 rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:border-gold/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden">
+                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface border border-black/5 rounded-2xl p-5 transition-all duration-500 hover:scale-[1.02] hover:border-gold/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden">
                       {/* Hover Slide Background Effect */}
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
 
                       <div className="relative z-10">
                         {brand.image && (
-                          <div className="h-56 bg-gradient-to-br from-black/5 to-transparent rounded-2xl mb-8 overflow-hidden flex items-center justify-center border border-black/5 shadow-inner">
+                          <div className="h-40 bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center border border-black/5 shadow-inner">
                             <img src={brand.image} alt={brand.name} className="w-full h-full object-contain p-6 mix-blend-darken opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-700 group-hover:scale-110" />
                           </div>
                         )}
@@ -200,7 +200,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
                           <p className="text-text-secondary text-sm leading-relaxed h-10">{brand.tagline}</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-10">
+                        <div className="flex flex-wrap gap-2 mb-6">
                           <span className="bg-black/5 text-gold text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-gold/20 backdrop-blur-md font-mono">{brand.puffRange}</span>
                           {brand.id.includes('nonic') && (
                             <span className="bg-black/5 text-accent-blue text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-accent-blue/20 backdrop-blur-md font-mono">0% Nicotine</span>
