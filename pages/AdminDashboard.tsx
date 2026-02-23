@@ -742,12 +742,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     </button>
                     <button
                       onClick={async () => {
-                        if (!confirm("Sync Geek Bar Pulse flavors? This will update names and descriptions in Firestore.")) return;
+                        console.log("DEBUG: Sync button clicked. Products in props:", products?.length);
+                        if (!products || products.length === 0) {
+                          alert("No products found in memory. Please wait for the initial load to complete.");
+                          return;
+                        }
+
+                        if (!confirm("Sync Geek Bar Pulse flavors? This will check all products and update matching ones in Firestore with the new names and descriptions.")) return;
+
                         setIsSyncing(true);
-                        const res = await syncGeekBarFlavors(products);
-                        setIsSyncing(false);
-                        if (res.success) alert(`Synced ${res.count} products!`);
-                        else alert("Sync failed.");
+                        console.log("DEBUG: Starting sync...");
+
+                        try {
+                          const res = await syncGeekBarFlavors(products);
+                          console.log("DEBUG: Sync result:", res);
+                          setIsSyncing(false);
+
+                          if (res.success) {
+                            if (res.count === 0) {
+                              alert("Sync complete, but no matching 'Geek Bar Pulse' products were found in your database. Ensure your products have the correct brand name.");
+                            } else {
+                              alert(`Successfully updated ${res.count} products! The changes are now live.`);
+                            }
+                          } else {
+                            const errorMsg = res.error instanceof Error ? res.error.message : JSON.stringify(res.error);
+                            alert("Sync failed: " + (errorMsg || "Unknown error"));
+                          }
+                        } catch (err) {
+                          console.error("DEBUG: Sync handler caught error:", err);
+                          setIsSyncing(false);
+                          alert("An unexpected error occurred during sync. Check the browser console for details.");
+                        }
                       }}
                       disabled={isSyncing}
                       className="px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 font-bold text-sm rounded-lg transition-colors disabled:opacity-50"

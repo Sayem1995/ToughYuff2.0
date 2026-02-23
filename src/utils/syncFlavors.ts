@@ -39,8 +39,10 @@ const newFlavors = [
 ];
 
 export const syncGeekBarFlavors = async (products: Product[]) => {
+    console.log("DEBUG: syncGeekBarFlavors started with", products.length, "products.");
     try {
         let updatedCount = 0;
+        let checkedCount = 0;
 
         for (const product of products) {
             const brandId = (product.brandId || '').toLowerCase();
@@ -48,24 +50,43 @@ export const syncGeekBarFlavors = async (products: Product[]) => {
             const name = (product.name || '');
 
             // Check if it's a Geek Bar Pulse product
-            if (brandId.includes('geekbar-pulse') || brandName.includes('geek bar pulse')) {
+            // We use more flexible checks to catch variations in how brands might be stored
+            if (brandId.includes('geekbar-pulse') ||
+                brandId.includes('geek-bar-pulse') ||
+                brandName.includes('geek bar pulse')) {
+
+                checkedCount++;
                 // Find matching flavor in our new list
-                const matchingFlavor = newFlavors.find(f => name.toLowerCase().includes(f.name.toLowerCase()));
+                // We normalize both strings to find a match
+                const matchingFlavor = newFlavors.find(f => {
+                    const normalizedName = name.toLowerCase();
+                    const normalizedFlavor = f.name.toLowerCase();
+                    return normalizedName.includes(normalizedFlavor);
+                });
 
                 if (matchingFlavor) {
-                    console.log(`Updating product: ${name} (${product.id}) with flavor text: ${matchingFlavor.description}`);
+                    console.log(`DEBUG: Matching product found: "${name}". Updating to: "${matchingFlavor.name}"`);
+                    if (!product.id) {
+                        console.error("DEBUG: Product missing ID!", product);
+                        continue;
+                    }
+
                     await updateDoc(doc(db, 'products', product.id), {
                         flavorText: matchingFlavor.description,
-                        name: matchingFlavor.name // Normalize name to our list if matched
+                        name: matchingFlavor.name,
+                        updatedAt: new Date()
                     });
                     updatedCount++;
+                } else {
+                    console.log(`DEBUG: No specific flavor match for: "${name}"`);
                 }
             }
         }
 
+        console.log(`DEBUG: Sync finished. Checked: ${checkedCount}, Updated: ${updatedCount}`);
         return { success: true, count: updatedCount };
     } catch (error) {
-        console.error("Error syncing flavors:", error);
+        console.error("DEBUG: Sync utility caught error:", error);
         return { success: false, error };
     }
 };
