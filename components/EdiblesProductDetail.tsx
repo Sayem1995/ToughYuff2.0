@@ -99,14 +99,21 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
 
                     {/* Right: Product Info */}
                     <div className="flex flex-col">
-                        {/* Rating */}
-                        <div className="flex items-center gap-2 mb-3">
-                            <div className="flex">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <Star key={i} className={`w-4 h-4 ${i <= 4 ? 'text-gold fill-gold' : 'text-text-tertiary'}`} />
-                                ))}
+                        {/* Rating & Out of Stock */}
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-2">
+                                <div className="flex">
+                                    {[1, 2, 3, 4, 5].map(i => (
+                                        <Star key={i} className={`w-4 h-4 ${i <= 4 ? 'text-gold fill-gold' : 'text-text-tertiary'}`} />
+                                    ))}
+                                </div>
+                                <span className="text-sm text-text-tertiary">0 Reviews</span>
                             </div>
-                            <span className="text-sm text-text-tertiary">0 Reviews</span>
+                            {!product.inStock && (
+                                <span className="bg-red-500/10 text-red-500 text-xs font-bold px-3 py-1 rounded border border-red-500/20 uppercase tracking-wider">
+                                    Out of Stock
+                                </span>
+                            )}
                         </div>
 
                         {/* Title */}

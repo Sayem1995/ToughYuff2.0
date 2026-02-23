@@ -33,6 +33,13 @@ export const EdiblesProductCard: React.FC<EdiblesProductCardProps> = ({ product 
                     alt={product.name || 'Product'}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
+                {!product.inStock && (
+                    <div className="absolute top-2 left-2 flex flex-col gap-1">
+                        <span className="bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide shadow-sm">
+                            Out of Stock
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* Content */}

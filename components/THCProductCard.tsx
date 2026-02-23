@@ -36,20 +36,23 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
                 {/* Badges */}
-                {(product.strength || product.count) && (
-                    <div className="absolute top-2 left-2 flex flex-col gap-1">
-                        {product.strength && (
-                            <span className="bg-text-primary text-background text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                                {product.strength}
-                            </span>
-                        )}
-                        {product.count && (
-                            <span className="bg-black/80 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                                {product.count}
-                            </span>
-                        )}
-                    </div>
-                )}
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
+                    {!product.inStock && (
+                        <span className="bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide shadow-sm">
+                            Out of Stock
+                        </span>
+                    )}
+                    {product.strength && (
+                        <span className="bg-text-primary text-background text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                            {product.strength}
+                        </span>
+                    )}
+                    {product.count && (
+                        <span className="bg-black/80 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                            {product.count}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Content */}

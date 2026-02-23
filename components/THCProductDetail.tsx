@@ -124,16 +124,23 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
 
                     {/* ── RIGHT: Product Info ── */}
                     <div className="flex flex-col">
-                        {/* Star Rating */}
-                        <div className="flex items-center gap-1.5 mb-3">
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <Star
-                                    key={i}
-                                    className="w-4 h-4 text-gold"
-                                    fill={i <= 5 ? '#C9A84C' : 'none'}
-                                />
-                            ))}
-                            <span className="text-sm text-text-tertiary ml-1 font-medium">2 Reviews</span>
+                        {/* Star Rating & Out of Stock */}
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <Star
+                                        key={i}
+                                        className="w-4 h-4 text-gold"
+                                        fill={i <= 5 ? '#C9A84C' : 'none'}
+                                    />
+                                ))}
+                                <span className="text-sm text-text-tertiary ml-1 font-medium">2 Reviews</span>
+                            </div>
+                            {!product.inStock && (
+                                <span className="bg-red-500/10 text-red-500 text-xs font-bold px-3 py-1 rounded border border-red-500/20 uppercase tracking-wider">
+                                    Out of Stock
+                                </span>
+                            )}
                         </div>
 
                         {/* Title */}

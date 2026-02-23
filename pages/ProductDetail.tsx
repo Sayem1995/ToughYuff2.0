@@ -90,6 +90,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
               <span className="bg-black/5 text-gold text-xs font-bold px-3 py-1 rounded border border-gold/20 uppercase tracking-wider">
                 {product.brandName}
               </span>
+              {!product.inStock && (
+                <span className="bg-red-500/10 text-red-500 text-xs font-bold px-3 py-1 rounded border border-red-500/20 uppercase tracking-wider">
+                  Out of Stock
+                </span>
+              )}
               {product.isNicotineFree && (
                 <span className="bg-blue-50 text-accent-blue text-xs font-bold px-3 py-1 rounded border border-accent-blue/20 uppercase tracking-wider">
                   Zero Nicotine

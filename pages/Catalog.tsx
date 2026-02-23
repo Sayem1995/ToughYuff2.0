@@ -156,9 +156,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
       if (!productMatchesCategory(product, filters.category)) return false;
       if (filters.brand !== 'all' && product.brandId !== filters.brand) return false;
       if (filters.flavorProfile !== 'all' && !product.flavorProfile.includes(filters.flavorProfile)) return false;
-      if (filters.nicotine === 'zero' && !product.isNicotineFree) return false;
       if (filters.nicotine === 'nicotine' && product.isNicotineFree) return false;
-      if (!product.inStock) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const name = (product.name || '').toLowerCase();
@@ -205,11 +203,10 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
     setSearchParams(params);
   };
 
-  // Count products per category for the category cards
   const productCountByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
     categories.forEach(cat => {
-      counts[cat.id] = products.filter(p => productMatchesCategory(p, cat.id) && p.inStock).length;
+      counts[cat.id] = products.filter(p => productMatchesCategory(p, cat.id)).length;
     });
     return counts;
   }, [products, categories]);
@@ -219,7 +216,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
     const counts: Record<string, number> = {};
     availableBrands.forEach(brand => {
       counts[brand.id] = products.filter(
-        p => p.brandId === brand.id && productMatchesCategory(p, filters.category) && p.inStock
+        p => p.brandId === brand.id && productMatchesCategory(p, filters.category)
       ).length;
     });
     return counts;
@@ -284,27 +281,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                 {filters.category === 'all' ? 'Back to Categories' : 'Back to Brands'}
               </button>
 
-              {/* Nicotine toggle */}
-              <div className="flex bg-surface rounded-lg p-1 border border-black/10 shadow-sm">
-                <button
-                  onClick={() => setFilters(p => ({ ...p, nicotine: 'all' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'all' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setFilters(p => ({ ...p, nicotine: 'nicotine' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'nicotine' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
-                >
-                  Nicotine
-                </button>
-                <button
-                  onClick={() => setFilters(p => ({ ...p, nicotine: 'zero' }))}
-                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${filters.nicotine === 'zero' ? 'bg-black/5 text-text-primary shadow-sm' : 'text-text-tertiary hover:text-text-primary'}`}
-                >
-                  Zero
-                </button>
-              </div>
+
             </div>
 
             {/* Search */}
@@ -476,14 +453,21 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
                       </div>
                     )}
                     <div className="flex justify-between items-start mb-4">
-                      <div className="text-[10px] font-bold text-gold uppercase tracking-widest bg-gold/10 px-2 py-1 rounded">{product.brandName}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-[10px] font-bold text-gold uppercase tracking-widest bg-gold/10 px-2 py-1 rounded">{product.brandName}</div>
+                        {!product.inStock && (
+                          <div className="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-500/10 px-2 py-1 rounded">Out of Stock</div>
+                        )}
+                      </div>
                     </div>
                     <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
                       <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
                     </div>
                     <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-gold transition-colors leading-tight line-clamp-2">{product.name}</h3>
-                    <p className="text-sm text-text-secondary line-clamp-2 mb-6 flex-grow">{product.description}</p>
-                    <div className="flex flex-wrap gap-2 mt-auto">
+                    <div className="font-bold text-xl text-text-primary mb-4 pb-4 border-b border-black/5 mt-auto flex-grow flex items-end">
+                      ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                       <span className="px-2 py-1 bg-black/5 rounded text-[10px] uppercase tracking-wider font-bold text-text-secondary font-mono">{product.puffCount} Puffs</span>
                       <span className={`px-2 py-1 rounded text-[10px] uppercase tracking-wider font-bold font-mono ${product.isNicotineFree ? 'bg-blue-50 text-accent-blue' : 'bg-black/5 text-text-secondary'}`}>{product.nicotine}</span>
                     </div>
