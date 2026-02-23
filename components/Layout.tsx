@@ -35,12 +35,14 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
     <nav className={`sticky top-4 md:top-6 z-[9999] mx-auto h-[64px] md:h-[72px] w-[calc(100%-2rem)] max-w-[1200px] rounded-full flex items-center transition-all duration-500 border ${isScrolled ? 'bg-background/80 backdrop-blur-xl border-black/5 shadow-2xl' : 'bg-transparent border-transparent'}`}>
       <div className="w-full px-6 md:px-8 flex items-center justify-between h-full">
         {/* Logo */}
-        <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <img src="/logo.png?v=3" alt="ToughYuff" className="h-[40px] md:h-[48px] w-auto object-contain block bg-white rounded-lg p-1 shadow-sm" />
-        </Link>
+        <div className="flex-1 flex justify-start">
+          <Link to="/" className="z-50 flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img src="/logo.png?v=3" alt="ToughYuff" className="h-[40px] md:h-[48px] w-auto object-contain block bg-white rounded-lg p-1 shadow-sm" />
+          </Link>
+        </div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8">
           {links.map((link) => (
             <Link
               key={link.name}
@@ -51,52 +53,55 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               {link.name}
             </Link>
           ))}
-
-          <div className="w-px h-6 bg-black/10 mx-2"></div>
-          <StoreSelector />
         </div>
 
-        {/* CTA -> Shop Dropdown */}
-        <div
-          className="hidden md:block relative group relative"
-          onMouseEnter={() => setShowShopMenu(true)}
-          onMouseLeave={() => setShowShopMenu(false)}
-        >
-          <button
-            className="bg-gold text-white px-6 py-2.5 rounded-full font-serif italic text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_20px_rgba(201,168,76,0.3)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 flex items-center gap-2"
-          >
-            Shop <ChevronDown className="w-4 h-4" />
-          </button>
+        {/* Right Actions */}
+        <div className="hidden md:flex flex-1 items-center justify-end gap-4 z-50">
+          <StoreSelector />
+          <div className="w-px h-6 bg-black/10"></div>
 
-          <AnimatePresence>
-            {showShopMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full right-0 mt-2 w-64 bg-surface border border-black/5 rounded-xl shadow-2xl overflow-hidden py-2"
-              >
-                {categories.length > 0 ? (
-                  categories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/catalog?category=${cat.id}`}
-                      className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-black/5 transition-colors"
-                    >
-                      {cat.name}
+          {/* CTA -> Shop Dropdown */}
+          <div
+            className="relative group z-50"
+            onMouseEnter={() => setShowShopMenu(true)}
+            onMouseLeave={() => setShowShopMenu(false)}
+          >
+            <button
+              className="bg-gold text-white px-6 py-2.5 rounded-full font-serif italic text-sm font-semibold hover:brightness-110 hover:shadow-[0_0_20px_rgba(201,168,76,0.3)] hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 flex items-center gap-2"
+            >
+              Shop <ChevronDown className="w-4 h-4" />
+            </button>
+
+            <AnimatePresence>
+              {showShopMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full right-0 mt-2 w-64 bg-surface border border-black/5 rounded-xl shadow-2xl overflow-hidden py-2"
+                >
+                  {categories.length > 0 ? (
+                    categories.map(cat => (
+                      <Link
+                        key={cat.id}
+                        to={`/catalog?category=${cat.id}`}
+                        className="block px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-black/5 transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-xs text-text-tertiary">No categories found</div>
+                  )}
+                  <div className="border-t border-black/5 mt-2 pt-2">
+                    <Link to="/catalog" className="block px-4 py-2 text-sm text-gold hover:text-yellow-600 font-bold">
+                      View All Products
                     </Link>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-xs text-text-tertiary">No categories found</div>
-                )}
-                <div className="border-t border-black/5 mt-2 pt-2">
-                  <Link to="/catalog" className="block px-4 py-2 text-sm text-gold hover:text-yellow-600 font-bold">
-                    View All Products
-                  </Link>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Mobile Menu Toggle */}
