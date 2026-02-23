@@ -147,7 +147,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
       if (selectedCategory && b.category === selectedCategory.slug) return true;
       if (b.category === filters.category) return true;
       return categoryProductBrandIds.has(b.id);
-    });
+    }).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   }, [brands, products, filters.category, categories]);
 
   // Filtered products (only when a brand is selected)
@@ -164,7 +164,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
         return name.includes(q) || brand.includes(q);
       }
       return true;
-    });
+    }).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   }, [products, filters, searchQuery, categories]);
 
   const selectedBrandObj = brands.find(b => b.id === filters.brand);
@@ -326,7 +326,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {categories.map((category) => (
+              {[...categories].sort((a, b) => (a.name || '').localeCompare(b.name || '')).map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
