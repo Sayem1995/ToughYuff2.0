@@ -104,18 +104,16 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
           </div>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-text-primary z-50 flex items-center gap-4"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {/* Show store selector on mobile header explicitly or just in menu? Let's put in menu to save space, or here? */}
-          {/* Actually, putting it here makes it accessible. */}
-          <div onClick={(e) => e.stopPropagation()}>
-            <StoreSelector />
-          </div>
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        {/* Mobile Header Actions */}
+        <div className="md:hidden flex items-center gap-4 z-50">
+          <StoreSelector />
+          <button
+            className="text-text-primary p-2 -mr-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
 
         {/* Mobile Nav Overlay / Sidebar */}
         <AnimatePresence>
@@ -143,7 +141,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   <div className="flex flex-col items-center mx-auto">
                     <Link to="/" onClick={() => setIsOpen(false)}>
                       <div className="inline-block relative group">
-                        <img src="/logo.png?v=3" alt="ToughYuff" className="h-20 w-auto object-contain bg-surface border border-black/5 rounded-xl p-2 mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:border-gold/30" />
+                        <img src="/logo.png?v=3" alt="ToughYuff" className="h-16 w-auto object-contain bg-surface border border-black/5 rounded-xl p-2 mb-2 shadow-sm group-hover:shadow-md transition-all group-hover:border-gold/30" />
                         <div className="absolute inset-0 bg-gradient-to-tr from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl mix-blend-overlay"></div>
                       </div>
                     </Link>
@@ -177,12 +175,12 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   {categories.map((cat) => (
                     <Link
                       key={cat.id}
-                      to={`/catalog?category=${cat.id}`} // Placeholder link
+                      to={`/catalog?category=${cat.id}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between py-3 text-white/90 font-bold text-sm tracking-wide border-b border-white/5 last:border-0 hover:text-gold transition-colors group"
+                      className="flex items-center justify-between py-3 text-text-primary font-bold text-sm tracking-wide border-b border-black/5 last:border-0 hover:text-gold transition-colors group"
                     >
                       <span>{cat.name}</span>
-                      <ChevronDown className="w-4 h-4 text-white/30 group-hover:text-gold transition-transform -rotate-90 group-hover:rotate-0" />
+                      <ChevronDown className="w-4 h-4 text-text-tertiary group-hover:text-gold transition-transform -rotate-90 group-hover:rotate-0" />
                     </Link>
                   ))}
 
@@ -190,16 +188,16 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   <Link
                     to="/catalog"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between py-3 text-gold font-bold text-sm tracking-wide border-b border-white/5 last:border-0 hover:text-white transition-colors group"
+                    className="flex items-center justify-between py-3 text-gold font-bold text-sm tracking-wide border-b border-black/5 last:border-0 hover:text-text-primary transition-colors group"
                   >
                     <span>VIEW ALL VAPES</span>
-                    <ChevronDown className="w-4 h-4 text-gold group-hover:text-white transition-transform -rotate-90 group-hover:rotate-0" />
+                    <ChevronDown className="w-4 h-4 text-gold group-hover:text-text-primary transition-transform -rotate-90 group-hover:rotate-0" />
                   </Link>
                 </div>
 
                 {/* Footer / Extra Links */}
-                <div className="mt-auto p-6 bg-black/20 border-t border-white/5">
-                  <Link to="/login" onClick={() => setIsOpen(false)} className="block text-center text-sm font-bold text-gold/80 mb-4 hover:text-gold tracking-widest">
+                <div className="mt-auto p-6 bg-black/5 border-t border-black/5">
+                  <Link to="/login" onClick={() => setIsOpen(false)} className="block text-center text-sm font-bold text-gold hover:text-yellow-600 mb-4 tracking-widest">
                     LOGIN / REGISTER
                   </Link>
                   <p className="text-xs font-bold text-text-primary uppercase tracking-wide">ToughYuff Smoke Shop</p>
