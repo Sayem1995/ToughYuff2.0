@@ -523,7 +523,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   };
 
   const handleFixCali = async () => {
-    if (!confirm("This will find all Cali 8000 and 20000 products that are out of stock or missing the Disposable Vapes category, and fix them. Continue?")) return;
+    console.log("DEBUG: handleFixCali called");
+    if (!window.confirm("This will find all Cali 8000 and 20000 products that are out of stock or missing the Disposable Vapes category, and fix them. Continue?")) return;
     try {
       // Find the actual disposable category slug from the database
       const disposableCat = categories.find(c => c.name.toLowerCase().includes('disposable vape') || c.name.toLowerCase().includes('disposables'));
@@ -532,7 +533,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       const allCali = products.filter(p => p.brandId === 'cali-ul8000' || p.brandId === 'cali-20000');
       const toUpdate = allCali.filter(p => !p.inStock || p.category !== targetCategorySlug);
 
-      console.log(`Found ${toUpdate.length} Cali products to fix. Using category slug: ${targetCategorySlug}`);
+      console.log(`DEBUG: Found ${toUpdate.length} Cali products to fix.`);
+
+      if (toUpdate.length === 0) {
+        alert("No Cali products need fixing!");
+        return;
+      }
 
       for (const p of toUpdate) {
         if (!p.id) continue;
@@ -541,10 +547,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           category: targetCategorySlug
         });
       }
-      alert(`Successfully fixed ${toUpdate.length} Cali products using category '${targetCategorySlug}'. They should now appear in the catalog.`);
+      alert(`Successfully fixed ${toUpdate.length} Cali products!`);
     } catch (e) {
-      console.error(e);
-      alert("Error fixing Cali products.");
+      console.error("DEBUG: Fix Cali error:", e);
+      alert("Error fixing Cali products. Check console.");
     }
   };
 
@@ -735,47 +741,41 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       </span>
                     )}
                     <button
-                      onClick={handleFixCali}
-                      className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors"
+                      onClick={() => {
+                        console.log("DEBUG: Fix Cali button clicked");
+                        handleFixCali();
+                      }}
+                      className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors cursor-pointer"
                     >
                       Fix Cali Products
                     </button>
                     <button
                       onClick={async () => {
-                        console.log("DEBUG: Sync button clicked. Products in props:", products?.length);
+                        console.log("DEBUG: Sync button clicked");
                         if (!products || products.length === 0) {
-                          alert("No products found in memory. Please wait for the initial load to complete.");
+                          alert("No products in memory yet. Please wait.");
                           return;
                         }
 
-                        if (!confirm("Sync Geek Bar Pulse flavors? This will check all products and update matching ones in Firestore with the new names and descriptions.")) return;
+                        if (!window.confirm("Sync Geek Bar Pulse flavors? This will update Firestore data.")) return;
 
                         setIsSyncing(true);
-                        console.log("DEBUG: Starting sync...");
-
                         try {
                           const res = await syncGeekBarFlavors(products);
-                          console.log("DEBUG: Sync result:", res);
                           setIsSyncing(false);
-
                           if (res.success) {
-                            if (res.count === 0) {
-                              alert("Sync complete, but no matching 'Geek Bar Pulse' products were found in your database. Ensure your products have the correct brand name.");
-                            } else {
-                              alert(`Successfully updated ${res.count} products! The changes are now live.`);
-                            }
+                            alert(res.count === 0 ? "No matching products found." : `Successfully synced ${res.count} products!`);
                           } else {
-                            const errorMsg = res.error instanceof Error ? res.error.message : JSON.stringify(res.error);
-                            alert("Sync failed: " + (errorMsg || "Unknown error"));
+                            alert("Sync failed. Check terminal.");
                           }
                         } catch (err) {
-                          console.error("DEBUG: Sync handler caught error:", err);
+                          console.error("DEBUG: Sync error:", err);
                           setIsSyncing(false);
-                          alert("An unexpected error occurred during sync. Check the browser console for details.");
+                          alert("Unexpected sync error.");
                         }
                       }}
                       disabled={isSyncing}
-                      className="px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 font-bold text-sm rounded-lg transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 font-bold text-sm rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                     >
                       {isSyncing ? 'Syncing...' : 'Sync Geek Bar Pulse Flavors'}
                     </button>
