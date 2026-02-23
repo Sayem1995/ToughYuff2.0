@@ -372,40 +372,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
                                 </div>
                             </div>
                         </div>
-
-                        <div>
-                            <label className="block text-sm text-text-secondary mb-1">Sales Channel</label>
-                            <select
-                                name="channel"
-                                value={formData.channel}
-                                onChange={handleChange}
-                                className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
-                            >
-                                <option value="store">In-Store Only</option>
-                                <option value="online">Online Only</option>
-                                <option value="both">Both</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Flavor Profile */}
-                    <div>
-                        <label className="block text-sm text-text-secondary mb-2">Flavor Profile</label>
-                        <div className="flex flex-wrap gap-2">
-                            {FLAVOR_PROFILES.map(profile => (
-                                <button
-                                    key={profile}
-                                    type="button"
-                                    onClick={() => handleFlavorProfileChange(profile)}
-                                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${formData.flavorProfile?.includes(profile)
-                                        ? 'bg-gold text-black border-gold'
-                                        : 'bg-transparent text-text-secondary border-black/10 hover:border-gold/50'
-                                        }`}
-                                >
-                                    {profile}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Description */}
