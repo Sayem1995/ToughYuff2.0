@@ -271,7 +271,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
 
       {/* Filter Bar — only shown in products view */}
       {viewMode === 'products' && (
-        <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
+        <div className="sticky top-[88px] md:top-[104px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
           <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
             <div className="flex flex-wrap gap-3 items-center">
@@ -325,7 +325,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories: ra
 
       {/* Brands view: back button in a lighter bar */}
       {viewMode === 'brands' && (
-        <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-3 px-6">
+        <div className="sticky top-[88px] md:top-[104px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-3 px-6">
           <div className="max-w-[1200px] mx-auto">
             <button
               onClick={() => handleCategorySelect('all')}
