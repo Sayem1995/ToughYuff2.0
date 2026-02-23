@@ -43,8 +43,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="hidden lg:flex w-1/2 bg-surface relative items-center justify-center p-12 border-r border-black/5">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
         <div className="relative z-10 text-center">
-          <div className="w-64 h-80 mx-auto bg-background border-2 border-dashed border-gold/30 rounded-xl mb-8 flex items-center justify-center">
-            <span className="text-text-tertiary">Admin Visual / Logo</span>
+          <div className="w-64 h-80 mx-auto bg-black/20 backdrop-blur-sm border border-gold/10 rounded-2xl mb-8 flex items-center justify-center shadow-2xl overflow-hidden p-6">
+            <img src="/logo.png?v=3" alt="ToughYuff Logo" className="w-full h-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
           </div>
           <h1 className="text-3xl font-bold text-text-primary mb-2">TooughYuff Admin</h1>
           <p className="text-text-secondary">Product Availability Console</p>
