@@ -224,12 +224,24 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const productCountByBrand = useMemo(() => {
     const counts: Record<string, number> = {};
     availableBrands.forEach(brand => {
+      // Determine if this brand is inherently tied to the active category
+      const brandIsInActiveCategory = categories.find(c => c.id === filters.category)?.slug === brand.category || (!brand.category && filters.category === 'all');
+
       counts[brand.id] = products.filter(
-        p => (p.brandId === brand.id || p.brandName?.toLowerCase() === brand.name?.toLowerCase()) && productMatchesCategory(p, filters.category)
+        p => {
+          const matchesBrand = p.brandId === brand.id || (brand.name && p.brandName?.toLowerCase() === brand.name?.toLowerCase());
+
+          // If the product explicitly matches the category, great.
+          // Otherwise, if the product matches the brand AND the brand is shown in this view, count it.
+          // Because when you click the brand, you see all its products anyway.
+          const matchesCat = productMatchesCategory(p, filters.category);
+
+          return matchesBrand && (matchesCat || filters.category === 'all' || p.category === '' || !p.category);
+        }
       ).length;
     });
     return counts;
-  }, [products, availableBrands, filters.category]);
+  }, [products, availableBrands, filters.category, categories]);
 
   return (
     <div className="min-h-screen bg-background">
