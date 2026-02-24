@@ -357,21 +357,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
     // Check if product is THC, Edibles, or standard
     const productCategory = (product.category || '').toLowerCase();
-    let isTHC = productCategory === 'thc-disposables';
+    let isTHC = productCategory.includes('thc');
     let isEdibles = productCategory.includes('edible');
 
     // Also check the category NAME from allCategories (handles old slugs after rename)
     if (!isEdibles && product.category) {
       const cat = allCategories.find(c => c.slug === product.category);
-      if (cat && (cat.name || '').toLowerCase().includes('edible')) {
-        isEdibles = true;
+      if (cat) {
+        if ((cat.name || '').toLowerCase().includes('edible')) isEdibles = true;
+        if ((cat.name || '').toLowerCase().includes('thc')) isTHC = true;
       }
     }
 
     // Fallback: Check Brand if Product Category is missing/mismatch
     if (!isTHC && !isEdibles && product.brandId) {
       const brand = allBrands.find(b => b.id === product.brandId);
-      if (brand?.category === 'thc-disposables') {
+      if ((brand?.category || '').toLowerCase().includes('thc')) {
         isTHC = true;
       } else if ((brand?.category || '').toLowerCase().includes('edible')) {
         isEdibles = true;
@@ -1060,7 +1061,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                               const brandCat = (brand.category || '').toLowerCase();
                               if (brandCat.includes('edible')) {
                                 setShowEdiblesForm(true);
-                              } else if (brandCat === 'thc-disposables') {
+                              } else if (brandCat.includes('thc')) {
                                 setShowTHCForm(true);
                               } else {
                                 setShowForm(true);
