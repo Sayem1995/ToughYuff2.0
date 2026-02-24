@@ -141,9 +141,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
   // Filtered products (only when a brand is selected)
   const filteredProducts = useMemo(() => {
+    const selectedBrandOpt = brands.find(b => b.id === filters.brand);
     return products.filter(product => {
       if (!productMatchesCategory(product, filters.category)) return false;
-      if (filters.brand !== 'all' && product.brandId !== filters.brand) return false;
+      if (filters.brand !== 'all') {
+        const matchesId = product.brandId === filters.brand;
+        const matchesName = selectedBrandOpt && product.brandName?.toLowerCase() === selectedBrandOpt.name?.toLowerCase();
+        if (!matchesId && !matchesName) return false;
+      }
       if (filters.flavorProfile !== 'all' && !product.flavorProfile.includes(filters.flavorProfile)) return false;
       if (filters.nicotine === 'nicotine' && product.isNicotineFree) return false;
       if (searchQuery) {
@@ -205,7 +210,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const counts: Record<string, number> = {};
     availableBrands.forEach(brand => {
       counts[brand.id] = products.filter(
-        p => p.brandId === brand.id && productMatchesCategory(p, filters.category)
+        p => (p.brandId === brand.id || p.brandName?.toLowerCase() === brand.name?.toLowerCase()) && productMatchesCategory(p, filters.category)
       ).length;
     });
     return counts;
