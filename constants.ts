@@ -354,6 +354,21 @@ export const EDIBLE_BRANDS: Brand[] = [
   { id: 'polka-dot-shroom-bar', name: 'Polka Dot Shroom Bar', tagline: 'A Magical Experience', puffRange: '', description: 'Premium shroom bars with a unique twist.', image: 'https://placehold.co/600x600/2d1b69/ffffff?text=Polka+Dot', category: 'edibles' }
 ];
 
+export const WRAPS_BRANDS: Brand[] = [
+  { id: 'sweet-wood-regular', name: 'Sweet Wood Regular', tagline: 'Natural leaf wraps', puffRange: '', description: 'Premium natural leaf wraps for a smooth experience.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Sweet+Wood', category: 'wraps-and-blunts' },
+  { id: 'sweet-wood-flat', name: 'Sweet Wood Flat', tagline: 'Consistent and slow burning', puffRange: '', description: 'Flat leaf wraps designed for easy rolling.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Sweet+Wood+Flat', category: 'wraps-and-blunts' },
+  { id: 'backwood', name: 'Backwood', tagline: 'Wild & Mild', puffRange: '', description: 'All-natural tobacco leaf wraps known for their rugged look and rich flavor.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Backwood', category: 'wraps-and-blunts' },
+  { id: 'truewraps', name: 'Truewraps', tagline: 'Pure tobacco satisfaction', puffRange: '', description: 'High-quality tobacco wraps for a traditional experience.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Truewraps', category: 'wraps-and-blunts' },
+  { id: 'blk', name: 'BLK', tagline: 'Bold and smooth', puffRange: '', description: 'Smooth tip wraps with a variety of rich flavors.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=BLK', category: 'wraps-and-blunts' },
+  { id: 'dutch-master', name: 'Dutch Master', tagline: 'The Master of wraps', puffRange: '', description: 'Classic slow-burning wraps with a signature aroma.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Dutch+Master', category: 'wraps-and-blunts' },
+  { id: 'game', name: 'Game', tagline: 'Get in the game', puffRange: '', description: 'Thin, slow-burning leaves available in many popular flavors.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Game', category: 'wraps-and-blunts' },
+  { id: 'bluntville', name: 'BLuntville', tagline: 'Fast or slow, it’s up to you', puffRange: '', description: 'Triple-wrapped cigars that allow for a customized smoking speed.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Bluntville', category: 'wraps-and-blunts' },
+  { id: 'fireleaf', name: 'Fireleaf', tagline: 'Hot and fresh', puffRange: '', description: 'Unique fire-cured tobacco wraps with intense flavor.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Fireleaf', category: 'wraps-and-blunts' },
+  { id: 'big-dawg', name: 'Big Dawg', tagline: 'For the big dogs', puffRange: '', description: 'Large capacity wraps for an extended session.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Big+Dawg', category: 'wraps-and-blunts' },
+  { id: 'grabba-leaf', name: 'Grabba Leaf', tagline: 'Whole leaf authenticity', puffRange: '', description: '100% natural whole tobacco leaves for a pure, robust flavor.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Grabba+Leaf', category: 'wraps-and-blunts' },
+  { id: 'crush-grabba', name: 'Crush Grabba', tagline: 'Crush it your way', puffRange: '', description: 'Pre-crushed grabba leaf for easy mixing and rolling.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Crush+Grabba', category: 'wraps-and-blunts' }
+];
+
 const getProfile = (name: string): string[] => {
   const profiles = [];
   if (name.toLowerCase().includes('ice') || name.toLowerCase().includes('frozen') || name.toLowerCase().includes('cool') || name.toLowerCase().includes('menthol')) profiles.push('Ice');

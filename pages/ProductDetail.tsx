@@ -4,6 +4,7 @@ import { Product } from '../types';
 import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings } from 'lucide-react';
 import { THCProductDetail } from '../components/THCProductDetail';
 import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
+import { WrapsProductDetail } from '../components/WrapsProductDetail';
 
 // Helper component for Accordion
 const AccordionItem = ({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon?: React.ElementType }) => {
@@ -59,6 +60,11 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
   // Edibles View Check
   if (product.category === 'edibles') {
     return <EdiblesProductDetail product={product} />;
+  }
+
+  // Wraps View Check
+  if (product.category === 'wraps-and-blunts') {
+    return <WrapsProductDetail product={product} />;
   }
 
   // Find related

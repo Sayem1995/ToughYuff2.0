@@ -522,6 +522,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleSeedWrapsBrands = async () => {
+    if (!confirm("Add default Wraps & Blunts brands (Sweet Wood, Backwood, Dutch Master, etc.)?")) return;
+    try {
+      const { WRAPS_BRANDS } = await import('../constants');
+      await BrandService.ensureBrands(WRAPS_BRANDS, currentStore as any);
+
+      // Refresh brands
+      const fetchedBrands = await BrandService.getAllBrands(currentStore as any);
+      const fetchedOrder = await BrandService.getBrandOrder(currentStore as any);
+      setDynamicBrands(fetchedBrands);
+      setBrandOrder(fetchedOrder);
+
+      alert("Wraps brands added successfully!");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to add wraps brands.");
+    }
+  };
+
   const handleFixAllProducts = async () => {
     console.log("DEBUG: handleFixAllProducts called");
     if (!window.confirm("This will find all products (including Cali Bar, Geek Bar, etc.) that are out of stock or using the old 'Disposable' category, and fix them. Continue?")) return;
@@ -694,6 +713,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       <Plus className="w-4 h-4" /> Add Default Brands
                     </button>
                   )}
+                {activeTab === 'wraps-and-blunts' && (
+                  <button
+                    onClick={handleSeedWrapsBrands}
+                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Add Default Brands
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     const currentCat = sidebarCategories.find(c => c.slug === activeTab);
