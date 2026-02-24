@@ -816,6 +816,64 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       {isSyncing ? 'Processing...' : 'Sync Geek Bar Pulse Flavors Now'}
                     </button>
                     <button
+                      onClick={async () => {
+                        if (!confirm("Update pricing for all specified brands?")) return;
+                        try {
+                          setIsSyncing(true);
+                          const { db } = await import('../src/firebase');
+                          const { writeBatch, doc } = await import('firebase/firestore');
+
+                          const batch = writeBatch(db);
+                          let count = 0;
+
+                          products.forEach(p => {
+                            let newPrice = null;
+                            if (p.brandId === 'cali-ul8000') newPrice = 20.00;
+                            else if (p.brandId === 'cali-20000') newPrice = 25.00;
+                            else if (p.brandId === 'geekbar-pulse') newPrice = 20.00;
+                            else if (p.brandId === 'geekbar-pulsex') newPrice = 25.00;
+                            else if (p.brandId === 'airbar-diamond') newPrice = 10.00;
+                            else if (p.brandId === '4ever-gummies') newPrice = 10.00;
+                            else if (p.brandId === 'fun-cube') newPrice = 5.00;
+
+                            // fallback mapping by name if brandId doesn't match
+                            if (!newPrice && p.brandName) {
+                              const bName = p.brandName.toLowerCase();
+                              if (bName.includes('cali ul 8000')) newPrice = 20.00;
+                              else if (bName.includes('cali 20000')) newPrice = 25.00;
+                              else if (bName.includes('geek bar pulse x') || bName.includes('geekbar pulse x')) newPrice = 25.00;
+                              else if (bName.includes('geek bar pulse') || bName.includes('geekbar pulse')) newPrice = 20.00;
+                              else if (bName.includes('airbar diamond') || bName.includes('air bar diamond')) newPrice = 10.00;
+                              else if (bName.includes('4ever gummies')) newPrice = 10.00;
+                              else if (bName.includes('fun cube')) newPrice = 5.00;
+                            }
+
+                            if (newPrice !== null && p.price !== newPrice && p.id) {
+                              const docRef = doc(db, 'products', p.id);
+                              batch.update(docRef, { price: newPrice });
+                              count++;
+                            }
+                          });
+
+                          if (count > 0) {
+                            await batch.commit();
+                            alert(`Successfully updated prices for ${count} products!`);
+                          } else {
+                            alert("No prices needed updating.");
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          alert("Failed to update prices.");
+                        } finally {
+                          setIsSyncing(false);
+                        }
+                      }}
+                      disabled={isSyncing}
+                      className="px-4 py-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                    >
+                      Update Database Prices
+                    </button>
+                    <button
                       onClick={handleMigrateData}
                       disabled={isMigrating}
                       className="px-4 py-2 bg-black/5 hover:bg-black/10 text-text-primary text-sm font-medium rounded-lg border border-black/10 transition-colors"

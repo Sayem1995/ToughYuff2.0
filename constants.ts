@@ -398,7 +398,14 @@ const generateProducts = (): Product[] => {
       stockQuantity: 100, // Default stock
       inStock: true,
       lowStockThreshold: 10,
-      price: 19.99, // Default price
+      price: brand.id === 'cali-ul8000' ? 20.00 :
+        brand.id === 'cali-20000' ? 25.00 :
+          brand.id === 'geekbar-pulse' ? 20.00 :
+            brand.id === 'geekbar-pulsex' ? 25.00 :
+              brand.id === 'airbar-diamond' ? 10.00 :
+                brand.id === '4ever-gummies' ? 10.00 :
+                  brand.id === 'fun-cube' ? 5.00 :
+                    19.99, // Default price
       channel: 'both', // Default channel
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
