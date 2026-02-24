@@ -168,62 +168,7 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
                             </div>
                         </div>
 
-                        {/* Flavor / Option Selection */}
-                        <div className="mb-6">
-                            <label className="block text-xs font-bold text-background bg-text-primary px-3 py-1.5 w-fit rounded shadow-sm uppercase tracking-widest mb-2">
-                                Select Flavor
-                            </label>
-                            <select
-                                className="w-full border border-black/10 rounded-lg px-4 py-3 text-sm focus:border-gold outline-none bg-surface font-medium shadow-sm text-text-primary"
-                                value={selectedOption}
-                                onChange={(e) => setSelectedOption(e.target.value)}
-                            >
-                                <option value="">Choose an option</option>
-                                <option value="default">{product.name} {product.strength ? `- ${product.strength}` : ''}</option>
-                            </select>
-                        </div>
-
-                        {/* Quantity + Add to Cart */}
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="flex items-center border border-black/10 rounded-lg overflow-hidden bg-surface shadow-sm">
-                                <button
-                                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                    className="w-12 h-12 flex items-center justify-center hover:bg-black/5 transition-colors text-text-primary"
-                                >
-                                    <Minus className="w-4 h-4" />
-                                </button>
-                                <div className="w-16 h-12 flex items-center justify-center font-bold text-sm border-x border-black/10 text-text-primary">
-                                    {quantity}
-                                </div>
-                                <button
-                                    onClick={() => setQuantity(q => q + 1)}
-                                    className="w-12 h-12 flex items-center justify-center hover:bg-black/5 transition-colors text-text-primary"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                </button>
-                            </div>
-
-                            <button className="flex-1 bg-text-primary hover:bg-black/80 text-background font-bold py-3.5 rounded-lg uppercase tracking-wider text-sm transition-colors shadow-md hover:shadow-lg">
-                                Add to Cart
-                            </button>
-                        </div>
-
-                        {/* Trust Badges */}
-                        <div className="mt-auto pt-6 border-t border-black/10 space-y-3">
-                            <p className="font-bold text-xs uppercase tracking-wider flex items-center gap-2 text-text-secondary">
-                                <span>Secure checkout powered by</span>
-                                <span className="px-2 py-0.5 bg-black/5 text-[10px] rounded font-bold text-text-primary">Bolt</span>
-                            </p>
-                            <p className="text-xs font-bold flex items-center gap-2 text-green-600">
-                                <Truck className="w-4 h-4" />
-                                ORDER NOW - SHIPS TODAY!{' '}
-                                <span className="text-text-tertiary underline font-normal cursor-pointer">terms apply</span>
-                            </p>
-                            <div className="text-xs text-text-secondary space-y-1">
-                                <p><span className="font-bold text-text-primary">Categories:</span> Delta 9 Gummies, Delta-9 THC Products, Hemp THC Edibles</p>
-                                <p><span className="font-bold text-text-primary">Brand:</span> {product.brandName || 'N/A'}</p>
-                            </div>
-                        </div>
+                        {/* Checkout elements removed as per user request */}
                     </div>
                 </div>
 
