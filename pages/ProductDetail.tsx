@@ -223,7 +223,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
             <h2 className="text-2xl font-bold mb-8 text-text-primary">More from {product.brandName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map(rel => (
-                <Link to={`/ product / ${rel.id} `} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
+                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
                   <div className="text-lg font-bold text-text-primary mb-1">{rel.name}</div>
                   <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
                 </Link>
