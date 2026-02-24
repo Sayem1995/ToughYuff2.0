@@ -115,50 +115,48 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
               ${product.price ? product.price.toFixed(2) : '0.00'}
             </div>
 
-            {/* Highlights Section */}
-            <div className="mb-10">
-              <h3 className="text-xl font-bold text-text-primary mb-6">Highlights</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
-                    <Battery className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-text-primary">Battery: {product.battery || '650mAh'}</span>
-                </div>
+            {/* Features List */}
+            {Array.isArray(product.features) && product.features.length > 0 ? (
+              <div className="mb-8 mt-6 border-t border-black/10 pt-6">
+                <ul className="space-y-3">
+                  {product.features.map((feature, i) => (
+                    <li key={i} className="flex items-start text-sm text-text-secondary">
+                      <span className="mr-3 text-gold shrink-0">
+                        {feature.startsWith('✨') || feature.startsWith('🔥') || feature.startsWith('⚡') || feature.startsWith('📱') || feature.startsWith('💨') || feature.startsWith('🔋') || feature.startsWith('🧠') || feature.startsWith('👜') || feature.startsWith('⭐') ? '' : '•'}
+                      </span>
+                      <span dangerouslySetInnerHTML={{ __html: feature }} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 mb-8 mt-6 border-t border-black/10 pt-6">
+                <span className="text-text-primary font-medium">{(product.puffCount || 0).toLocaleString()} Puffs</span>
+                <span className="text-text-tertiary">|</span>
+                <span className="text-text-primary font-medium">{product.nicotine}</span>
+              </div>
+            )}
 
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
-                    <Percent className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-text-primary">Nicotine: {product.nicotine || '5%'}</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
-                    <Wind className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-text-primary">
-                    {product.puffCount && product.puffCount > 0
-                      ? `${product.puffCount.toLocaleString()}+ puffs`
-                      : product.brandName?.toLowerCase().includes('pulse') ? '15000+ puffs' : 'Unknown puffs'}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
-                    <Zap className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-text-primary">
-                    {product.isRechargeable ?? true ? 'Rechargeable' : 'Non-Rechargeable'}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-text-primary">Best Seller</span>
-                </div>
+            {/* Select Flavor */}
+            <div className="mb-8">
+              <label className="block text-[10px] font-bold text-background bg-text-primary uppercase tracking-widest mb-2 px-3 py-1.5 w-fit rounded shadow-sm">
+                Select Flavor
+              </label>
+              <div className="relative">
+                <select
+                  className="w-full appearance-none border border-black/10 rounded-lg px-4 py-3 pr-10 text-sm text-text-primary bg-surface focus:border-gold focus:ring-1 focus:ring-gold/20 outline-none font-medium cursor-pointer shadow-sm"
+                  defaultValue=""
+                >
+                  <option value="" disabled>CHOOSE AN OPTION</option>
+                  {product.flavorProfile && product.flavorProfile.length > 0 ? (
+                    product.flavorProfile.map((flavor, i) => (
+                      <option key={i} value={flavor}>{flavor}</option>
+                    ))
+                  ) : (
+                    <option value="default">{product.name}</option>
+                  )}
+                </select>
+                <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
