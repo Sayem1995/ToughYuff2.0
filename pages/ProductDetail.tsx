@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
-import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings, ChevronDown, Percent, Award } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Plus, Minus, Settings, ChevronDown } from 'lucide-react';
 import { THCProductDetail } from '../components/THCProductDetail';
 import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
 import { WrapsProductDetail } from '../components/WrapsProductDetail';
