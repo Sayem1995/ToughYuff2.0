@@ -1070,26 +1070,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           {/* BRANDS VIEW */}
           {
-            activeTab !== 'products' && activeTab !== 'categories' && (
-              <div className="bg-surface rounded-xl border border-black/5 p-6">
-                <h3 className="text-xl font-bold mb-4">
-                  Manage {sidebarCategories.find(c => c.slug === activeTab)?.name} Items ({
-                    sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).length
-                  })
-                </h3>
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={sidebarBrands.filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')).map(b => b.id)}
-                    strategy={verticalListSortingStrategy}
+            activeTab !== 'products' && activeTab !== 'categories' && (() => {
+              const currentCategoryObj = sidebarCategories.find(c => c.slug === activeTab);
+              const isDisposable = activeTab.includes('disposable');
+
+              // Get all brands that should be shown under this tab
+              // 1. Explicitly tagged brands
+              // 2. Untagged brands (default to disposables)
+              // 3. Brands that have products in this category (dynamic inference)
+              const activeBrands = sidebarBrands.filter(b => {
+                if (b.category === activeTab) return true;
+                if (!b.category && isDisposable) return true;
+
+                // If the brand has products belonging to this category, show the brand
+                const hasProductsInCat = products.some(p => {
+                  const matchesCategory = p.category === activeTab || p.category === currentCategoryObj?.id;
+                  const isLegacyDisposableMatch = isDisposable && (!p.category || p.category.includes('disposable'));
+                  const matchesBrand = p.brandId === b.id || p.brandName?.toLowerCase() === b.name?.toLowerCase();
+                  return matchesBrand && (matchesCategory || isLegacyDisposableMatch);
+                });
+
+                return hasProductsInCat;
+              });
+
+              return (
+                <div className="bg-surface rounded-xl border border-black/5 p-6">
+                  <h3 className="text-xl font-bold mb-4">
+                    Manage {currentCategoryObj?.name || activeTab.replace(/-/g, ' ')} Items ({activeBrands.length})
+                  </h3>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
                   >
-                    <div className="space-y-2">
-                      {sidebarBrands
-                        .filter(b => b.category === activeTab || (!b.category && activeTab === 'disposable-vape')) // Default legacy brands to disposable-vape
-                        .map(brand => (
+                    <SortableContext
+                      items={activeBrands.map(b => b.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-2">
+                        {activeBrands.map(brand => (
                           <SortableBrandItem
                             key={brand.id}
                             id={brand.id}
@@ -1100,11 +1119,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                             onDelete={() => handleDeleteBrand(brand.id)}
                           />
                         ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              </div>
-            )
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </div>
+              );
+            })()
           }
 
           {/* BRANDS MANAGEMENT VIEW */}
