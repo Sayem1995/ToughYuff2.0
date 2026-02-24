@@ -28,7 +28,7 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
 
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            setFormData(prev => ({ ...prev, ...initialData }));
         }
     }, [initialData]);
 

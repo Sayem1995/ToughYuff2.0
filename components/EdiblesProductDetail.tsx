@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { Star, ChevronLeft, ChevronRight, Truck, Minus, Plus } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, Truck, Minus, Plus, Zap, Wind, Percent, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface EdiblesProductDetailProps {
@@ -126,15 +126,47 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
                             ${product.price ? product.price.toFixed(2) : '0.00'}
                         </div>
 
-                        {/* Bullets */}
-                        <ul className="space-y-2.5 mb-8 text-text-secondary text-sm">
-                            {bullets.map((b, i) => (
-                                <li key={i} className="flex items-start gap-2.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-gold mt-1.5 flex-shrink-0" />
-                                    {b}
-                                </li>
-                            ))}
-                        </ul>
+                        {/* Highlights Section */}
+                        <div className="mb-10 lg:pr-12">
+                            <h3 className="text-xl font-bold text-text-primary mb-6">Highlights</h3>
+                            <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                                {/* Strength */}
+                                {product.strength && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                            <Percent className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-sm font-medium text-text-primary">{product.strength} Total Potency</span>
+                                    </div>
+                                )}
+
+                                {/* Count */}
+                                {product.count && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                            <Wind className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-sm font-medium text-text-primary">{product.count} Count Pack</span>
+                                    </div>
+                                )}
+
+                                {/* Relaxation */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
+                                        <Zap className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">Designed to support relaxation</span>
+                                </div>
+
+                                {/* Quality Guarantee */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                        <Award className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">Premium {product.brandName || 'Brand'} Quality</span>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Flavor / Option Selection */}
                         <div className="mb-6">

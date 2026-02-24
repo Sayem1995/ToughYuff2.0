@@ -38,10 +38,11 @@ const AdminTHCProductForm: React.FC<AdminTHCProductFormProps> = ({ initialData, 
 
     useEffect(() => {
         if (initialData) {
-            setFormData({
+            setFormData(prev => ({
+                ...prev,
                 ...initialData,
                 category: 'thc-disposables' // Ensure category is set correctly for subsequent edits
-            });
+            }));
         }
     }, [initialData]);
 

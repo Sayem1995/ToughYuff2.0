@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface THCProductDetailProps {
@@ -153,17 +153,51 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                             ${product.price ? product.price.toFixed(2) : '0.00'}
                         </div>
 
-                        {/* Feature Bullets */}
-                        {featureBullets.length > 0 && (
-                            <ul className="space-y-2 mb-8 text-sm text-text-secondary">
-                                {featureBullets.map((bullet, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
-                                        {bullet}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        {/* Highlights Section */}
+                        <div className="mb-10 lg:pr-12">
+                            <h3 className="text-xl font-bold text-text-primary mb-6">Highlights</h3>
+                            <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                                {/* Battery / Rechargeable */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
+                                        <Zap className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">
+                                        {product.isRechargeable ?? true ? 'USB-C Rechargeable' : 'Non-Rechargeable'}
+                                    </span>
+                                </div>
+
+                                {/* Puffs / Count */}
+                                {(product.puffCount || product.count) && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                            <Wind className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-sm font-medium text-text-primary">
+                                            {product.puffCount ? `${product.puffCount.toLocaleString()}+ Puffs` : `${product.count} Per Pack`}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Strength */}
+                                {product.strength && (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                            <Percent className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-sm font-medium text-text-primary">{product.strength} Potency</span>
+                                    </div>
+                                )}
+
+                                {/* Quality Guarantee */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                        <Award className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">Premium {product.brandName} Quality</span>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* SELECT FLAVOR */}
                         <div className="mb-6">

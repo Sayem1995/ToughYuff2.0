@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag, Store, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag, Store, ShieldCheck, Percent, Wind, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface WrapsProductDetailProps {
@@ -11,7 +11,7 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
     const allImages = [product.image, ...(product.images || [])].filter(Boolean);
     const [selectedImageIdx, setSelectedImageIdx] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    
+
     // Default to the first flavor if available, or just an empty string
     const defaultFlavor = product.flavorProfile && product.flavorProfile.length > 0 ? product.flavorProfile[0] : '';
     const [selectedFlavor, setSelectedFlavor] = useState(defaultFlavor);
@@ -40,13 +40,13 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
 
             <div className="max-w-7xl mx-auto px-4 py-8 md:py-16">
                 <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
-                    
+
                     {/* Left Showcase (Images) */}
                     <div className="w-full lg:w-1/2 flex flex-col gap-6">
                         <div className="relative aspect-[4/5] sm:aspect-square bg-gradient-to-b from-[#161a1d] to-[#0a0f12] rounded-3xl overflow-hidden border border-white/5 flex items-center justify-center p-8 group shadow-2xl">
                             {/* Stylish Background Glow */}
                             <div className="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl pointer-events-none" />
-                            
+
                             <img
                                 src={selectedImage}
                                 alt={product.name || 'Wrap Product'}
@@ -80,11 +80,10 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
                                     <button
                                         key={idx}
                                         onClick={() => setSelectedImageIdx(idx)}
-                                        className={`w-24 h-24 rounded-2xl flex-shrink-0 bg-[#161a1d] p-3 transition-all duration-300 relative overflow-hidden group ${
-                                            selectedImageIdx === idx 
-                                            ? 'ring-2 ring-amber-500 ring-offset-4 ring-offset-[#0a0f12] scale-105' 
+                                        className={`w-24 h-24 rounded-2xl flex-shrink-0 bg-[#161a1d] p-3 transition-all duration-300 relative overflow-hidden group ${selectedImageIdx === idx
+                                            ? 'ring-2 ring-amber-500 ring-offset-4 ring-offset-[#0a0f12] scale-105'
                                             : 'border border-white/5 hover:border-white/20 hover:scale-105'
-                                        }`}
+                                            }`}
                                     >
                                         <img src={img} alt={`Variant ${idx + 1}`} className="w-full h-full object-contain filter drop-shadow-lg group-hover:brightness-110 transition-all" />
                                     </button>
@@ -122,11 +121,10 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
                                         <button
                                             key={index}
                                             onClick={() => setSelectedFlavor(flavor)}
-                                            className={`px-5 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 ${
-                                                selectedFlavor === flavor
+                                            className={`px-5 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 ${selectedFlavor === flavor
                                                 ? 'bg-amber-500 text-black shadow-[0_0_20px_rgba(245,158,11,0.3)] scale-105'
                                                 : 'bg-[#161a1d] text-gray-300 border border-white/5 hover:border-white/20 hover:bg-[#1a1f24]'
-                                            }`}
+                                                }`}
                                         >
                                             {flavor}
                                         </button>
@@ -139,7 +137,7 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
                         <div className="bg-[#161a1d] border border-white/5 rounded-3xl p-6 sm:p-8 mb-10 shadow-xl relative overflow-hidden">
                             {/* Subtle background element */}
                             <div className="absolute -right-20 -top-20 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />
-                            
+
                             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 relative z-10">
                                 <div>
                                     <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-2">Total Amount</p>
@@ -197,14 +195,57 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
 
                         {/* Description & Specs Accordion/List */}
                         <div className="space-y-6">
+                            {/* Highlights Section */}
                             <div className="bg-[#161a1d]/50 rounded-2xl p-6 border border-white/5">
-                                <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+                                <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                    Product Description
+                                    Highlights
                                 </h3>
-                                <p className="text-gray-400 leading-relaxed text-sm">
-                                    {product.description || `Experience the ultimate in smoothness with ${product.brandName}'s premium selection. Crafted for perfect burns and rich flavor profiles.`}
-                                </p>
+
+                                <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                                    {/* Strength */}
+                                    {product.strength && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm border border-white/5">
+                                                <Percent className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-xs font-medium text-gray-300">{product.strength} Total Potency</span>
+                                        </div>
+                                    )}
+
+                                    {/* Count */}
+                                    {product.count && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm border border-white/5">
+                                                <Wind className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-xs font-medium text-gray-300">{product.count} Count Pack</span>
+                                        </div>
+                                    )}
+
+                                    {/* Quality Guarantee */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm border border-white/5">
+                                            <Award className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-xs font-medium text-gray-300">Premium {product.brandName || 'Brand'} Quality</span>
+                                    </div>
+
+                                    {/* Authentic Guarantee */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm border border-white/5">
+                                            <ShieldCheck className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-xs font-medium text-gray-300">100% Genuine</span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 pt-6 border-t border-white/5">
+                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">About</h4>
+                                    <p className="text-gray-400 leading-relaxed text-sm">
+                                        {product.description || `Experience the ultimate in smoothness with ${product.brandName || 'our'}'s premium selection. Crafted for perfect burns and rich flavor profiles.`}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

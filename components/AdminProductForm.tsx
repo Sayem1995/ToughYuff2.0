@@ -49,7 +49,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ initialData, brands
 
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            setFormData(prev => ({ ...prev, ...initialData }));
         }
     }, [initialData]);
 

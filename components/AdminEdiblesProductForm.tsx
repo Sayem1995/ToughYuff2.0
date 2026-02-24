@@ -40,10 +40,11 @@ const AdminEdiblesProductForm: React.FC<AdminEdiblesProductFormProps> = ({ initi
 
     useEffect(() => {
         if (initialData) {
-            setFormData({
+            setFormData(prev => ({
+                ...prev,
                 ...initialData,
                 category: 'edibles'
-            });
+            }));
         }
     }, [initialData]);
 
