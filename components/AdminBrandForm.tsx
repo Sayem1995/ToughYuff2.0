@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Brand } from '../types';
+import { Brand, Category } from '../types';
 import { X, Upload, Save, Loader2 } from 'lucide-react';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from '../src/firebase';
 
 interface AdminBrandFormProps {
     initialData?: Brand;
+    categories?: Category[];
     onSave: (data: Omit<Brand, 'id'>) => Promise<void>;
     onCancel: () => void;
 }
 
-const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, onCancel }) => {
+const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, onCancel, categories = [] }) => {
     const [formData, setFormData] = useState<Partial<Brand>>({
         name: '',
+        category: 'disposable-vapes',
         tagline: '',
         puffRange: '',
         description: '',
@@ -111,6 +113,23 @@ const AdminBrandForm: React.FC<AdminBrandFormProps> = ({ initialData, onSave, on
                             className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
                             required
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-text-secondary mb-1">Category</label>
+                        <select
+                            name="category"
+                            value={formData.category || 'disposable-vapes'}
+                            onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none text-sm"
+                            required
+                        >
+                            {categories.map(cat => (
+                                <option key={cat.id || cat.slug} value={cat.slug || cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>

@@ -1336,6 +1336,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         showBrandForm && (
           <AdminBrandForm
             initialData={editingBrand}
+            categories={allCategories}
             onSave={handleSaveBrand}
             onCancel={() => {
               setShowBrandForm(false);
