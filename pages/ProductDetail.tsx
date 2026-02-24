@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
-import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings, ChevronDown } from 'lucide-react';
 import { THCProductDetail } from '../components/THCProductDetail';
 import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
 import { WrapsProductDetail } from '../components/WrapsProductDetail';
@@ -108,50 +108,55 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
               )}
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">{product.name}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-tight mb-4">{product.name}</h1>
 
-            <div className="flex items-center gap-4 mb-8">
-              <span className="text-text-primary font-medium">{(product.puffCount || 0).toLocaleString()} Puffs</span>
-              <span className="text-text-tertiary">|</span>
-              <span className="text-text-primary font-medium">{product.nicotine}</span>
+            {/* Price */}
+            <div className="text-2xl font-bold text-text-primary mb-6 pb-6 border-b border-black/10">
+              ${product.price ? product.price.toFixed(2) : '0.00'}
             </div>
 
-            {/* Highlights Section */}
+            {/* Features List */}
+            {Array.isArray(product.features) && product.features.length > 0 ? (
+              <div className="mb-8">
+                <ul className="space-y-3">
+                  {product.features.map((feature, i) => (
+                    <li key={i} className="flex items-start text-sm text-text-secondary">
+                      <span className="mr-3 text-gold shrink-0">
+                        {feature.startsWith('✨') || feature.startsWith('🔥') || feature.startsWith('⚡') || feature.startsWith('📱') || feature.startsWith('💨') || feature.startsWith('🔋') || feature.startsWith('🧠') || feature.startsWith('👜') ? '' : '•'}
+                      </span>
+                      <span dangerouslySetInnerHTML={{ __html: feature }} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 mb-8">
+                <span className="text-text-primary font-medium">{(product.puffCount || 0).toLocaleString()} Puffs</span>
+                <span className="text-text-tertiary">|</span>
+                <span className="text-text-primary font-medium">{product.nicotine}</span>
+              </div>
+            )}
+
+            {/* Select Flavor */}
             <div className="mb-8">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0">
-                    <Battery className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm text-text-primary">Battery: {product.battery || 'Unknown'}</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0">
-                    <Droplet className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm text-text-primary">Nicotine: {product.nicotine}</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0">
-                    <Wind className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm text-text-primary">
-                    {product.brandName?.toLowerCase().includes('geek bar pulse')
-                      ? '15000-19999 puffs'
-                      : `${(product.puffCount || 0).toLocaleString()} puffs`}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0">
-                    <Zap className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-sm text-text-primary">
-                    {product.isRechargeable ? 'Rechargeable' : 'Non-Rechargeable'}
-                  </span>
-                </div>
+              <label className="block text-xs font-bold text-background bg-text-primary uppercase tracking-widest mb-2 px-3 py-1.5 w-fit rounded shadow-sm">
+                Select Flavor
+              </label>
+              <div className="relative">
+                <select
+                  className="w-full appearance-none border border-black/10 rounded-lg px-4 py-3 pr-10 text-sm text-text-primary bg-surface focus:border-gold focus:ring-1 focus:ring-gold/20 outline-none font-medium cursor-pointer shadow-sm"
+                  defaultValue=""
+                >
+                  <option value="" disabled>CHOOSE AN OPTION</option>
+                  {product.flavorProfile && product.flavorProfile.length > 0 ? (
+                    product.flavorProfile.map((flavor, i) => (
+                      <option key={i} value={flavor}>{flavor}</option>
+                    ))
+                  ) : (
+                    <option value="default">{product.name}</option>
+                  )}
+                </select>
+                <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
@@ -216,7 +221,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
             <h2 className="text-2xl font-bold mb-8 text-text-primary">More from {product.brandName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map(rel => (
-                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
+                <Link to={`/ product / ${rel.id} `} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
                   <div className="text-lg font-bold text-text-primary mb-1">{rel.name}</div>
                   <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
                 </Link>
