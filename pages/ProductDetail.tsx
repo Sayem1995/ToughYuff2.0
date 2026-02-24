@@ -63,7 +63,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
   }
 
   // Wraps View Check
-  if (product.category === 'wraps-and-blunts') {
+  if (product.category && product.category.toLowerCase().includes('wrap')) {
     return <WrapsProductDetail product={product} />;
   }
 
