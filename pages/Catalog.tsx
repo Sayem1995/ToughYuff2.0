@@ -91,31 +91,46 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     // Direct matches: product.category matches the category ID or slug
     if (product.category === categoryId || product.category === slug) return true;
 
+    // Brand-level inheritance: If the product itself is missing category data, check its brand
+    const associatedBrand = brands.find(b => b.id === product.brandId || b.name?.toLowerCase() === product.brandName?.toLowerCase());
+    if (associatedBrand && associatedBrand.category) {
+      if (associatedBrand.category === categoryId || associatedBrand.category === slug) return true;
+    }
+
     // For 'disposable vape(s)' categories: match products whose category contains 'disposable-vape' or 'disposable_vape'
     // but NOT 'thc-disposable' (those belong to their own category)
     if (catName.includes('disposable vape') || catName.includes('disposables')) {
-      if (!productCat) return true; // Legacy products with no category default to disposable vapes
+      if (!productCat && (!associatedBrand || !associatedBrand.category)) return true; // Legacy products with no category default to disposable vapes
       const isDisposableVape = productCat.includes('disposable-vape') ||
         productCat.includes('disposable_vape') ||
         productCat.includes('disposable vape') ||
         productCat === 'disposable'; // Catch legacy 'Disposable' (lowercased)
       const isTHC = productCat.includes('thc');
-      return isDisposableVape && !isTHC;
+      if (isDisposableVape && !isTHC) return true;
+
+      // Secondary check against brand category if product category failed
+      if (associatedBrand && associatedBrand.category) {
+        const bCat = associatedBrand.category.toLowerCase();
+        if (bCat.includes('disposable') && !bCat.includes('thc')) return true;
+      }
     }
 
     // For 'thc disposables' categories: match products whose category contains 'thc'
     if (catName.includes('thc')) {
-      return productCat.includes('thc');
+      if (productCat.includes('thc')) return true;
+      if (associatedBrand && associatedBrand.category?.toLowerCase().includes('thc')) return true;
     }
 
     // For 'edibles' categories
     if (catName.includes('edible')) {
-      return productCat.includes('edible');
+      if (productCat.includes('edible')) return true;
+      if (associatedBrand && associatedBrand.category?.toLowerCase().includes('edible')) return true;
     }
 
     // For 'cigarettes' categories
     if (catName.includes('cigarette')) {
-      return productCat.includes('cigarette');
+      if (productCat.includes('cigarette')) return true;
+      if (associatedBrand && associatedBrand.category?.toLowerCase().includes('cigarette')) return true;
     }
 
     return false;
