@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Category } from '../types';
-import { X, Loader2 } from 'lucide-react';
+import { X, Upload, Loader2 } from 'lucide-react';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from '../src/firebase';
 
 interface AdminCategoryFormProps {
     initialData?: Category;
     onSave: (data: Omit<Category, 'id'>) => Promise<void>;
     onCancel: () => void;
+    allCategories?: Category[];
 }
 
-const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSave, onCancel }) => {
+const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSave, onCancel, allCategories }) => {
     const [name, setName] = useState('');
     const [image, setImage] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Upload states
+    const [uploading, setUploading] = useState(false);
+    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     useEffect(() => {
         if (initialData) {
@@ -21,6 +29,40 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
             setDescription(initialData.description || '');
         }
     }, [initialData]);
+
+    const handleImageUpload = (file: File) => {
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert("File is too large! Max 2MB.");
+            return;
+        }
+
+        setUploading(true);
+        setUploadSuccess(false);
+        setUploadProgress(0);
+
+        const storageRef = ref(storage, `categories/${Date.now()}_${file.name}`);
+        const task = uploadBytesResumable(storageRef, file);
+
+        task.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadProgress(Math.round(progress));
+            },
+            (error) => {
+                console.error("Upload failed:", error);
+                alert("Upload failed.");
+                setUploading(false);
+            },
+            () => {
+                getDownloadURL(task.snapshot.ref).then((downloadURL) => {
+                    setImage(downloadURL);
+                    setUploadSuccess(true);
+                    setUploading(false);
+                });
+            }
+        );
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,7 +84,7 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
             const dataToSave = {
                 name: name.trim(),
                 slug,
-                order: initialData ? initialData.order : 999,
+                order: initialData ? initialData.order : (allCategories ? allCategories.length : 999),
                 ...(image.trim() ? { image: image.trim() } : {}),
                 ...(description.trim() ? { description: description.trim() } : {}),
             } as any;
@@ -82,21 +124,48 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                         />
                     </div>
 
-                    {/* Image URL */}
+                    {/* Image Upload */}
                     <div>
-                        <label className="block text-sm text-text-secondary mb-1">Image URL <span className="text-text-tertiary text-xs">(optional)</span></label>
-                        <input
-                            type="url"
-                            value={image}
-                            onChange={(e) => setImage(e.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                            className="w-full bg-background border border-black/10 rounded px-3 py-2 text-text-primary focus:border-gold outline-none"
-                        />
-                        {image && (
-                            <div className="mt-2 w-16 h-16 rounded-lg overflow-hidden border border-black/10 bg-black/5">
-                                <img src={image} alt="preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        <label className="block text-sm text-text-secondary mb-1">Category Image <span className="text-text-tertiary text-xs">(optional)</span></label>
+                        <div className="flex items-start gap-4">
+                            <div className="w-24 h-24 bg-black/5 rounded-lg border border-black/10 flex items-center justify-center overflow-hidden relative group">
+                                {image ? (
+                                    <>
+                                        <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => { setImage(''); setUploadSuccess(false); }}
+                                            disabled={uploading}
+                                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 transition-opacity disabled:opacity-0"
+                                        >
+                                            <X className="w-6 h-6" />
+                                        </button>
+                                    </>
+                                ) : (
+                                    <span className="text-xs text-text-tertiary">No Image</span>
+                                )}
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-2 z-20">
+                                        <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                                    </div>
+                                )}
                             </div>
-                        )}
+                            <div className="flex-1">
+                                <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-sm text-text-primary transition-colors ${uploading ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}>
+                                    <Upload className="w-4 h-4" />
+                                    {uploading ? 'Uploading...' : image ? 'Change Image' : 'Upload Image'}
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
+                                        }}
+                                        disabled={uploading}
+                                    />
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Description */}
@@ -121,7 +190,7 @@ const AdminCategoryForm: React.FC<AdminCategoryFormProps> = ({ initialData, onSa
                         </button>
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || uploading}
                             className="px-6 py-2 bg-gold hover:bg-yellow-500 text-black font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
                         >
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
