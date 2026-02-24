@@ -1,7 +1,27 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award, Battery, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Helper component for Accordion
+const AccordionItem = ({ title, children, icon: Icon }: { title: React.ReactNode | string, children: React.ReactNode, icon?: React.ElementType }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="border-b border-black/10">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between w-full text-left py-4 hover:bg-black/5 transition-colors px-2 -mx-2 rounded-lg"
+            >
+                <span className="flex items-center gap-3 font-semibold text-lg text-text-primary">
+                    {Icon && <Icon className="w-5 h-5 text-text-secondary" />}
+                    {title}
+                </span>
+                {isOpen ? <Minus className="w-5 h-5 text-text-secondary" /> : <Plus className="w-5 h-5 text-text-secondary" />}
+            </button>
+            {isOpen && <div className="pb-6 text-text-secondary leading-relaxed px-2">{children}</div>}
+        </div>
+    );
+};
 
 interface THCProductDetailProps {
     product: Product;
@@ -10,9 +30,6 @@ interface THCProductDetailProps {
 export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) => {
     const allImages = [product.image, ...(product.images || [])].filter(Boolean);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [selectedFlavor, setSelectedFlavor] = useState('');
-    const [quantity, setQuantity] = useState(1);
-    const [activeTab, setActiveTab] = useState<'description' | 'loyalty'>('description');
 
     const prevImage = () => setCurrentImageIndex(i => (i - 1 + allImages.length) % allImages.length);
     const nextImage = () => setCurrentImageIndex(i => (i + 1) % allImages.length);
@@ -156,93 +173,101 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         {/* Highlights Section */}
                         <div className="mb-10 lg:pr-12">
                             <h3 className="text-xl font-bold text-text-primary mb-6">Highlights</h3>
-                            <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                                {/* Battery / Rechargeable */}
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
+                                {/* Battery */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                        <Battery className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">Battery: {product.battery || '650mAh'}</span>
+                                </div>
+
+                                {/* Nicotine / Strength */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                        <Percent className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">
+                                        {product.strength ? `Strength: ${product.strength}` : `Nicotine: ${product.nicotine || '5%'}`}
+                                    </span>
+                                </div>
+
+                                {/* Puffs / Count */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                        <Wind className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="text-sm font-medium text-text-primary">
+                                        {product.count
+                                            ? `${product.count} count`
+                                            : product.puffCount && product.puffCount > 0
+                                                ? `${product.puffCount.toLocaleString()}+ puffs`
+                                                : `${product.puffCount || '20,000'}+ puffs`}
+                                    </span>
+                                </div>
+
+                                {/* Rechargeable */}
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
                                         <Zap className="w-5 h-5 text-white" />
                                     </div>
                                     <span className="text-sm font-medium text-text-primary">
-                                        {product.isRechargeable ?? true ? 'USB-C Rechargeable' : 'Non-Rechargeable'}
+                                        {product.isRechargeable ?? true ? 'Rechargeable' : 'Non-Rechargeable'}
                                     </span>
                                 </div>
 
-                                {/* Puffs / Count */}
-                                {(product.puffCount || product.count) && (
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
-                                            <Wind className="w-5 h-5 text-white" />
-                                        </div>
-                                        <span className="text-sm font-medium text-text-primary">
-                                            {product.puffCount ? `${product.puffCount.toLocaleString()}+ Puffs` : `${product.count} Per Pack`}
-                                        </span>
-                                    </div>
-                                )}
-
-                                {/* Strength */}
-                                {product.strength && (
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
-                                            <Percent className="w-5 h-5 text-white" />
-                                        </div>
-                                        <span className="text-sm font-medium text-text-primary">{product.strength} Potency</span>
-                                    </div>
-                                )}
-
-                                {/* Quality Guarantee */}
+                                {/* Award / Best Seller */}
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
                                         <Award className="w-5 h-5 text-white" />
                                     </div>
-                                    <span className="text-sm font-medium text-text-primary">Premium {product.brandName} Quality</span>
+                                    <span className="text-sm font-medium text-text-primary">Best Seller</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Checkout elements removed as per user request */}
-                    </div>
-                </div>
+                        {/* Accordions */}
+                        <div className="space-y-1 border-t border-black/10 mt-6 lg:mr-12">
+                            <AccordionItem
+                                title={
+                                    <div className="flex items-center gap-2">
+                                        {product.brandName?.toLowerCase().includes('pulse') && <Settings className="w-5 h-5 text-text-secondary" />}
+                                        <span>About {product.brandName || "Brand"}</span>
+                                    </div>
+                                }
+                            >
+                                <p className="text-text-secondary leading-relaxed">
+                                    {product.aboutText || product.description || `Experience the premium quality of ${product.brandName}. This product delivers exceptional performance.`}
+                                </p>
+                            </AccordionItem>
 
-                {/* ── Description / Loyalty Tabs ── */}
-                <div className="mt-16">
-                    <div className="flex items-center gap-0 border-b border-black/10">
-                        <button
-                            onClick={() => setActiveTab('description')}
-                            className={`px-8 py-4 text-sm font-bold uppercase tracking-wider transition-colors rounded-t-lg ${activeTab === 'description'
-                                ? 'bg-text-primary text-background'
-                                : 'bg-black/5 text-text-tertiary hover:text-text-primary'
-                                }`}
-                        >
-                            Description
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('loyalty')}
-                            className={`px-8 py-4 text-sm font-bold uppercase tracking-wider transition-colors rounded-t-lg ${activeTab === 'loyalty'
-                                ? 'bg-text-primary text-background'
-                                : 'bg-black/5 text-text-tertiary hover:text-text-primary'
-                                }`}
-                        >
-                            Loyalty Points
-                        </button>
-                    </div>
-                    <div className="py-8 text-text-secondary leading-relaxed max-w-4xl">
-                        {activeTab === 'description' && (
-                            <div className="space-y-4">
-                                <h3 className="text-xl font-bold text-text-primary">{fullTitle}</h3>
-                                {product.description && <p>{product.description}</p>}
-                                {product.aboutText && <p>{product.aboutText}</p>}
-                                {Array.isArray(product.features) && product.features.length > 0 && (
-                                    <ul className="list-disc pl-5 space-y-1">
-                                        {product.features.map((f, i) => <li key={i}>{f}</li>)}
-                                    </ul>
+                            <AccordionItem title="Flavor">
+                                {product.flavorText || (
+                                    <div>
+                                        <p className="mb-4">{product.description}</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {(Array.isArray(product.flavorProfile) ? product.flavorProfile : []).map(p => (
+                                                <span key={p} className="text-xs font-medium bg-black/5 text-text-secondary px-3 py-1 rounded-full">
+                                                    {p}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
-                            </div>
-                        )}
-                        {activeTab === 'loyalty' && (
-                            <div>
-                                <p>Earn points with every purchase at our store!</p>
-                            </div>
-                        )}
+                            </AccordionItem>
+
+                            <AccordionItem title="Features">
+                                {Array.isArray(product.features) && product.features.length > 0 ? (
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {product.features.map((feature, i) => (
+                                            <li key={i}>{feature}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-text-tertiary italic">No specific features listed.</p>
+                                )}
+                            </AccordionItem>
+                        </div>
                     </div>
                 </div>
 

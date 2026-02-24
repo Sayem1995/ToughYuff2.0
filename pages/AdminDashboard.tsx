@@ -339,6 +339,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
     // loadProducts(); // Handled by real-time listener
     setShowForm(false);
+    setShowTHCForm(false);
+    setShowEdiblesForm(false);
   };
 
   const handleQuickStockToggle = async (product: Product) => {
@@ -355,35 +357,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
 
-    // Check if product is THC, Edibles, or standard
+    // Initial check against product category slug
     const productCategory = (product.category || '').toLowerCase();
-    let isTHC = productCategory.includes('thc');
-    let isEdibles = productCategory.includes('edible');
+    let isTHC = productCategory === 'thc-disposables' || productCategory === 'thc-cartridges' || productCategory.includes('thc');
+    let isEdibles = productCategory === 'edibles' || productCategory.includes('edible');
 
-    // Also check the category NAME from allCategories (handles old slugs after rename)
-    if (!isEdibles && product.category) {
+    // Try verifying against the master categories list to prevent naming bleed
+    if (!isEdibles && !isTHC && product.category) {
       const cat = allCategories.find(c => c.slug === product.category);
       if (cat) {
-        if ((cat.name || '').toLowerCase().includes('edible')) isEdibles = true;
-        if ((cat.name || '').toLowerCase().includes('thc')) isTHC = true;
+        const catSlug = (cat.slug || '').toLowerCase();
+        if (catSlug === 'edibles' || catSlug.includes('edible')) isEdibles = true;
+        if (catSlug === 'thc-disposables' || catSlug === 'thc-cartridges' || catSlug.includes('thc')) isTHC = true;
       }
     }
 
     // Fallback: Check Brand if Product Category is missing/mismatch
     if (!isTHC && !isEdibles && product.brandId) {
       const brand = allBrands.find(b => b.id === product.brandId);
-      if ((brand?.category || '').toLowerCase().includes('thc')) {
-        isTHC = true;
-      } else if ((brand?.category || '').toLowerCase().includes('edible')) {
-        isEdibles = true;
-      }
+      const brandCat = (brand?.category || '').toLowerCase();
+      if (brandCat === 'edibles' || brandCat.includes('edible')) isEdibles = true;
+      if (brandCat === 'thc-disposables' || brandCat === 'thc-cartridges' || brandCat.includes('thc')) isTHC = true;
     }
 
+    // Safely enforce that Disposable Vapes or similar don't falsely flag as edibles
+    if (productCategory === 'disposable-vapes' ||
+      (product.brandId && allBrands.find(b => b.id === product.brandId)?.category === 'disposable-vapes')) {
+      isEdibles = false;
+    }
+
+    // Isolate form state properly
     if (isEdibles) {
+      setShowForm(false);
+      setShowTHCForm(false);
       setShowEdiblesForm(true);
     } else if (isTHC) {
+      setShowForm(false);
+      setShowEdiblesForm(false);
       setShowTHCForm(true);
     } else {
+      setShowEdiblesForm(false);
+      setShowTHCForm(false);
       setShowForm(true);
     }
   };
