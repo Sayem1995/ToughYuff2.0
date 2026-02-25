@@ -11,6 +11,7 @@ export const BRANDS: Brand[] = [
   { id: 'geekbar-pulse', name: 'Geek Bar Pulse', tagline: 'World’s first full screen disposable', puffRange: '15000 Puffs', description: 'Features Pulse Mode for enhanced airflow and flavor, plus a large display.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse', category: 'disposable-vapes' },
   { id: 'geekbar-pulsex', name: 'Geekbar Pulse X', tagline: 'Next gen pulse technology', puffRange: '25000 Puffs', description: 'Curved screen display and starry sky UI with faster charging.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse+X', category: 'disposable-vapes' },
   { id: 'tyson-30k', name: 'Tyson', tagline: 'The Undisputed Champion of Vapes', puffRange: '30000 Puffs', description: 'A heavyweight 30,000 puff device featuring dual power modes and a 3D curved display screen.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Tyson', category: 'disposable-vapes' },
+  { id: 'olit-hookalit', name: 'Olit Hookalit', tagline: 'Mystical E-Hookah Experience', puffRange: '40000 Puffs', description: 'A massive 40,000 puff e-hookah device with Tarot-style artwork, dual power modes, and dense cloud production.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Olit+Hookalit', category: 'disposable-vapes' },
 ];
 
 const RAW_PRODUCT_DATA = [
@@ -355,6 +356,31 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'tyson-30k', name: 'Strawberry Watermelon', code: '(T30)' },
   { brandId: 'tyson-30k', name: 'Tobacco', code: '(T30)' },
   { brandId: 'tyson-30k', name: 'Watermelon', code: '(T30)' },
+
+  // Olit Hookalit
+  { brandId: 'olit-hookalit', name: 'Blue Razz', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Blueberry Ice', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Cool Mint', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Grape Ice', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Grape Mint', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Lady Killer', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Lemon Mint', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Love 66', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Lucid Dream', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Magic Love', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Miami Mint', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Mixed Berries', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Passion Fruit', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Peach Ice', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Peach Mango Watermelon', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Pineapple Coconut', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Strawberry Kiwi', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Strawberry Punch', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Two Apple Shisha', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Watermelon Ice', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Watermelon Strawberry Melon', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Brown Ale', code: '(OH)' },
+  { brandId: 'olit-hookalit', name: 'Cherry Mint', code: '(OH)' },
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -410,7 +436,7 @@ const generateProducts = (): Product[] => {
       category: brand.category || 'disposable-vapes', // Inherit from brand
       name: item.name,
       puffCount: parseInt(brand.puffRange.split(' ')[0]) || 5000,
-      nicotine: isNicFree ? '0 mg (No Nicotine)' : '5%',
+      nicotine: isNicFree ? '0 mg (No Nicotine)' : brand.id === 'olit-hookalit' ? '0.35%' : '5%',
       isNicotineFree: isNicFree,
       flavorProfile: getProfile(item.name) as any,
       description: `Experience the premium taste of ${item.name} from ${brand.name}.`,
@@ -422,15 +448,16 @@ const generateProducts = (): Product[] => {
           brand.id === 'geekbar-pulse' ? 20.00 :
             brand.id === 'geekbar-pulsex' ? 25.00 :
               brand.id === 'tyson-30k' ? 25.00 :
-                brand.id === 'airbar-diamond' ? 10.00 :
-                  brand.id === '4ever-gummies' ? 10.00 :
-                    brand.id === 'fun-cube' ? 5.00 :
-                      19.99, // Default price
+                brand.id === 'olit-hookalit' ? 30.00 :
+                  brand.id === 'airbar-diamond' ? 10.00 :
+                    brand.id === '4ever-gummies' ? 10.00 :
+                      brand.id === 'fun-cube' ? 5.00 :
+                        19.99, // Default price
       channel: 'both', // Default channel
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
       // New defaults
-      battery: brand.id === 'tyson-30k' ? '850 mAh' : ((item as any).battery || '650 mAh'),
+      battery: brand.id === 'tyson-30k' ? '850 mAh' : brand.id === 'olit-hookalit' ? '1300 mAh' : ((item as any).battery || '650 mAh'),
       isRechargeable: (item as any).isRechargeable ?? true,
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
@@ -452,7 +479,16 @@ const generateProducts = (): Product[] => {
             'Adjustable airflow & Dual power modes',
             '3D curved display screen'
           ]
-          : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
+          : brand.id === 'olit-hookalit'
+            ? [
+              'Up to 40,000 puffs (MTL Mode)',
+              '40 mL massive e-liquid capacity',
+              '0.35% nicotine (E-Hookah style)',
+              '1300 mAh high-capacity battery',
+              'Dual power modes (MTL/DTL)',
+              '0.6 Ω LIT mesh coil for clouds'
+            ]
+            : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };

@@ -56,50 +56,44 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // TEMPORARY SYNC SCRIPT FOR TYSON AND YME
+  // TEMPORARY DB SEED SCRIPT FOR OLIT HOOKALIT
   React.useEffect(() => {
-    const syncData = async () => {
+    const seedOlit = async () => {
       try {
-        console.log("[Sync] Starting data sync...");
-
-        // 1. Cleanup old Tyson ID if exists
+        const targetBrandId = 'olit-hookalit';
         const productsRef = collection(db, 'products');
-        const oldTysonQuery = query(productsRef, where("brandId", "==", "mike-tyson-30k"));
-        const oldTysonSnapshot = await getDocs(oldTysonQuery);
-        if (oldTysonSnapshot.size > 0) {
-          console.log(`[Sync] Cleaning up ${oldTysonSnapshot.size} old Tyson products...`);
-          for (const d of oldTysonSnapshot.docs) {
-            await deleteDoc(doc(db, 'products', d.id));
-          }
-        }
+        const q = query(productsRef, where("brandId", "==", targetBrandId));
+        const snapshot = await getDocs(q);
 
-        // 2. Seed Brands
-        const targetBrandIds = ['tyson-30k', 'yme-nic', 'yme-nonic'];
-        for (const bid of targetBrandIds) {
-          const brandData = BRANDS.find(b => b.id === bid);
-          if (brandData) {
-            await setDoc(doc(db, 'brands', bid), brandData);
-            console.log(`[Sync] Seeded brand: ${brandData.name}`);
+        if (snapshot.size === 0) {
+          console.log(`[Seed] ${targetBrandId} not found in DB. Seeding...`);
+          const targetProducts = INITIAL_PRODUCTS.filter(p => p.brandId === targetBrandId);
+          for (const product of targetProducts) {
+            const docRef = doc(db, 'products', product.id);
+            await setDoc(docRef, product);
+            console.log(`[Seed] Seeded product ${product.name}`);
           }
-        }
 
-        // 3. Seed Products
-        for (const bid of targetBrandIds) {
-          const productsToSeed = INITIAL_PRODUCTS.filter(p => p.brandId === bid);
-          console.log(`[Sync] Seeding ${productsToSeed.length} products for ${bid}...`);
-          for (const p of productsToSeed) {
-            await setDoc(doc(db, 'products', p.id), p);
+          // Also seed the brand
+          const brandInfo = BRANDS.find(b => b.id === targetBrandId);
+          if (brandInfo) {
+            const brandRef = doc(db, 'brands', brandInfo.id);
+            await setDoc(brandRef, brandInfo);
+            console.log(`[Seed] Seeded brand ${brandInfo.name}`);
           }
-        }
 
-        console.log("[Sync] All target data synchronized successfully.");
+          console.log(`[Seed] Sync complete for ${targetBrandId}.`);
+        } else {
+          console.log(`[Seed] ${targetBrandId} already found in DB. Skipping.`);
+        }
       } catch (error) {
-        console.error("[Sync] Error during synchronization:", error);
+        console.error("[Seed] Error:", error);
       }
     };
 
-    syncData();
+    seedOlit();
   }, []);
+
 
   const handleEditProduct = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
