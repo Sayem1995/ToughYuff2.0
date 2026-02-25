@@ -441,7 +441,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />
                 ) : (
-                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col">
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col overflow-hidden">
                     {/* Admin Controls */}
                     {isAdmin && (
                       <div className="absolute top-4 right-4 z-20">
@@ -473,16 +473,22 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                         )}
                       </div>
                     )}
-                    <div className="aspect-square bg-black/5 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-4 relative group-hover:bg-black/10 transition-colors">
+
+                    {/* Top Image Block */}
+                    <div className="aspect-square bg-white flex items-center justify-center p-6 relative group-hover:bg-[#FCFAFE] transition-colors">
                       {!product.inStock && (
-                        <div className="absolute top-2 left-2 text-[10px] font-bold text-red-50 text-center uppercase tracking-widest bg-red-500 px-2 py-1 rounded z-10">Out of Stock</div>
+                        <div className="absolute top-4 left-4 text-[10px] font-bold text-red-50 text-center uppercase tracking-widest bg-red-500 px-2 py-1 rounded z-10">Out of Stock</div>
                       )}
                       <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                     </div>
-                    <div className="text-sm text-text-secondary mb-1 leading-none">{product.brandName}</div>
-                    <h3 className="text-base font-medium text-text-primary mb-1 line-clamp-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                    <div className="font-bold text-base text-text-primary mt-auto">
-                      ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
+
+                    {/* Bottom Info Block */}
+                    <div className="bg-[#F8F9FA] p-5 flex flex-col flex-grow">
+                      <div className="text-xs text-text-secondary mb-1 uppercase tracking-wider font-semibold">{product.brandName} - {product.puffCount || product.count || 'N/A'}</div>
+                      <h3 className="text-lg font-medium text-text-primary mb-3 line-clamp-3 leading-snug">{product.name}</h3>
+                      <div className="font-bold text-lg text-text-primary mt-auto">
+                        ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
+                      </div>
                     </div>
                   </Link>
                 )
