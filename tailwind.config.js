@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#FAF8F5', // Alabaster/light
+        background: '#FFFFFF', // Pure white (was Alabaster/light)
         surface: '#FFFFFF',    // Pure white
         elevated: '#FFFFFF',   // Lighter for floating elements
         'card-bg': 'rgba(0,0,0,0.03)', // Subtle dark tint for light mode
