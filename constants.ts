@@ -10,7 +10,7 @@ export const BRANDS: Brand[] = [
   { id: 'airbar-diamond', name: 'Airbar Diamond', tagline: 'Jewel-inspired elegance', puffRange: '500 Puffs', description: 'A classic, stylish choice with a hard shell design and smooth draw.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Airbar+Diamond', category: 'disposable-vapes' },
   { id: 'geekbar-pulse', name: 'Geek Bar Pulse', tagline: 'World’s first full screen disposable', puffRange: '15000 Puffs', description: 'Features Pulse Mode for enhanced airflow and flavor, plus a large display.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse', category: 'disposable-vapes' },
   { id: 'geekbar-pulsex', name: 'Geekbar Pulse X', tagline: 'Next gen pulse technology', puffRange: '25000 Puffs', description: 'Curved screen display and starry sky UI with faster charging.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Geek+Bar+Pulse+X', category: 'disposable-vapes' },
-  { id: 'mike-tyson-30k', name: 'Mike Tyson Legend 30K', tagline: 'The Undisputed Champion of Vapes', puffRange: '30000 Puffs', description: 'A heavyweight 30,000 puff device featuring dual power modes and a 3D curved display screen.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Mike+Tyson+30K', category: 'disposable-vapes' },
+  { id: 'tyson-30k', name: 'Tyson', tagline: 'The Undisputed Champion of Vapes', puffRange: '30000 Puffs', description: 'A heavyweight 30,000 puff device featuring dual power modes and a 3D curved display screen.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Tyson', category: 'disposable-vapes' },
 ];
 
 const RAW_PRODUCT_DATA = [
@@ -338,23 +338,23 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'geekbar-pulsex', name: 'White Peach Raspberry', code: '(GB PX)', description: 'Soft white peach with tart raspberry, refined and lightly cooled.' },
   { brandId: 'geekbar-pulsex', name: 'Wild Cherry Slush', code: '(GB PX)', description: 'Bold cherry slushy flavor, sweet with a slush-style icy kick.' },
 
-  // Mike Tyson 30K
-  { brandId: 'mike-tyson-30k', name: 'Apple Melonberry', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Blue Razz', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Clear', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Cool Mint', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Banana', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Blueberry', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Grape', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Mango', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Peach', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Frozen Strawberry', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Green Apple', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Menthol', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Strawberry Banana', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Strawberry Watermelon', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Tobacco', code: '(MT30)' },
-  { brandId: 'mike-tyson-30k', name: 'Watermelon', code: '(MT30)' },
+  // Tyson 30K
+  { brandId: 'tyson-30k', name: 'Apple Melonberry', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Blue Razz', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Clear', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Cool Mint', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Banana', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Blueberry', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Grape', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Mango', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Peach', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Frozen Strawberry', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Green Apple', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Menthol', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Strawberry Banana', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Strawberry Watermelon', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Tobacco', code: '(T30)' },
+  { brandId: 'tyson-30k', name: 'Watermelon', code: '(T30)' },
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -421,7 +421,7 @@ const generateProducts = (): Product[] => {
         brand.id === 'cali-20000' ? 25.00 :
           brand.id === 'geekbar-pulse' ? 20.00 :
             brand.id === 'geekbar-pulsex' ? 25.00 :
-              brand.id === 'mike-tyson-30k' ? 25.00 :
+              brand.id === 'tyson-30k' ? 25.00 :
                 brand.id === 'airbar-diamond' ? 10.00 :
                   brand.id === '4ever-gummies' ? 10.00 :
                     brand.id === 'fun-cube' ? 5.00 :
@@ -430,7 +430,7 @@ const generateProducts = (): Product[] => {
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
       // New defaults
-      battery: brand.id === 'mike-tyson-30k' ? '850 mAh' : ((item as any).battery || '650 mAh'),
+      battery: brand.id === 'tyson-30k' ? '850 mAh' : ((item as any).battery || '650 mAh'),
       isRechargeable: (item as any).isRechargeable ?? true,
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
@@ -443,7 +443,7 @@ const generateProducts = (): Product[] => {
           'Fast charging & pre-filled',
           'Sleek premium tech design'
         ]
-        : brand.id === 'mike-tyson-30k'
+        : brand.id === 'tyson-30k'
           ? [
             'Up to 30,000 puffs per device',
             '16 mL prefilled e-liquid capacity',
