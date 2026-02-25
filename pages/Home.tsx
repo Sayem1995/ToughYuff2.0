@@ -234,7 +234,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
             {[
               { name: 'Blue Raspberry Lemonade', tags: ['Fruity', 'Drink', 'Ice'], brands: ['Geek Bar', 'Cali'], nic: '5%' },
               { name: 'Frozen Apple Watermelon', tags: ['Fruity', 'Ice'], brands: ['Cali UL 8000'], nic: '5%' },
-              { name: 'Cool Mint', tags: ['Menthol', 'Fresh'], brands: ['Flair Ultra', 'UNC'], nic: 'Various' },
+              { name: 'Cool Mint', tags: ['Menthol', 'Fresh'], brands: ['Flair Ultra', 'YME'], nic: 'Various' },
               { name: 'Strawberry Ice Cream', tags: ['Dessert', 'Sweet'], brands: ['Geek Bar Pulse'], nic: '5%' }
             ].map((flavor, idx) => (
               <div key={idx} className="bg-elevated border border-black/5 p-8 rounded-2xl hover:border-black/10 transition-colors shadow-sm">
