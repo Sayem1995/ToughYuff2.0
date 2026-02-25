@@ -95,7 +95,7 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                     {/* ── LEFT: Image Slider ── */}
                     <div className="relative">
                         {/* Main image */}
-                        <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-2xl overflow-hidden flex items-center justify-center relative border border-black/5">
+                        <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-2xl overflow-hidden flex items-center justify-center relative">
                             <img
                                 src={allImages[currentImageIndex]}
                                 alt={product.name}

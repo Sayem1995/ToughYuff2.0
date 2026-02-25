@@ -81,7 +81,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Product Image */}
-          <div className="aspect-square bg-surface border border-black/5 rounded-2xl flex items-center justify-center relative overflow-hidden group hover:border-gold/30 transition-colors shadow-sm">
+          <div className="aspect-square bg-surface rounded-2xl flex items-center justify-center relative overflow-hidden group transition-colors shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent group-hover:from-black/10 transition-colors" />
             <img
               src={product.image}
@@ -223,7 +223,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
             <h2 className="text-2xl font-bold mb-8 text-text-primary">More from {product.brandName}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map(rel => (
-                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-surface border border-black/5 hover:border-gold/30 rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
+                <Link to={`/product/${rel.id}`} key={rel.id} className="block bg-surface rounded-2xl p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:shadow-black/5">
                   <div className="text-lg font-bold text-text-primary mb-1">{rel.name}</div>
                   <div className="text-sm text-text-secondary">{rel.nicotine} • {rel.puffCount} puffs</div>
                 </Link>

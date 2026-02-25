@@ -185,13 +185,13 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {groupBrands.map((brand) => (
-                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface border border-black/5 rounded-2xl p-5 transition-all duration-500 hover:scale-[1.02] hover:border-gold/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden">
+                    <Link to={`/catalog?brand=${brand.id}`} key={brand.id} className="brand-card group relative bg-surface rounded-2xl p-5 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden">
                       {/* Hover Slide Background Effect */}
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-0"></div>
 
                       <div className="relative z-10">
                         {brand.image && (
-                          <div className="h-40 bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center border border-black/5 shadow-inner">
+                          <div className="h-40 bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center shadow-inner">
                             <img src={brand.image} alt={brand.name} className="w-full h-full object-contain p-6 mix-blend-darken opacity-80 group-hover:mix-blend-normal group-hover:opacity-100 transition-all duration-700 group-hover:scale-110" />
                           </div>
                         )}
@@ -237,7 +237,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
               { name: 'Cool Mint', tags: ['Menthol', 'Fresh'], brands: ['Flair Ultra', 'YME'], nic: 'Various' },
               { name: 'Strawberry Ice Cream', tags: ['Dessert', 'Sweet'], brands: ['Geek Bar Pulse'], nic: '5%' }
             ].map((flavor, idx) => (
-              <div key={idx} className="bg-elevated border border-black/5 p-8 rounded-2xl hover:border-black/10 transition-colors shadow-sm">
+              <div key={idx} className="bg-elevated p-8 rounded-2xl transition-colors shadow-sm">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-2xl font-medium text-text-primary">{flavor.name}</h3>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${flavor.nic === '0 mg' ? 'border-accent-blue text-accent-blue' : 'border-black/10 text-text-tertiary'}`}>

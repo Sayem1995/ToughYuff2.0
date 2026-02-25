@@ -351,7 +351,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className="group bg-surface border border-black/5 shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
                   {/* Category image or icon placeholder */}
                   <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
@@ -397,7 +397,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 <button
                   key={brand.id}
                   onClick={() => handleBrandSelect(brand.id)}
-                  className="group bg-surface border border-black/5 shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
                 >
                   <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
                     <img src={brand.image} alt={brand.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
@@ -441,7 +441,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />
                 ) : (
-                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface border border-black/5 rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl hover:shadow-black/5 flex flex-col">
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col">
                     {/* Admin Controls */}
                     {isAdmin && (
                       <div className="absolute top-4 right-4 z-20">

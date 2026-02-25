@@ -56,7 +56,7 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
                     {/* Left: Image Gallery */}
                     <div className="space-y-4">
                         {/* Main Image with Arrows */}
-                        <div className="relative aspect-[4/5] bg-gradient-to-br from-black/5 to-transparent rounded-2xl overflow-hidden border border-black/5 flex items-center justify-center p-8">
+                        <div className="relative aspect-[4/5] bg-gradient-to-br from-black/5 to-transparent rounded-2xl overflow-hidden flex items-center justify-center p-8">
                             <img
                                 src={selectedImage}
                                 alt={product.name || 'Product Image'}
