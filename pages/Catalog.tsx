@@ -3,9 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
-import { db } from '../src/firebase';
-import { collection, query, where, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { INITIAL_PRODUCTS, BRANDS } from '../constants';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -54,44 +51,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  // TEMPORARY DB SEED SCRIPT FOR OLIT HOOKALIT
-  React.useEffect(() => {
-    const seedOlit = async () => {
-      try {
-        const targetBrandId = 'olit-hookalit';
-        const productsRef = collection(db, 'products');
-        const q = query(productsRef, where("brandId", "==", targetBrandId));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.size === 0) {
-          console.log(`[Seed] ${targetBrandId} not found in DB. Seeding...`);
-          const targetProducts = INITIAL_PRODUCTS.filter(p => p.brandId === targetBrandId);
-          for (const product of targetProducts) {
-            const docRef = doc(db, 'products', product.id);
-            await setDoc(docRef, product);
-            console.log(`[Seed] Seeded product ${product.name}`);
-          }
-
-          // Also seed the brand
-          const brandInfo = BRANDS.find(b => b.id === targetBrandId);
-          if (brandInfo) {
-            const brandRef = doc(db, 'brands', brandInfo.id);
-            await setDoc(brandRef, brandInfo);
-            console.log(`[Seed] Seeded brand ${brandInfo.name}`);
-          }
-
-          console.log(`[Seed] Sync complete for ${targetBrandId}.`);
-        } else {
-          console.log(`[Seed] ${targetBrandId} already found in DB. Skipping.`);
-        }
-      } catch (error) {
-        console.error("[Seed] Error:", error);
-      }
-    };
-
-    seedOlit();
   }, []);
 
 
