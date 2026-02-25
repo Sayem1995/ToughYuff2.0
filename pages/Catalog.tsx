@@ -484,7 +484,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
                     {/* Bottom Info Block */}
                     <div className="bg-[#F8F9FA] p-5 flex flex-col flex-grow">
-                      <div className="text-xs text-text-secondary mb-1 uppercase tracking-wider font-semibold">{product.brandName} - {product.puffCount || product.count || 'N/A'}</div>
                       <h3 className="text-lg font-medium text-text-primary mb-3 line-clamp-3 leading-snug">{product.name}</h3>
                       <div className="font-bold text-lg text-text-primary mt-auto">
                         ${typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}
