@@ -336,7 +336,7 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'geekbar-pulsex', name: 'Strawberry Mango', code: '(GB PX)', description: 'Juicy mango with ripe strawberry, smooth tropical blend with light chill.' },
   { brandId: 'geekbar-pulsex', name: 'Strawberry Watermelon', code: '(GB PX)', description: 'Sweet watermelon juice/candy mix with a clean, cold menthol finish.' },
   { brandId: 'geekbar-pulsex', name: 'White Peach Raspberry', code: '(GB PX)', description: 'Soft white peach with tart raspberry, refined and lightly cooled.' },
-  { id: 'geekbar-pulsex', name: 'Wild Cherry Slush', code: '(GB PX)', description: 'Bold cherry slushy flavor, sweet with a slush-style icy kick.' },
+  { brandId: 'geekbar-pulsex', name: 'Wild Cherry Slush', code: '(GB PX)', description: 'Bold cherry slushy flavor, sweet with a slush-style icy kick.' },
 
   // Mike Tyson 30K
   { brandId: 'mike-tyson-30k', name: 'Apple Melonberry', code: '(MT30)' },
