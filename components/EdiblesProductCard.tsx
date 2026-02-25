@@ -27,7 +27,7 @@ export const EdiblesProductCard: React.FC<EdiblesProductCardProps> = ({ product 
             className="group cursor-pointer flex flex-col bg-surface rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5"
         >
             {/* Top Image Block */}
-            <div className="aspect-square bg-white flex items-center justify-center p-6 relative group-hover:bg-[#FCFAFE] transition-colors">
+            <div className="aspect-square bg-transparent flex items-center justify-center p-6 relative transition-colors">
                 <img
                     src={product.image}
                     alt={product.name || 'Product'}

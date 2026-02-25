@@ -475,7 +475,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                     )}
 
                     {/* Top Image Block */}
-                    <div className="aspect-square bg-white flex items-center justify-center p-6 relative group-hover:bg-[#FCFAFE] transition-colors">
+                    <div className="aspect-square bg-transparent flex items-center justify-center p-6 relative transition-colors">
                       {!product.inStock && (
                         <div className="absolute top-4 left-4 text-[10px] font-bold text-red-50 text-center uppercase tracking-widest bg-red-500 px-2 py-1 rounded z-10">Out of Stock</div>
                       )}
