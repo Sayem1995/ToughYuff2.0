@@ -3,8 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
-import { db } from '../src/firebase';
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -53,32 +51,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  // TEMPORARY DB UPDATE SCRIPT FOR GEEK BAR PULSE PRICING
-  React.useEffect(() => {
-    const updatePrices = async () => {
-      try {
-        const productsRef = collection(db, 'products');
-        const q = query(productsRef, where("brandId", "==", "geekbar-pulse"));
-        const snapshot = await getDocs(q);
-
-        console.log(`[Update Script] Found ${snapshot.size} Geek Bar Pulse products.`);
-
-        for (const document of snapshot.docs) {
-          const data = document.data();
-          if (data.price !== 20) {
-            const docRef = doc(db, 'products', document.id);
-            await updateDoc(docRef, { price: 20 });
-            console.log(`[Update Script] Updated price for ${data.name} to $20.00`);
-          }
-        }
-      } catch (error) {
-        console.error("[Update Script] Error updating prices:", error);
-      }
-    };
-
-    updatePrices(); // Fire once on component mount
   }, []);
 
   const handleEditProduct = (e: React.MouseEvent, product: Product) => {
