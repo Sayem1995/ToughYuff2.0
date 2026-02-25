@@ -3,9 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
-import { db } from '../src/firebase';
-import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
-import { INITIAL_PRODUCTS, BRANDS } from '../constants';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -54,43 +51,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  // TEMPORARY DB SEED SCRIPT FOR MIKE TYSON 30K
-  React.useEffect(() => {
-    const seedTyson = async () => {
-      try {
-        const productsRef = collection(db, 'products');
-        const q = query(productsRef, where("brandId", "==", "mike-tyson-30k"));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.size === 0) {
-          console.log("[Seed] Mike Tyson 30K not found in DB. Seeding...");
-          const tysonProducts = INITIAL_PRODUCTS.filter(p => p.brandId === 'mike-tyson-30k');
-          for (const product of tysonProducts) {
-            const docRef = doc(db, 'products', product.id);
-            await setDoc(docRef, product);
-            console.log(`[Seed] Seeded product ${product.name}`);
-          }
-
-          // Also seed the brand
-          const mtBrand = BRANDS.find(b => b.id === 'mike-tyson-30k');
-          if (mtBrand) {
-            const brandRef = doc(db, 'brands', mtBrand.id);
-            await setDoc(brandRef, mtBrand);
-            console.log(`[Seed] Seeded brand ${mtBrand.name}`);
-          }
-
-          console.log("[Seed] Sync complete.");
-        } else {
-          console.log("[Seed] Mike Tyson 30K already found in DB. Skipping.");
-        }
-      } catch (error) {
-        console.error("[Seed] Error:", error);
-      }
-    };
-
-    seedTyson();
   }, []);
 
   const handleEditProduct = (e: React.MouseEvent, product: Product) => {
