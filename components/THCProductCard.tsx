@@ -26,7 +26,7 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
     return (
         <div
             onClick={() => navigate(`/product/${product.id}`)}
-            className="group cursor-pointer flex flex-col bg-surface rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5"
+            className="group cursor-pointer flex flex-col bg-surface border border-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5"
         >
             {/* Top Image Block */}
             <div className="aspect-square bg-transparent flex items-center justify-center p-6 relative transition-colors">

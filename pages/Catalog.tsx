@@ -441,7 +441,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                 ) : product.category === 'edibles' ? (
                   <EdiblesProductCard key={product.id} product={product} />
                 ) : (
-                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col overflow-hidden">
+                  <Link to={`/product/${product.id}`} key={product.id} className="group relative bg-surface border border-white rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 flex flex-col overflow-hidden">
                     {/* Admin Controls */}
                     {isAdmin && (
                       <div className="absolute top-4 right-4 z-20">
