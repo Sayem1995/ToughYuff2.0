@@ -3,9 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
-import { db } from '../src/firebase';
-import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
-import { INITIAL_PRODUCTS, BRANDS } from '../constants';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -54,27 +51,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  // FINAL SYNC FOR BRAND IMAGES
-  React.useEffect(() => {
-    const finalSync = async () => {
-      try {
-        console.log("[Sync] Updating brand images in DB...");
-        const targets = ['tyson-30k', 'olit-hookalit', 'yme-nic', 'yme-nonic'];
-        for (const bid of targets) {
-          const brandData = BRANDS.find(b => b.id === bid);
-          if (brandData) {
-            await setDoc(doc(db, 'brands', bid), brandData, { merge: true });
-            console.log(`[Sync] Updated image for brand: ${bid}`);
-          }
-        }
-        console.log("[Sync] Final brand sync complete.");
-      } catch (error) {
-        console.error("[Sync] Error:", error);
-      }
-    };
-    finalSync();
   }, []);
 
 
