@@ -3,6 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
+import { db } from '../src/firebase';
+import { collection, query, where, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { INITIAL_PRODUCTS, BRANDS } from '../constants';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -51,6 +54,54 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  // FORCED MULTI-STORE SYNC SCRIPT
+  React.useEffect(() => {
+    const forceSync = async () => {
+      try {
+        console.log("[Sync] Starting FORCED multi-store sync...");
+        const targetBrandIds = ['olit-hookalit', 'tyson-30k', 'yme-nic', 'yme-nonic'];
+        const stores = ['goldmine', 'ten2ten'];
+
+        for (const storeId of stores) {
+          console.log(`[Sync] Processing store: ${storeId}`);
+
+          // 1. Seed Brands for this store
+          for (const bid of targetBrandIds) {
+            const brandInfo = BRANDS.find(b => b.id === bid);
+            if (brandInfo) {
+              const brandDocId = `${bid}-${storeId}`;
+              await setDoc(doc(db, 'brands', brandDocId), {
+                ...brandInfo,
+                storeId,
+                updatedAt: new Date()
+              }, { merge: true });
+            }
+          }
+
+          // 2. Seed Products for this store
+          const productsToSeed = INITIAL_PRODUCTS.filter(p => targetBrandIds.includes(p.brandId));
+          console.log(`[Sync] Seeding ${productsToSeed.length} products for ${storeId}...`);
+
+          for (const product of productsToSeed) {
+            const productDocId = `${product.id}-${storeId}`;
+            await setDoc(doc(db, 'products', productDocId), {
+              ...product,
+              id: productDocId, // Ensure unique ID
+              storeId,
+              updatedAt: new Date()
+            }, { merge: true });
+          }
+        }
+
+        console.log("[Sync] FORCED multi-store sync complete for all targets.");
+      } catch (error) {
+        console.error("[Sync] Critical error during forced sync:", error);
+      }
+    };
+
+    forceSync();
   }, []);
 
 
