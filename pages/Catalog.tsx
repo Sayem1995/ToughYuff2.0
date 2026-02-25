@@ -3,6 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Product, Brand, FilterState, FlavorProfile } from '../types';
 import { Filter, Search, MoreVertical, Edit, Trash, ArrowLeft, Tag } from 'lucide-react';
 import { ProductService } from '../src/services/productService';
+import { db } from '../src/firebase';
+import { collection, query, where, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { INITIAL_PRODUCTS, BRANDS } from '../constants';
 import AdminProductForm from '../components/AdminProductForm';
 import { useStore } from '../src/context/StoreContext';
 import { THCProductCard } from '../components/THCProductCard';
@@ -51,6 +54,51 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const handleClickOutside = () => setActiveMenuId(null);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  // TEMPORARY SYNC SCRIPT FOR TYSON AND YME
+  React.useEffect(() => {
+    const syncData = async () => {
+      try {
+        console.log("[Sync] Starting data sync...");
+
+        // 1. Cleanup old Tyson ID if exists
+        const productsRef = collection(db, 'products');
+        const oldTysonQuery = query(productsRef, where("brandId", "==", "mike-tyson-30k"));
+        const oldTysonSnapshot = await getDocs(oldTysonQuery);
+        if (oldTysonSnapshot.size > 0) {
+          console.log(`[Sync] Cleaning up ${oldTysonSnapshot.size} old Tyson products...`);
+          for (const d of oldTysonSnapshot.docs) {
+            await deleteDoc(doc(db, 'products', d.id));
+          }
+        }
+
+        // 2. Seed Brands
+        const targetBrandIds = ['tyson-30k', 'yme-nic', 'yme-nonic'];
+        for (const bid of targetBrandIds) {
+          const brandData = BRANDS.find(b => b.id === bid);
+          if (brandData) {
+            await setDoc(doc(db, 'brands', bid), brandData);
+            console.log(`[Sync] Seeded brand: ${brandData.name}`);
+          }
+        }
+
+        // 3. Seed Products
+        for (const bid of targetBrandIds) {
+          const productsToSeed = INITIAL_PRODUCTS.filter(p => p.brandId === bid);
+          console.log(`[Sync] Seeding ${productsToSeed.length} products for ${bid}...`);
+          for (const p of productsToSeed) {
+            await setDoc(doc(db, 'products', p.id), p);
+          }
+        }
+
+        console.log("[Sync] All target data synchronized successfully.");
+      } catch (error) {
+        console.error("[Sync] Error during synchronization:", error);
+      }
+    };
+
+    syncData();
   }, []);
 
   const handleEditProduct = (e: React.MouseEvent, product: Product) => {
