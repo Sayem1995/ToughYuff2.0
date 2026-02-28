@@ -1309,6 +1309,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                             onDelete={() => handleDeleteBrand(brand.id)}
                           />
                         ))}
+
+                        {/* Add Brand Placeholder Button */}
+                        <button
+                          onClick={() => { setEditingBrand(undefined); setShowBrandForm(true); }}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-dashed border-2 border-dashed border-black/10 rounded-xl text-black/40 hover:text-gold hover:border-gold hover:bg-gold/5 transition-all outline-none focus:ring-2 focus:ring-gold/50 font-bold tracking-wide uppercase text-sm"
+                        >
+                          <Plus className="w-5 h-5" />
+                          Add Brand
+                        </button>
                       </div>
                     </SortableContext>
                   </DndContext>
