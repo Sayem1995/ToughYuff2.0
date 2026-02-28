@@ -587,6 +587,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       // 1. Any Cali products out of stock
       // 2. Any product using the old 'Disposable' category (case-insensitive)
       // 3. Any Geek Bar Pulse X product (since they are new and might have sync issues)
+      // 4. Any product accidentally categorized as 'thc-disposables' that shouldn't be
+      const disposableBrandsList = ['cali', 'geekbar', 'raz', 'airbar', 'tyson', 'lava', 'flair'];
+
       const toUpdate = products.filter(p => {
         const isCali = p.brandId?.includes('cali');
         const isGeekBar = p.brandId?.includes('geekbar');
@@ -594,13 +597,34 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         const isMissingCategory = !p.category;
         const isOutOfStock = !p.inStock;
 
-        return (isCali && isOutOfStock) || isOldCategory || isMissingCategory || (isGeekBar && p.category !== targetCategorySlug);
+        const isWronglyTHC = p.category === 'thc-disposables' &&
+          disposableBrandsList.some(b => p.brandId?.toLowerCase().includes(b) || p.brandName?.toLowerCase().includes(b));
+
+        return (isCali && isOutOfStock) || isOldCategory || isMissingCategory || (isGeekBar && p.category !== targetCategorySlug) || isWronglyTHC;
       });
 
       console.log(`DEBUG: Found ${toUpdate.length} products to fix.`);
 
-      if (toUpdate.length === 0) {
-        alert("All products look good!");
+      // Also fix Brands directly in Firestore if they are wrong
+      let brandsFixedCount = 0;
+      try {
+        const { collection: fbCollection, getDocs: fbGetDocs, doc: fbDoc, updateDoc: fbUpdateDoc } = await import('firebase/firestore');
+        const { db: fbDb } = await import('../src/firebase');
+        const brandsSnapshot = await fbGetDocs(fbCollection(fbDb, 'brands'));
+
+        for (const bDoc of brandsSnapshot.docs) {
+          const data = bDoc.data();
+          if (data.category === 'thc-disposables' && disposableBrandsList.some(b => data.id?.toLowerCase().includes(b) || data.name?.toLowerCase().includes(b))) {
+            await fbUpdateDoc(fbDoc(fbDb, 'brands', bDoc.id), { category: 'disposable-vapes' });
+            brandsFixedCount++;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fix brands:", err);
+      }
+
+      if (toUpdate.length === 0 && brandsFixedCount === 0) {
+        alert("All products and brands look good!");
         return;
       }
 
@@ -1245,8 +1269,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
                 // If the brand has products belonging to this category, show the brand
                 const hasProductsInCat = products.some(p => {
-                  const matchesCategory = p.category === activeTab || p.category === currentCategoryObj?.id;
-                  const isLegacyDisposableMatch = activeTab === 'disposable-vapes' && (!p.category || p.category.includes('disposable'));
+                  const pCat = (p.category || '').toLowerCase();
+                  const matchesCategory = pCat === activeTab || pCat === currentCategoryObj?.id;
+
+                  // For the main disposable vapes tab, catch products that have NO category or explicitly 'disposable-vapes'
+                  const isLegacyDisposableMatch = activeTab === 'disposable-vapes' &&
+                    (pCat === '' || pCat === 'disposable-vapes' || pCat === 'disposables');
+
                   const matchesBrand = p.brandId === b.id || p.brandName?.toLowerCase() === b.name?.toLowerCase();
                   return matchesBrand && (matchesCategory || isLegacyDisposableMatch);
                 });
