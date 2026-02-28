@@ -642,6 +642,81 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleAddMuhaMeds = async () => {
+    if (!window.confirm("Add Muha Meds 2G products to both stores?")) return;
+    try {
+      const stores = ['goldmine', 'ten2ten'];
+      const { collection: fbCollection, doc: fbDoc, setDoc: fbSetDoc } = await import('firebase/firestore');
+      const { db: fbDb } = await import('../src/firebase');
+
+      const productsToAdd = [
+        { name: 'Blue Slushie', flavorProfile: ['Fruity', 'Ice'] },
+        { name: 'Bubblegum Burst', flavorProfile: ['Dessert', 'Fruity'] },
+        { name: 'Dragon Berry Runtz', flavorProfile: ['Fruity'] },
+        { name: 'Frozen Pomegranate', flavorProfile: ['Fruity', 'Ice'] },
+        { name: 'Galactic Diesel', flavorProfile: ['Tobacco', 'Fruity'] },
+        { name: 'Habibi', flavorProfile: ['Fruity'] },
+        { name: 'Horchata', flavorProfile: ['Dessert'] },
+        { name: 'Pineapple Paradise', flavorProfile: ['Fruity'] },
+        { name: 'Sweet Dreams OG', flavorProfile: ['Fruity', 'Tobacco'] },
+        { name: 'Watermelon Moonshine', flavorProfile: ['Fruity', 'Ice'] }
+      ];
+
+      const features = [
+        '2g high-capacity tank: Pre-filled with 2 grams of thick, premium oil for extended use.',
+        'Potent formulation: High THC (or cannabinoid) concentration for strong, fast-acting effects.',
+        'Draw-activated firing: No buttons or settings; zero maintenance.',
+        'Sleek, pocket-friendly design: Slim, discreet, lightweight, and easy to carry.',
+        'Long-lasting battery: Built to last the full 2g without frequent recharging.',
+        'Smooth, flavorful hits: Ceramic-style coil and quality terpenes for clean vapor.',
+        'Ready-to-use out of box: Fully assembled and pre-filled.',
+        'Disposable & low maintenance: Use until the oil is finished, then dispose.',
+        'Authenticity focused branding: Genuine hardware and oil to distinguish from counterfeits.'
+      ];
+
+      let count = 0;
+      for (const storeId of stores) {
+        for (const item of productsToAdd) {
+          const docId = `muha-meds-${item.name.toLowerCase().replace(/ /g, '-')}-${storeId}`;
+          const productData = {
+            id: docId,
+            storeId,
+            brandId: 'muha-meds',
+            brandName: 'Muha Meds',
+            category: 'thc-disposables',
+            name: item.name,
+            puffCount: 2000,
+            nicotine: 'THC',
+            isNicotineFree: false,
+            flavorProfile: item.flavorProfile,
+            description: `Experience the premium taste of ${item.name} from Muha Meds 2G.`,
+            stockQuantity: 100,
+            inStock: storeId === 'goldmine', // In stock for goldmine, out of stock for 10to10 initially
+            lowStockThreshold: 10,
+            price: 35.00,
+            channel: 'both',
+            image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Muha+Meds',
+            battery: 'Integrated',
+            isRechargeable: true,
+            aboutText: 'Premium THC Experience',
+            flavorText: `A rich and authentic ${item.name} flavor profile with 2g of high-capacity oil.`,
+            features: features,
+            updatedAt: new Date(),
+            createdAt: new Date()
+          };
+
+          await fbSetDoc(fbDoc(fbCollection(fbDb, 'products'), docId), productData, { merge: true });
+          count++;
+        }
+      }
+      alert(`Added ${count} Muha Meds products successfully!`);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding products.");
+    }
+  };
+
   const handleCleanupDuplicates = async () => {
     if (!window.confirm("This will scan ALL products and remove duplicates (keeping the original). Continue?")) return;
     try {
@@ -909,7 +984,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm font-bold"
                     >
                       <Trash2 className="w-4 h-4" />
-                      Cleanup Duplicates
+                      Cleanup
+                    </button>
+                    <button
+                      onClick={handleAddMuhaMeds}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-bold"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Muha Meds
                     </button>
                     <button
                       onClick={async () => {
