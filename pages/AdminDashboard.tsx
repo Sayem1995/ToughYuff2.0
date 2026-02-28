@@ -1240,12 +1240,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               // 3. Brands that have products in this category (dynamic inference)
               const activeBrands = sidebarBrands.filter(b => {
                 if (b.category === activeTab) return true;
-                if (!b.category && isDisposable) return true;
+                // Only default uncategorized brands to 'disposable-vapes', NOT 'thc-disposables' or other tabs
+                if (!b.category && activeTab === 'disposable-vapes') return true;
 
                 // If the brand has products belonging to this category, show the brand
                 const hasProductsInCat = products.some(p => {
                   const matchesCategory = p.category === activeTab || p.category === currentCategoryObj?.id;
-                  const isLegacyDisposableMatch = isDisposable && (!p.category || p.category.includes('disposable'));
+                  const isLegacyDisposableMatch = activeTab === 'disposable-vapes' && (!p.category || p.category.includes('disposable'));
                   const matchesBrand = p.brandId === b.id || p.brandName?.toLowerCase() === b.name?.toLowerCase();
                   return matchesBrand && (matchesCategory || isLegacyDisposableMatch);
                 });

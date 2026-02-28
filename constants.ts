@@ -389,7 +389,7 @@ export const THC_BRANDS: Brand[] = [
   { id: 'mad-labs', name: 'Mad Labs', tagline: 'Innovation in every hit', puffRange: '2000mg', description: 'Cutting edge extraction technology.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Mad+Labs', category: 'thc-disposables' },
   { id: 'california-honey', name: 'California Honey', tagline: 'Golden Standard', puffRange: '1000mg', description: 'Pure and potent California honey oil.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=California+Honey', category: 'thc-disposables' },
   { id: 'big-chiefs', name: 'Big Chiefs', tagline: 'Stay Big', puffRange: '1000mg', description: 'Authentic and verified premium extracts.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Big+Chiefs', category: 'thc-disposables' },
-  { id: 'exodus', name: 'Exodus', tagline: 'Movement of the People', puffRange: '2000mg', description: 'High potency blends for the experienced user.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Exodus', category: 'thc-disposables' }
+  { id: 'boutique-switch', name: 'Boutique Switch', tagline: 'Flip the Switch', puffRange: '2000mg', description: 'Premium boutique-style THC disposables.', image: 'https://placehold.co/600x600/1a1a1a/D4AF37?text=Boutique+Switch', category: 'thc-disposables' }
 ];
 
 export const EDIBLE_BRANDS: Brand[] = [
