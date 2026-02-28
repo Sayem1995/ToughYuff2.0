@@ -98,7 +98,7 @@ const App: React.FC = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
 
       // Central Deduplication & Normalization
       const seenNames = new Set<string>();
@@ -109,6 +109,9 @@ const App: React.FC = () => {
         seenNames.add(name);
         return true;
       });
+
+      // Sort alphabetically by name
+      deduplicatedCats.sort((a: any, b: any) => (a.name || '').localeCompare(b.name || ''));
 
       setCategories(deduplicatedCats);
 
@@ -162,8 +165,8 @@ const App: React.FC = () => {
           return true;
         });
 
-        // Sort in memory
-        deduplicatedCats.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+        // Sort alphabetically by name
+        deduplicatedCats.sort((a: any, b: any) => (a.name || '').localeCompare(b.name || ''));
         setCategories(deduplicatedCats);
       }).catch(e => console.error("Fallback fetch failed", e));
     });
@@ -200,6 +203,8 @@ const App: React.FC = () => {
       // Deduplicate by ID just in case
       const combined = [...dynamicBrands, ...activeStaticBrands];
       const unique = Array.from(new Map(combined.map(b => [b.id, b])).values());
+      // Sort alphabetically by name
+      unique.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
       setDisplayBrands(unique);
     };
@@ -250,6 +255,11 @@ const App: React.FC = () => {
     );
   }
 
+  // Filter public products for out-of-stock items, sort alphabetically
+  const publicProducts = products
+    .filter(p => p.inStock)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
   return (
     <Router>
       <ScrollToTop />
@@ -260,15 +270,15 @@ const App: React.FC = () => {
        */}
 
       <Routes>
-        {/* Public Routes - Gated by Passcode */}
+        {/* Public Routes - Gated by Passcode using publicProducts filtered list */}
         <Route path="/" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Home brands={displayBrands} categories={categories} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Home brands={displayBrands} categories={categories} products={publicProducts} /></Layout>
         } />
         <Route path="/catalog" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Catalog products={products} brands={displayBrands} categories={categories} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Catalog products={publicProducts} brands={displayBrands} categories={categories} /></Layout>
         } />
         <Route path="/product/:id" element={
-          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><ProductDetail products={products} /></Layout>
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><ProductDetail products={publicProducts} /></Layout>
         } />
         <Route path="/about" element={
           !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><About /></Layout>

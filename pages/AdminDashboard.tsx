@@ -335,7 +335,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     if (editingProduct && editingProduct.id) {
       await ProductService.updateProduct(editingProduct.id, data);
     } else {
+      // Create product in the current store
       await ProductService.addProduct({ ...data, storeId: currentStore });
+
+      // Determine the other store
+      const otherStore = currentStore === 'goldmine' ? 'ten2ten' : 'goldmine';
+      // Add a sync copy to the other store, forced out-of-stock
+      await ProductService.addProduct({
+        ...data,
+        storeId: otherStore,
+        inStock: false,
+        stockQuantity: 0
+      });
     }
     // loadProducts(); // Handled by real-time listener
     setShowForm(false);
@@ -413,6 +424,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       await BrandService.updateBrand(editingBrand.id, { ...data, storeId: currentStore });
     } else {
       await BrandService.addBrand({ ...data, storeId: currentStore });
+
+      // Sync to other store
+      const otherStore = currentStore === 'goldmine' ? 'ten2ten' : 'goldmine';
+      await BrandService.addBrand({ ...data, storeId: otherStore });
     }
     const fetchedBrands = await BrandService.getAllBrands(currentStore);
     setDynamicBrands(fetchedBrands);
@@ -457,6 +472,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       // Assign an order to new categories
       const newOrder = allCategories.length > 0 ? Math.max(...allCategories.map(c => c.order || 0)) + 1 : 0;
       await CategoryService.addCategory({ ...data, storeId: currentStore, order: newOrder });
+
+      // Sync to other store
+      const otherStore = currentStore === 'goldmine' ? 'ten2ten' : 'goldmine';
+      await CategoryService.addCategory({ ...data, storeId: otherStore, order: newOrder });
     }
     setShowCategoryForm(false);
     setEditingCategory(undefined);

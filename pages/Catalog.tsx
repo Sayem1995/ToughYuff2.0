@@ -61,7 +61,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     const forceSync = async () => {
       try {
         console.log("[Sync] Starting FORCED multi-store sync...");
-        const targetBrandIds = ['olit-hookalit', 'tyson-30k', 'yme-nic', 'yme-nonic'];
+        const targetBrandIds = ['olit-hookalit', 'tyson-30k', 'yme-nic', 'yme-nonic', 'cali-ul8000', 'cali-20000', 'geekbar-pulse', 'geekbar-pulsex'];
         const stores = ['goldmine', 'ten2ten'];
 
         for (const storeId of stores) {

@@ -117,7 +117,7 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
   return (
     <div className="overflow-hidden" ref={containerRef}>
       {/* SECTION 1: HERO (THE OPENING SHOT) */}
-      <section className="min-h-[100dvh] pt-32 pb-20 relative bg-background flex items-center bg-gradient-to-t from-background via-background/80 to-transparent">
+      <section className="sticky top-0 h-[100dvh] pt-32 pb-20 bg-background flex items-center bg-gradient-to-t from-background via-background/80 to-transparent -z-10">
         {/* Cinematic dark overlay pattern could go here, but background colors handle it */}
         <div className="absolute inset-0 bg-white/40 z-0"></div>
         <div className="max-w-[1200px] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-end z-10 h-full pb-20">
@@ -153,6 +153,9 @@ const Home: React.FC<HomeProps> = ({ brands = [], categories = [] }) => {
           </div>
         </div>
       </section>
+
+      {/* Spacer to push content down below the sticky hero initially */}
+      <div className="h-[100dvh]"></div>
 
       {/* SECTION 2: THE PHILOSOPHY / MANIFESTO */}
       <section className="py-32 bg-[#FFFFFF] relative manifesto-container border-y border-black/5">

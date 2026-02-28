@@ -9,15 +9,15 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [selectedStore, setSelectedStore] = useState<'goldmine' | 'ten2ten'>('goldmine');
-  const [email, setEmail] = useState('goldmine@tooughyuff.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleStoreSelect = (store: 'goldmine' | 'ten2ten') => {
     setSelectedStore(store);
-    setEmail(`${store}@tooughyuff.com`);
-    setPassword(''); // Clear password for security/convenience balance
+    setEmail(''); // Form logic: clear login forms entirely when switching contexts
+    setPassword('');
     setError('');
   };
 
