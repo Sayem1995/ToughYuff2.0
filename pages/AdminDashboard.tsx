@@ -618,6 +618,67 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleCleanupDuplicates = async () => {
+    if (!window.confirm("This will scan ALL products and remove duplicates (keeping the original). Continue?")) return;
+    try {
+      const stores = ['goldmine', 'ten2ten'];
+      let totalDeleted = 0;
+
+      for (const storeId of stores) {
+        // Fetch all products for this store directly from Firestore
+        const { collection: fbCollection, query: fbQuery, where: fbWhere, getDocs: fbGetDocs, doc: fbDoc, deleteDoc: fbDeleteDoc } = await import('firebase/firestore');
+        const { db: fbDb } = await import('../src/firebase');
+
+        const q = fbQuery(fbCollection(fbDb, 'products'), fbWhere('storeId', '==', storeId));
+        const snapshot = await fbGetDocs(q);
+
+        console.log(`[Cleanup] Found ${snapshot.size} products in ${storeId}`);
+
+        // Group by (brandId + name)
+        const groups: Record<string, { docId: string; name: string; isSyncCopy: boolean }[]> = {};
+
+        snapshot.docs.forEach(document => {
+          const data = document.data();
+          const name = (data.name || '').toLowerCase().trim();
+          const brandId = (data.brandId || '').toLowerCase().trim();
+          const key = `${brandId}::${name}`;
+
+          if (!groups[key]) groups[key] = [];
+          groups[key].push({
+            docId: document.id,
+            name: data.name,
+            isSyncCopy: document.id.endsWith('-goldmine') || document.id.endsWith('-ten2ten')
+          });
+        });
+
+        // Delete duplicates
+        for (const [key, items] of Object.entries(groups)) {
+          if (items.length <= 1) continue;
+
+          // Sort: keep originals first (non-sync copies)  
+          items.sort((a, b) => {
+            if (a.isSyncCopy !== b.isSyncCopy) return a.isSyncCopy ? 1 : -1;
+            return 0;
+          });
+
+          // Keep first, delete rest
+          const toDelete = items.slice(1);
+          for (const dup of toDelete) {
+            console.log(`[Cleanup] Deleting duplicate: ${dup.docId} (${dup.name})`);
+            const docRef = fbDoc(fbDb, 'products', dup.docId);
+            await fbDeleteDoc(docRef);
+            totalDeleted++;
+          }
+        }
+      }
+
+      alert(`Cleanup complete! Deleted ${totalDeleted} duplicate products.`);
+    } catch (e) {
+      console.error("Cleanup error:", e);
+      alert("Error during cleanup. Check console.");
+    }
+  };
+
   const handleBrandClick = (brandId: string) => {
     setFilters(prev => ({ ...prev, brand: brandId }));
     setActiveTab('products');
@@ -818,6 +879,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     >
                       <ShieldAlert className="w-4 h-4" />
                       Fix All Products
+                    </button>
+                    <button
+                      onClick={handleCleanupDuplicates}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm font-bold"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Cleanup Duplicates
                     </button>
                     <button
                       onClick={async () => {
