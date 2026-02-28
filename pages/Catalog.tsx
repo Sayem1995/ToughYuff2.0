@@ -56,7 +56,12 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // FORCED MULTI-STORE SYNC SCRIPT
+  // FORCED MULTI-STORE SYNC SCRIPT — DISABLED
+  // This was a one-time migration script. It has been disabled to prevent
+  // duplicate products from being created on every Catalog page load.
+  // All data has already been seeded to Firestore.
+  // If you need to re-seed, uncomment this block temporarily.
+  /*
   React.useEffect(() => {
     const forceSync = async () => {
       try {
@@ -103,6 +108,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
     forceSync();
   }, []);
+  */
 
 
   const handleEditProduct = (e: React.MouseEvent, product: Product) => {
