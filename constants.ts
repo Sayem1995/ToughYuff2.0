@@ -381,6 +381,18 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'olit-hookalit', name: 'Watermelon Strawberry Melon', code: '(OH)' },
   { brandId: 'olit-hookalit', name: 'Brown Ale', code: '(OH)' },
   { brandId: 'olit-hookalit', name: 'Cherry Mint', code: '(OH)' },
+
+  // Mad Labs
+  { brandId: 'mad-labs', name: 'Watermelon Z', code: '(ML)', description: 'Indica-dominant with fruity, calming effects.', strains: ['Indica-Dominant'] },
+  { brandId: 'mad-labs', name: 'Peach Rings', code: '(ML)', description: 'Relaxing, peach-forward indica.', strains: ['Indica-Dominant'] },
+  { brandId: 'mad-labs', name: 'Lemon Cherry Gelato', code: '(ML)', description: 'Balanced hybrid with dessert-like sweetness.', strains: ['Balanced / Hybrid'] },
+  { brandId: 'mad-labs', name: 'Guava Kush', code: '(ML)', description: 'Hybrid with tropical fruit + mellow relaxation.', strains: ['Balanced / Hybrid'] },
+  { brandId: 'mad-labs', name: 'Sherbacio', code: '(ML)', description: 'Balanced hybrid with sherbet + creamy tones.', strains: ['Balanced / Hybrid'] },
+  { brandId: 'mad-labs', name: 'Blue Dream', code: '(ML)', description: 'Classic sativa-dominant hybrid with uplift + relaxed body.', strains: ['Sativa / Sativa-Dominant'] },
+  { brandId: 'mad-labs', name: 'Pixie Dust', code: '(ML)', description: 'Bright sativa with energetic, euphoric lift.', strains: ['Sativa / Sativa-Dominant'] },
+  { brandId: 'mad-labs', name: 'Horchata Latto', code: '(ML)', description: 'Sativa-leaning hybrid with warm spice + uplifting energy.', strains: ['Sativa / Sativa-Dominant'] },
+  { brandId: 'mad-labs', name: 'Blue Razz', code: '(ML)', description: 'Lively sativa with vibrant berry profile.', strains: ['Sativa / Sativa-Dominant'] },
+  { brandId: 'mad-labs', name: 'Jet Fuel', code: '(ML)', description: 'Indica-leaning hybrid with diesel character and calm vibes.', strains: ['Indica-Leaning Hybrid'] },
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -424,8 +436,9 @@ const getProfile = (name: string): string[] => {
 };
 
 const generateProducts = (): Product[] => {
+  const allBrands = [...BRANDS, ...THC_BRANDS, ...EDIBLE_BRANDS, ...WRAPS_BRANDS];
   return RAW_PRODUCT_DATA.map((item, index) => {
-    const brand = BRANDS.find(b => b.id === item.brandId)!;
+    const brand = allBrands.find(b => b.id === item.brandId)!;
     const isNicFree = brand.id.includes('nonic');
 
     return {
@@ -440,19 +453,21 @@ const generateProducts = (): Product[] => {
       isNicotineFree: isNicFree,
       flavorProfile: getProfile(item.name) as any,
       description: `Experience the premium taste of ${item.name} from ${brand.name}.`,
+      // Default initial static properties
       stockQuantity: 100, // Default stock
       inStock: true,
       lowStockThreshold: 10,
-      price: brand.id === 'cali-ul8000' ? 19.99 :
-        brand.id === 'cali-20000' ? 24.99 :
-          brand.id === 'geekbar-pulse' ? 19.99 :
-            brand.id === 'geekbar-pulsex' ? 24.99 :
-              brand.id === 'tyson-30k' ? 25.00 :
-                brand.id === 'olit-hookalit' ? 30.00 :
-                  brand.id === 'airbar-diamond' ? 10.00 :
-                    brand.id === '4ever-gummies' ? 10.00 :
-                      brand.id === 'fun-cube' ? 5.00 :
-                        19.99, // Default price
+      price: brand.id === 'mad-labs' ? 35.00 :
+        brand.id === 'cali-ul8000' ? 19.99 :
+          brand.id === 'cali-20000' ? 24.99 :
+            brand.id === 'geekbar-pulse' ? 19.99 :
+              brand.id === 'geekbar-pulsex' ? 24.99 :
+                brand.id === 'tyson-30k' ? 25.00 :
+                  brand.id === 'olit-hookalit' ? 30.00 :
+                    brand.id === 'airbar-diamond' ? 10.00 :
+                      brand.id === '4ever-gummies' ? 10.00 :
+                        brand.id === 'fun-cube' ? 5.00 :
+                          19.99, // Default price
       channel: 'both', // Default channel
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
@@ -461,34 +476,47 @@ const generateProducts = (): Product[] => {
       isRechargeable: (item as any).isRechargeable ?? true,
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
-      features: brand.id === 'geekbar-pulsex'
+      strains: (item as any).strains || [],
+      features: brand.id === 'mad-labs'
         ? [
-          'Up to 25,000 puffs (Regular Mode)',
-          'Pulse Mode for a powerful hit',
-          'World’s first 3D curved screen',
-          'Dual mesh coil for consistent vapor',
-          'Fast charging & pre-filled',
-          'Sleek premium tech design'
+          '2 grams of THC oil',
+          'Full-spectrum extract',
+          'High THC potency',
+          'Strain-specific terpene flavors',
+          'No PG, VG, or vitamin E acetate',
+          'Ceramic coil for smooth, even heating',
+          'Rechargeable battery (USB-C)',
+          'Draw-activated (no buttons)',
+          'Lab-tested for purity and potency'
         ]
-        : brand.id === 'tyson-30k'
+        : brand.id === 'geekbar-pulsex'
           ? [
-            'Up to 30,000 puffs per device',
-            '16 mL prefilled e-liquid capacity',
-            '5% (50 mg) salt nicotine strength',
-            'Triple mesh coil for stronger flavor',
-            'Adjustable airflow & Dual power modes',
-            '3D curved display screen'
+            'Up to 25,000 puffs (Regular Mode)',
+            'Pulse Mode for a powerful hit',
+            'World’s first 3D curved screen',
+            'Dual mesh coil for consistent vapor',
+            'Fast charging & pre-filled',
+            'Sleek premium tech design'
           ]
-          : brand.id === 'olit-hookalit'
+          : brand.id === 'tyson-30k'
             ? [
-              'Up to 40,000 puffs (MTL Mode)',
-              '40 mL massive e-liquid capacity',
-              '0.35% nicotine (E-Hookah style)',
-              '1300 mAh high-capacity battery',
-              'Dual power modes (MTL/DTL)',
-              '0.6 Ω LIT mesh coil for clouds'
+              'Up to 30,000 puffs per device',
+              '16 mL prefilled e-liquid capacity',
+              '5% (50 mg) salt nicotine strength',
+              'Triple mesh coil for stronger flavor',
+              'Adjustable airflow & Dual power modes',
+              '3D curved display screen'
             ]
-            : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
+            : brand.id === 'olit-hookalit'
+              ? [
+                'Up to 40,000 puffs (MTL Mode)',
+                '40 mL massive e-liquid capacity',
+                '0.35% nicotine (E-Hookah style)',
+                '1300 mAh high-capacity battery',
+                'Dual power modes (MTL/DTL)',
+                '0.6 Ω LIT mesh coil for clouds'
+              ]
+              : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };
