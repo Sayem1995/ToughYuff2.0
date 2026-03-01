@@ -757,6 +757,46 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleAddBoutiqSwitches = async () => {
+    if (!window.confirm("Add Boutiq Switches products to both stores?")) return;
+    try {
+      const stores = ['goldmine', 'ten2ten'];
+      const { collection: fbCollection, doc: fbDoc, setDoc: fbSetDoc } = await import('firebase/firestore');
+      const { db: fbDb } = await import('../src/firebase');
+      const { INITIAL_PRODUCTS } = await import('../constants');
+
+      const boutiqProducts = INITIAL_PRODUCTS.filter(p => p.brandId === 'boutique-switch');
+
+      if (boutiqProducts.length === 0) {
+        alert("No Boutiq Switches products found in constants.");
+        return;
+      }
+
+      let count = 0;
+      for (const storeId of stores) {
+        for (const item of boutiqProducts) {
+          const docId = `boutique-switch-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${storeId}`;
+          const productData = {
+            ...item,
+            id: docId,
+            storeId,
+            inStock: storeId === 'goldmine', // In stock for goldmine, out of stock for 10to10 initially
+            updatedAt: new Date(),
+            createdAt: new Date()
+          };
+
+          await fbSetDoc(fbDoc(fbCollection(fbDb, 'products'), docId), productData, { merge: true });
+          count++;
+        }
+      }
+      alert(`Added ${count} Boutiq Switches products successfully!`);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding Boutiq Switches products.");
+    }
+  };
+
   const handleCleanupDuplicates = async () => {
     if (!window.confirm("This will scan ALL products and remove duplicates (keeping the original). Continue?")) return;
     try {
@@ -1039,6 +1079,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     >
                       <Plus className="w-4 h-4" />
                       Add Mad Labs
+                    </button>
+                    <button
+                      onClick={handleAddBoutiqSwitches}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-bold"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Boutiq Switches
                     </button>
                     <button
                       onClick={async () => {

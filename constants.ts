@@ -393,6 +393,29 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'mad-labs', name: 'Horchata Latto', code: '(ML)', description: 'Sativa-leaning hybrid with warm spice + uplifting energy.', strains: ['Sativa / Sativa-Dominant'] },
   { brandId: 'mad-labs', name: 'Blue Razz', code: '(ML)', description: 'Lively sativa with vibrant berry profile.', strains: ['Sativa / Sativa-Dominant'] },
   { brandId: 'mad-labs', name: 'Jet Fuel', code: '(ML)', description: 'Indica-leaning hybrid with diesel character and calm vibes.', strains: ['Indica-Leaning Hybrid'] },
+
+  // Boutiq Switches
+  { brandId: 'boutique-switch', name: 'Arctic Frost x Rocket Pop x Tropic Haze', code: '(BS)', strains: ['Hybrid', 'Hybrid', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Baja Berry x X-41 x Daydream', code: '(BS)', strains: ['Hybrid', 'Hybrid', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Blinker Berry x Pluto x Blue Mango', code: '(BS)', strains: ['Indica', 'Indica', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Blue Matcha x Acai Berry x Sour Slush', code: '(BS)', strains: ['Sativa', 'Sativa', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Cherry Gelato x Fruit Stripe x Straw-Tangie', code: '(BS)', strains: ['Hybrid', 'Hybrid', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Cherry Lime x Crunch Berry x Orange Mochi', code: '(BS)', strains: ['Sativa', 'Indica', 'Hybrid'] },
+  { brandId: 'boutique-switch', name: 'Grape Soda x Glowberry x Cherry Pie', code: '(BS)', strains: ['Indica', 'Indica', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Grape-Ape x Jelly Roll x Rainbow Belts', code: '(BS)', strains: ['Indica', 'Indica', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Italian Ice x Lemon Cherry x Z-Runtz', code: '(BS)', strains: ['Hybrid', 'Hybrid', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Lemon Stripes x OZK x Mango Kush', code: '(BS)', strains: ['Sativa', 'Indica', 'Hybrid'] },
+  { brandId: 'boutique-switch', name: 'Lime Haze x Slimeade x Starfruit', code: '(BS)', strains: ['Sativa', 'Indica', 'Hybrid'] },
+  { brandId: 'boutique-switch', name: 'Maui Wowie x Gelato41 x Mango Melon', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Mojito x Kiwi-Z x Lime Slush', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Orange Slush x Mango Runtz x Guava Gelato', code: '(BS)', strains: ['Sativa', 'Indica', 'Hybrid'] },
+  { brandId: 'boutique-switch', name: 'Peach Kush x Mango Berry x Yellow Diesel', code: '(BS)', strains: ['Hybrid', 'Indica', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Pink Haze x Candyland x Straw-Haze', code: '(BS)', strains: ['Sativa', 'Sativa', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Pink Z x Dragonfruit x Tropicana', code: '(BS)', strains: ['Indica', 'Hybrid', 'Sativa'] },
+  { brandId: 'boutique-switch', name: 'Purple Papaya x Blue Berriez x RZ-11', code: '(BS)', strains: ['Indica', 'Indica', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Sour Tangie x NYC Sour x Passion Fruit', code: '(BS)', strains: ['Sativa', 'Sativa', 'Hybrid'] },
+  { brandId: 'boutique-switch', name: 'Strawberry x Fire OG x Watermelon', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
+  { brandId: 'boutique-switch', name: 'Wowie x Runtz x Pink Z', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -458,16 +481,17 @@ const generateProducts = (): Product[] => {
       inStock: true,
       lowStockThreshold: 10,
       price: brand.id === 'mad-labs' ? 35.00 :
-        brand.id === 'cali-ul8000' ? 19.99 :
-          brand.id === 'cali-20000' ? 24.99 :
-            brand.id === 'geekbar-pulse' ? 19.99 :
-              brand.id === 'geekbar-pulsex' ? 24.99 :
-                brand.id === 'tyson-30k' ? 25.00 :
-                  brand.id === 'olit-hookalit' ? 30.00 :
-                    brand.id === 'airbar-diamond' ? 10.00 :
-                      brand.id === '4ever-gummies' ? 10.00 :
-                        brand.id === 'fun-cube' ? 5.00 :
-                          19.99, // Default price
+        brand.id === 'boutique-switch' ? 40.00 :
+          brand.id === 'cali-ul8000' ? 19.99 :
+            brand.id === 'cali-20000' ? 24.99 :
+              brand.id === 'geekbar-pulse' ? 19.99 :
+                brand.id === 'geekbar-pulsex' ? 24.99 :
+                  brand.id === 'tyson-30k' ? 25.00 :
+                    brand.id === 'olit-hookalit' ? 30.00 :
+                      brand.id === 'airbar-diamond' ? 10.00 :
+                        brand.id === '4ever-gummies' ? 10.00 :
+                          brand.id === 'fun-cube' ? 5.00 :
+                            19.99, // Default price
       channel: 'both', // Default channel
       image: (item as any).image || brand.image, // Use specific product image if available, fallback to brand image
 
@@ -477,46 +501,56 @@ const generateProducts = (): Product[] => {
       aboutText: brand.description,
       flavorText: (item as any).description || `A rich and authentic ${item.name} flavor profile.`,
       strains: (item as any).strains || [],
-      features: brand.id === 'mad-labs'
+      features: brand.id === 'boutique-switch'
         ? [
-          '2 grams of THC oil',
-          'Full-spectrum extract',
-          'High THC potency',
-          'Strain-specific terpene flavors',
-          'No PG, VG, or vitamin E acetate',
-          'Ceramic coil for smooth, even heating',
-          'Rechargeable battery (USB-C)',
-          'Draw-activated (no buttons)',
-          'Lab-tested for purity and potency'
+          '2g Capacity (2000mg Reservoir)',
+          '100% Liquid Diamond & Live Rosin',
+          'Switch Between 2 Flavors, or blend for a 3rd!',
+          'Dual Tank Architecture',
+          'No Clogging or Leaking',
+          'USB-C Rechargeable',
+          'Lab Tested for purity and potency'
         ]
-        : brand.id === 'geekbar-pulsex'
+        : brand.id === 'mad-labs'
           ? [
-            'Up to 25,000 puffs (Regular Mode)',
-            'Pulse Mode for a powerful hit',
-            'World’s first 3D curved screen',
-            'Dual mesh coil for consistent vapor',
-            'Fast charging & pre-filled',
-            'Sleek premium tech design'
+            '2 grams of THC oil',
+            'Full-spectrum extract',
+            'High THC potency',
+            'Strain-specific terpene flavors',
+            'No PG, VG, or vitamin E acetate',
+            'Ceramic coil for smooth, even heating',
+            'Rechargeable battery (USB-C)',
+            'Draw-activated (no buttons)',
+            'Lab-tested for purity and potency'
           ]
-          : brand.id === 'tyson-30k'
+          : brand.id === 'geekbar-pulsex'
             ? [
-              'Up to 30,000 puffs per device',
-              '16 mL prefilled e-liquid capacity',
-              '5% (50 mg) salt nicotine strength',
-              'Triple mesh coil for stronger flavor',
-              'Adjustable airflow & Dual power modes',
-              '3D curved display screen'
+              'Up to 25,000 puffs (Regular Mode)',
+              'Pulse Mode for a powerful hit',
+              'World’s first 3D curved screen',
+              'Dual mesh coil for consistent vapor',
+              'Fast charging & pre-filled',
+              'Sleek premium tech design'
             ]
-            : brand.id === 'olit-hookalit'
+            : brand.id === 'tyson-30k'
               ? [
-                'Up to 40,000 puffs (MTL Mode)',
-                '40 mL massive e-liquid capacity',
-                '0.35% nicotine (E-Hookah style)',
-                '1300 mAh high-capacity battery',
-                'Dual power modes (MTL/DTL)',
-                '0.6 Ω LIT mesh coil for clouds'
+                'Up to 30,000 puffs per device',
+                '16 mL prefilled e-liquid capacity',
+                '5% (50 mg) salt nicotine strength',
+                'Triple mesh coil for stronger flavor',
+                'Adjustable airflow & Dual power modes',
+                '3D curved display screen'
               ]
-              : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
+              : brand.id === 'olit-hookalit'
+                ? [
+                  'Up to 40,000 puffs (MTL Mode)',
+                  '40 mL massive e-liquid capacity',
+                  '0.35% nicotine (E-Hookah style)',
+                  '1300 mAh high-capacity battery',
+                  'Dual power modes (MTL/DTL)',
+                  '0.6 Ω LIT mesh coil for clouds'
+                ]
+                : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };
