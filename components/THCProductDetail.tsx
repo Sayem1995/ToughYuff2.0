@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award, Battery, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award, Battery, Settings, Beaker, CheckCircle2, Flame, Droplets, Leaf } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Helper component for Accordion
@@ -174,55 +174,110 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         <div className="mb-10 lg:pr-12">
                             <h3 className="text-xl font-bold text-text-primary mb-6">Highlights</h3>
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
-                                {/* Battery */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
-                                        <Battery className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-text-primary">Battery: {product.battery || '650mAh'}</span>
-                                </div>
+                                {product.brandId === 'mad-labs' ? (
+                                    <>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
+                                                <Droplets className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Capacity: 2G (2000mg)</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                                <Percent className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">THC: High Potency (Full-Spectrum)</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                                <Zap className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Rechargeable: USB-C</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                                <Flame className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Heating: Ceramic Coil</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
+                                                <Wind className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Draw-Activated: No Buttons</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                                <Beaker className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Lab Tested</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                                <Leaf className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Strain-Specific Terpenes</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                                <Wind className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Estimated Puffs: 800–1200+</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* Battery */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                                <Battery className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Battery: {product.battery || '650mAh'}</span>
+                                        </div>
 
-                                {/* Nicotine / Strength */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
-                                        <Percent className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-text-primary">
-                                        {product.strength ? `Strength: ${product.strength}` : `Nicotine: ${product.nicotine || '5%'}`}
-                                    </span>
-                                </div>
+                                        {/* Nicotine / Strength */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#D55F2E] flex-shrink-0 shadow-sm">
+                                                <Percent className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">
+                                                {product.strength ? `Strength: ${product.strength}` : `Nicotine: ${product.nicotine || '5%'}`}
+                                            </span>
+                                        </div>
 
-                                {/* Puffs / Count */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
-                                        <Wind className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-text-primary">
-                                        {product.count
-                                            ? `${product.count} count`
-                                            : product.puffCount && product.puffCount > 0
-                                                ? `${product.puffCount.toLocaleString()}+ puffs`
-                                                : `${product.puffCount || '20,000'}+ puffs`}
-                                    </span>
-                                </div>
+                                        {/* Puffs / Count */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F48AA4] flex-shrink-0 shadow-sm">
+                                                <Wind className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">
+                                                {product.count
+                                                    ? `${product.count} count`
+                                                    : product.puffCount && product.puffCount > 0
+                                                        ? `${product.puffCount.toLocaleString()}+ puffs`
+                                                        : `${product.puffCount || '20,000'}+ puffs`}
+                                            </span>
+                                        </div>
 
-                                {/* Rechargeable */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
-                                        <Zap className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-text-primary">
-                                        {product.isRechargeable ?? true ? 'Rechargeable' : 'Non-Rechargeable'}
-                                    </span>
-                                </div>
+                                        {/* Rechargeable */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#5FB2A1] flex-shrink-0 shadow-sm">
+                                                <Zap className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">
+                                                {product.isRechargeable ?? true ? 'Rechargeable' : 'Non-Rechargeable'}
+                                            </span>
+                                        </div>
 
-                                {/* Award / Best Seller */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
-                                        <Award className="w-5 h-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-text-primary">Best Seller</span>
-                                </div>
+                                        {/* Award / Best Seller */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#FCAD62] flex-shrink-0 shadow-sm">
+                                                <Award className="w-5 h-5 text-white" />
+                                            </div>
+                                            <span className="text-sm font-medium text-text-primary">Best Seller</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 
