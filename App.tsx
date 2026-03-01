@@ -153,7 +153,7 @@ const App: React.FC = () => {
       // Let's just fetch once with fallback to populate UI.
 
       getDocs(qFallback).then((snapshot) => {
-        const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const rawCats = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
 
         // Central Deduplication & Normalization
         const seenNames = new Set<string>();
@@ -192,8 +192,9 @@ const App: React.FC = () => {
       const usedBrandIds = new Set(products.map(p => p.brandId));
 
       // 3. Filter static brands (only show if they have products in this store)
-      const { BRANDS } = await import('./constants');
-      const activeStaticBrands = BRANDS.filter(b => usedBrandIds.has(b.id));
+      const { BRANDS, THC_BRANDS, EDIBLE_BRANDS, WRAPS_BRANDS } = await import('./constants');
+      const allStaticBrands = [...BRANDS, ...THC_BRANDS, ...EDIBLE_BRANDS, ...WRAPS_BRANDS];
+      const activeStaticBrands = allStaticBrands.filter(b => usedBrandIds.has(b.id));
 
       // 4. Merge (Dynamic brands take precedence or are additive? 
       // If a dynamic brand has same ID as static, use dynamic. 

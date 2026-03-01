@@ -157,7 +157,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
     // For 'disposable vape(s)' categories: match products whose category contains 'disposable-vape' or 'disposable_vape'
     // but NOT 'thc-disposable' (those belong to their own category)
-    if (catName.includes('disposable vape') || catName.includes('disposables')) {
+    if (catName.includes('disposable vape') || (catName.includes('disposables') && !catName.includes('thc'))) {
       if (!productCat && (!associatedBrand || !associatedBrand.category)) return true; // Legacy products with no category default to disposable vapes
       const isDisposableVape = productCat.includes('disposable-vape') ||
         productCat.includes('disposable_vape') ||
@@ -198,14 +198,14 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
   const availableBrands = useMemo(() => {
     if (filters.category === 'all') return brands;
     const selectedCategory = categories.find(c => c.id === filters.category);
-    const isDisposable = selectedCategory?.slug?.includes('disposable');
+    const isDisposableVapeCat = selectedCategory?.slug?.includes('disposable') && !selectedCategory?.slug?.includes('thc');
 
     const categoryProductBrandIds = new Set(
       products.filter(p => productMatchesCategory(p, filters.category)).map(p => p.brandId)
     );
 
     return brands.filter(b => {
-      if (!b.category && isDisposable) return true;
+      if (!b.category && isDisposableVapeCat) return true;
       if (selectedCategory && b.category === selectedCategory.slug) return true;
       if (b.category === filters.category) return true;
       return categoryProductBrandIds.has(b.id);
