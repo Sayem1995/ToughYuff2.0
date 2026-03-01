@@ -38,6 +38,7 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
     const titleParts = [product.brandName, product.name].filter(Boolean).join(' ');
     const sizePart = [product.count ? `${product.count}` : '', product.strength || ''].filter(Boolean).join(' ');
     const fullTitle = sizePart ? `${titleParts} | ${sizePart}` : titleParts;
+    const breadcrumbTitle = fullTitle.replace(/\n/g, ' x ');
 
     const categoryLabel =
         product.category === 'thc-disposables'
@@ -86,7 +87,7 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                 <BreadcrumbArrow className="w-3 h-3 text-text-tertiary" />
                 <Link to="/catalog" className="hover:text-gold transition-colors">Products</Link>
                 <BreadcrumbArrow className="w-3 h-3 text-text-tertiary" />
-                <span className="text-text-primary font-medium">{fullTitle}</span>
+                <span className="text-text-primary font-medium">{breadcrumbTitle}</span>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 py-8">
@@ -161,7 +162,7 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-2xl md:text-3xl font-bold text-text-primary leading-tight mb-4">
+                        <h1 className="text-2xl md:text-3xl font-bold text-text-primary leading-tight mb-4 whitespace-pre-line">
                             {fullTitle}
                         </h1>
 

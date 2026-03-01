@@ -44,7 +44,7 @@ export const THCProductCard: React.FC<THCProductCardProps> = ({ product }) => {
 
             {/* Bottom Info Block */}
             <div className="bg-[#F8F9FA] p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-medium text-text-primary mb-3 line-clamp-3 leading-snug">
+                <h3 className="text-lg font-medium text-text-primary mb-3 line-clamp-3 leading-snug whitespace-pre-line">
                     {product.name}
                 </h3>
                 <div className="font-bold text-lg text-text-primary mt-auto">
