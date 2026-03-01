@@ -32,7 +32,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { BRANDS } from '../constants';
+import { BRANDS, THC_BRANDS, EDIBLE_BRANDS, WRAPS_BRANDS } from '../constants';
 import { useStore } from '../src/context/StoreContext';
 
 
@@ -126,7 +126,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     const nameMap = new Map<string, string>(); // name.toLowerCase() -> master ID
 
     // Add static brands first
-    BRANDS.forEach(b => {
+    const allStaticBrands = [...BRANDS, ...THC_BRANDS, ...EDIBLE_BRANDS, ...WRAPS_BRANDS];
+    allStaticBrands.forEach(b => {
       const nameKey = (b.name || '').toLowerCase().trim();
       brandMap.set(b.id, { ...b }); // Clone to allow merging later
       nameMap.set(nameKey, b.id);
