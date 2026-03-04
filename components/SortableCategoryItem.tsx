@@ -81,43 +81,28 @@ export const SortableCategoryItem: React.FC<SortableCategoryItemProps> = ({ cate
                 {/* Status Indicator (Only if active) */}
                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-gold mr-2" />}
 
-                {/* Context Menu Trigger */}
-                <div className="relative" ref={menuRef}>
+                {/* Actions */}
+                <div className="flex items-center gap-1 pr-2">
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            setShowMenu(!showMenu);
+                            onEdit();
                         }}
-                        className="p-2 text-text-tertiary hover:text-text-primary transition-colors rounded-lg hover:bg-black/5"
+                        className="p-1.5 text-text-tertiary hover:text-gold hover:bg-gold/10 transition-colors rounded-md"
+                        title="Edit Category (Add Image)"
                     >
-                        <MoreVertical className="w-4 h-4" />
+                        <Edit className="w-4 h-4" />
                     </button>
-
-                    {/* Dropdown Menu */}
-                    {showMenu && (
-                        <div className="absolute right-0 top-full mt-1 w-32 bg-surface border border-black/10 rounded-lg shadow-xl z-50 overflow-hidden">
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowMenu(false);
-                                    onEdit();
-                                }}
-                                className="w-full text-left px-4 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-black/5 flex items-center gap-2"
-                            >
-                                <Edit className="w-3 h-3" /> Edit
-                            </button>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowMenu(false);
-                                    onDelete();
-                                }}
-                                className="w-full text-left px-4 py-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center gap-2"
-                            >
-                                <Trash className="w-3 h-3" /> Delete
-                            </button>
-                        </div>
-                    )}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete();
+                        }}
+                        className="p-1.5 text-text-tertiary hover:text-red-500 hover:bg-red-50 transition-colors rounded-md"
+                        title="Delete Category"
+                    >
+                        <Trash className="w-4 h-4" />
+                    </button>
                 </div>
             </div>
         </div>

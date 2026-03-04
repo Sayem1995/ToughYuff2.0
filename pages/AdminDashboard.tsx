@@ -1602,12 +1602,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               <div className="bg-surface rounded-xl border border-black/5 p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-bold">Manage Categories ({allCategories.length})</h3>
-                  <button
-                    onClick={handleRepairCategories}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-xs font-bold transition-colors"
-                  >
-                    <BarChart className="w-3 h-3" /> Repair Defaults
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowCategoryForm(true)}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/20 rounded-lg text-xs font-bold transition-colors"
+                    >
+                      <Plus className="w-3 h-3" /> Add Category
+                    </button>
+                    <button
+                      onClick={handleRepairCategories}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-black/5 hover:bg-black/10 border border-black/10 rounded-lg text-xs font-bold transition-colors"
+                    >
+                      <BarChart className="w-3 h-3" /> Repair Defaults
+                    </button>
+                  </div>
                 </div>
                 <DndContext
                   sensors={sensors}
