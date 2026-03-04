@@ -484,8 +484,8 @@ const generateProducts = (): Product[] => {
         brand.id === 'boutique-switch' ? 40.00 :
           brand.id === 'cali-ul8000' ? 19.99 :
             brand.id === 'cali-20000' ? 24.99 :
-              brand.id === 'geekbar-pulse' ? 19.99 :
-                brand.id === 'geekbar-pulsex' ? 24.99 :
+              brand.id === 'geekbar-pulse' ? 20.00 :
+                brand.id === 'geekbar-pulsex' ? 25.00 :
                   brand.id === 'tyson-30k' ? 25.00 :
                     brand.id === 'olit-hookalit' ? 30.00 :
                       brand.id === 'airbar-diamond' ? 10.00 :

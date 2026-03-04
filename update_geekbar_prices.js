@@ -18,32 +18,43 @@ const db = getFirestore(app);
 
 async function updateGeekBarPrices() {
     try {
-        console.log("Starting price update for Geek Bar Pulse products...");
+        console.log("Starting price update for Geek Bar Pulse & Pulse X products...");
 
         const productsRef = collection(db, 'products');
-        const q = query(productsRef, where("brandId", "==", "geekbar-pulse"));
 
-        const snapshot = await getDocs(q);
-
-        console.log(`Found ${snapshot.size} Geek Bar Pulse products.`);
-
+        // Check Geek Bar Pulse
         let updateCount = 0;
 
-        for (const document of snapshot.docs) {
-            const data = document.data();
+        const qPulse = query(productsRef, where("brandId", "==", "geekbar-pulse"));
+        const snapshotPulse = await getDocs(qPulse);
+        console.log(`Found ${snapshotPulse.size} Geek Bar Pulse products.`);
 
-            // Re-affirm we aren't accidentally updating Geekbar Pulse X ($25)
-            if (data.brandId === 'geekbar-pulse' && data.price !== 20) {
+        for (const document of snapshotPulse.docs) {
+            const data = document.data();
+            if (data.price !== 20) {
                 const docRef = doc(db, 'products', document.id);
-                await updateDoc(docRef, {
-                    price: 20.00
-                });
+                await updateDoc(docRef, { price: 20.00 });
                 console.log(`Updated price for ${data.name} to $20.00`);
                 updateCount++;
             }
         }
 
-        console.log(`Successfully updated ${updateCount} products to $20.00.`);
+        // Check Geek Bar Pulse X
+        const qPulseX = query(productsRef, where("brandId", "==", "geekbar-pulsex"));
+        const snapshotPulseX = await getDocs(qPulseX);
+        console.log(`Found ${snapshotPulseX.size} Geek Bar Pulse X products.`);
+
+        for (const document of snapshotPulseX.docs) {
+            const data = document.data();
+            if (data.price !== 25) {
+                const docRef = doc(db, 'products', document.id);
+                await updateDoc(docRef, { price: 25.00 });
+                console.log(`Updated price for ${data.name} to $25.00`);
+                updateCount++;
+            }
+        }
+
+        console.log(`Successfully updated ${updateCount} products.`);
         process.exit(0);
 
     } catch (error) {
