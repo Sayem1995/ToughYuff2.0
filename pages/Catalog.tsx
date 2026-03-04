@@ -482,9 +482,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                   {brand.puffRange && (
                     <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
                   )}
-                  {brand.tagline && (
-                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{brand.tagline}</p>
-                  )}
                   <div className="mt-auto pt-4 flex items-end justify-between w-full">
                     <p className="text-xs text-text-tertiary font-medium">
                       {productCountByBrand[brand.id] ?? 0} products
