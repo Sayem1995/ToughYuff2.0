@@ -482,10 +482,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                   {brand.puffRange && (
                     <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
                   )}
-                  <div className="mt-auto pt-4 flex items-end justify-between w-full">
-                    <p className="text-xs text-text-tertiary font-medium">
-                      {productCountByBrand[brand.id] ?? 0} products
-                    </p>
+                  <div className="mt-auto pt-4 flex justify-end w-full">
                     {priceByBrand[brand.id] !== undefined && priceByBrand[brand.id] > 0 && (
                       <p className="text-sm font-bold text-text-primary">
                         ${priceByBrand[brand.id].toFixed(2)}
