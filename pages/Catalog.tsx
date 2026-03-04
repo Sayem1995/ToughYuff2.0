@@ -301,6 +301,24 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
     return counts;
   }, [products, availableBrands, filters.category, categories]);
 
+  // Find lowest price for each brand for the brand cards
+  const priceByBrand = useMemo(() => {
+    const prices: Record<string, number> = {};
+    availableBrands.forEach(brand => {
+      const brandProducts = products.filter(
+        p => {
+          const matchesBrand = p.brandId === brand.id || (brand.name && p.brandName?.toLowerCase() === brand.name?.toLowerCase());
+          const matchesCat = productMatchesCategory(p, filters.category);
+          return matchesBrand && (matchesCat || filters.category === 'all' || p.category === '' || !p.category);
+        }
+      );
+      if (brandProducts.length > 0) {
+        prices[brand.id] = Math.min(...brandProducts.map(p => typeof p.price === 'number' && !isNaN(p.price) ? p.price : 0));
+      }
+    });
+    return prices;
+  }, [products, availableBrands, filters.category, categories]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Strip */}
@@ -467,9 +485,16 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                   {brand.tagline && (
                     <p className="text-sm text-text-secondary mt-2 line-clamp-2">{brand.tagline}</p>
                   )}
-                  <p className="text-xs text-text-tertiary mt-2 font-medium">
-                    {productCountByBrand[brand.id] ?? 0} products
-                  </p>
+                  <div className="mt-auto pt-4 flex items-end justify-between w-full">
+                    <p className="text-xs text-text-tertiary font-medium">
+                      {productCountByBrand[brand.id] ?? 0} products
+                    </p>
+                    {priceByBrand[brand.id] !== undefined && priceByBrand[brand.id] > 0 && (
+                      <p className="text-sm font-bold text-text-primary">
+                        ${priceByBrand[brand.id].toFixed(2)}
+                      </p>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
