@@ -216,7 +216,8 @@ const App: React.FC = () => {
         const master = brandMap.get(existingId);
         if (master) {
           // Merge dynamic data over static data
-          if (b.image) master.image = b.image;
+          // Ignore placeholder images from rogue duplicates so they don't overwrite real uploads
+          if (b.image && !b.image.includes('placehold.co')) master.image = b.image;
           if (b.tagline) master.tagline = b.tagline;
           if (b.description) master.description = b.description;
           if (b.puffRange) master.puffRange = b.puffRange;

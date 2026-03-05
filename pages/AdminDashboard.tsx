@@ -144,8 +144,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         const master = brandMap.get(existingId);
         if (master) {
           // Merge dynamic data (like images) over the static data
-          // Prioritize non-empty string values from the dynamic brand
-          if (b.image) master.image = b.image;
+          // Prioritize non-empty string values from the dynamic brand, excluding ghost placeholders
+          if (b.image && !b.image.includes('placehold.co')) master.image = b.image;
           if (b.tagline) master.tagline = b.tagline;
           if (b.description) master.description = b.description;
           if (b.puffRange) master.puffRange = b.puffRange;
