@@ -416,6 +416,62 @@ const RAW_PRODUCT_DATA = [
   { brandId: 'boutique-switch', name: 'Sour Tangie\nNYC Sour\nPassion Fruit', code: '(BS)', strains: ['Sativa', 'Sativa', 'Hybrid'] },
   { brandId: 'boutique-switch', name: 'Strawberry\nFire OG\nWatermelon', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
   { brandId: 'boutique-switch', name: 'Wowie\nRuntz\nPink Z', code: '(BS)', strains: ['Sativa', 'Hybrid', 'Indica'] },
+
+  // Big Chief Duo 2G Flavor Combos
+  { brandId: 'big-chiefs', name: 'Guava Pop × Blackberry Jam', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  { brandId: 'big-chiefs', name: 'Rainbow Belts × Zoap', code: '(BC)', strains: ['Hybrid', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Bold Runtz × Do-Si-Dos', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  { brandId: 'big-chiefs', name: 'Lemonhead Z × Georgia Pie', code: '(BC)', strains: ['Sativa', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Frozen Cherries × Raspberry Parfait', code: '(BC)', strains: ['Hybrid', 'Sativa'] },
+  { brandId: 'big-chiefs', name: 'Hella Jelly × Juice Man', code: '(BC)', strains: ['Sativa', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Berry Pie × Blue Gushers', code: '(BC)', strains: ['Sativa', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Tractor Fuel × White Fire', code: '(BC)', strains: ['Hybrid', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Purple Dream × Night Cap', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  { brandId: 'big-chiefs', name: 'Mango Tango × Cherry Fritter', code: '(BC)', strains: ['Hybrid', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Gelato × Wedding Cake', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  { brandId: 'big-chiefs', name: 'Blue Dream × Sour Diesel', code: '(BC)', strains: ['Sativa', 'Sativa'] },
+  { brandId: 'big-chiefs', name: 'Strawberry Cough × GSC (Girl Scout Cookies)', code: '(BC)', strains: ['Sativa', 'Hybrid'] },
+  { brandId: 'big-chiefs', name: 'Granddaddy Purple × Lemon Haze', code: '(BC)', strains: ['Indica', 'Sativa'] },
+  { brandId: 'big-chiefs', name: 'Gorilla Glue #4 × Purple Punch', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  { brandId: 'big-chiefs', name: 'Runtz × Ice Cream Cake', code: '(BC)', strains: ['Hybrid', 'Indica'] },
+  // Muha Meds 2g flavors
+  { brandId: 'muha-meds', name: 'Blue Slushie', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Blueberry Haze', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Blueberry Cookies', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Berry Gelato', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Bubble Gum Burst', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Cherry Grapefruit', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Cherry Lime Sherbelato', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Diamond Peaches', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Frozen Pomegranate', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Galactic', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Green Apple Runtz', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Jack Herer', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Kush Mints', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Mango Chelo', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Pineapple Paradise', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Pineapple Express', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Purple Punch', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Runtz', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Strawberry Runtz', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Strawberry Cough', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Super Sour Diesel', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Watermelon OG', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Watermelon Moonshine', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Watermelon Skittlez', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Wedding Cake', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'White Walker', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Cali Gas OG', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Blue Dream', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Granddaddy Purp', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Apple Gelato Ice', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Lemonado', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Razz Tazz', code: '(MM)' },
+  { brandId: 'muha-meds', name: '🆕 Newer / Limited-Drop Flavors (seen in newer 2G releases)', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Horchata', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Dragon Berry Runtz', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Apple Gelato Ice', code: '(MM)' },
+  { brandId: 'muha-meds', name: 'Bubblegum Blast', code: '(MM)' }
 ];
 
 export const THC_BRANDS: Brand[] = [
@@ -523,34 +579,46 @@ const generateProducts = (): Product[] => {
             'Draw-activated (no buttons)',
             'Lab-tested for purity and potency'
           ]
-          : brand.id === 'geekbar-pulsex'
+          : brand.id === 'big-chiefs'
             ? [
-              'Up to 25,000 puffs (Regular Mode)',
-              'Pulse Mode for a powerful hit',
-              'World’s first 3D curved screen',
-              'Dual mesh coil for consistent vapor',
-              'Fast charging & pre-filled',
-              'Sleek premium tech design'
+              'Dual-chamber design – two separate 1g tanks (2g total) with different strains/flavors',
+              'Strain switch – toggle or slider to choose which chamber to vape',
+              '2-gram capacity – longer-lasting than standard 1g disposables',
+              'Rechargeable battery – usually USB-C or Micro-USB so you can finish all the oil',
+              'Draw-activated – inhale to use (no buttons)',
+              'Ceramic coil – smoother vapor and better flavor',
+              'Premium oil blends – often liquid diamonds + live resin',
+              'LED indicators – shows battery status and active chamber',
+              'Leak-resistant build – sealed design to prevent oil leakage'
             ]
-            : brand.id === 'tyson-30k'
+            : brand.id === 'geekbar-pulsex'
               ? [
-                'Up to 30,000 puffs per device',
-                '16 mL prefilled e-liquid capacity',
-                '5% (50 mg) salt nicotine strength',
-                'Triple mesh coil for stronger flavor',
-                'Adjustable airflow & Dual power modes',
-                '3D curved display screen'
+                'Up to 25,000 puffs (Regular Mode)',
+                'Pulse Mode for a powerful hit',
+                'World’s first 3D curved screen',
+                'Dual mesh coil for consistent vapor',
+                'Fast charging & pre-filled',
+                'Sleek premium tech design'
               ]
-              : brand.id === 'olit-hookalit'
+              : brand.id === 'tyson-30k'
                 ? [
-                  'Up to 40,000 puffs (MTL Mode)',
-                  '40 mL massive e-liquid capacity',
-                  '0.35% nicotine (E-Hookah style)',
-                  '1300 mAh high-capacity battery',
-                  'Dual power modes (MTL/DTL)',
-                  '0.6 Ω LIT mesh coil for clouds'
+                  'Up to 30,000 puffs per device',
+                  '16 mL prefilled e-liquid capacity',
+                  '5% (50 mg) salt nicotine strength',
+                  'Triple mesh coil for stronger flavor',
+                  'Adjustable airflow & Dual power modes',
+                  '3D curved display screen'
                 ]
-                : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
+                : brand.id === 'olit-hookalit'
+                  ? [
+                    'Up to 40,000 puffs (MTL Mode)',
+                    '40 mL massive e-liquid capacity',
+                    '0.35% nicotine (E-Hookah style)',
+                    '1300 mAh high-capacity battery',
+                    'Dual power modes (MTL/DTL)',
+                    '0.6 Ω LIT mesh coil for clouds'
+                  ]
+                  : ['Long-lasting Battery', 'Premium Mesh Coil', 'Smooth Airflow']
     };
   });
 };

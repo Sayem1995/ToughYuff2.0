@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand, Category } from '../types';
-import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X, ShieldAlert } from 'lucide-react';
+import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X, ShieldAlert, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { BrandService } from '../src/services/brandService';
@@ -798,6 +798,57 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
     }
   };
 
+  const handleAddBigChiefs = async () => {
+    if (!window.confirm("Add Big Chiefs products to both stores?")) return;
+    try {
+      const stores = ['goldmine', 'ten2ten'];
+      const { collection: fbCollection, doc: fbDoc, setDoc: fbSetDoc } = await import('firebase/firestore');
+      const { db: fbDb } = await import('../src/firebase');
+      const { INITIAL_PRODUCTS } = await import('../constants');
+
+      const bigChiefsProducts = INITIAL_PRODUCTS.filter(p => p.brandId === 'big-chiefs');
+
+      if (bigChiefsProducts.length === 0) {
+        alert("No Big Chiefs products found in constants.");
+        return;
+      }
+
+      let count = 0;
+      for (const storeId of stores) {
+        for (const item of bigChiefsProducts) {
+          const docId = `big-chiefs-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${storeId}`;
+          const productData = {
+            ...item,
+            id: docId,
+            storeId,
+            inStock: storeId === 'goldmine', // In stock for goldmine, out of stock for 10to10 initially
+            features: [
+              'Dual-chamber design – two separate 1g tanks (2g total) with different strains/flavors',
+              'Strain switch – toggle or slider to choose which chamber to vape',
+              '2-gram capacity – longer-lasting than standard 1g disposables',
+              'Rechargeable battery – usually USB-C or Micro-USB so you can finish all the oil',
+              'Draw-activated – inhale to use (no buttons)',
+              'Ceramic coil – smoother vapor and better flavor',
+              'Premium oil blends – often liquid diamonds + live resin',
+              'LED indicators – shows battery status and active chamber',
+              'Leak-resistant build – sealed design to prevent oil leakage'
+            ],
+            updatedAt: new Date(),
+            createdAt: new Date()
+          };
+
+          await fbSetDoc(fbDoc(fbCollection(fbDb, 'products'), docId), productData, { merge: true });
+          count++;
+        }
+      }
+      alert(`Added ${count} Big Chiefs products successfully!`);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding Big Chiefs products.");
+    }
+  };
+
   const handleCleanupDuplicates = async () => {
     if (!window.confirm("This will scan ALL products and remove duplicates (keeping the original). Continue?")) return;
     try {
@@ -1082,13 +1133,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       Add Mad Labs
                     </button>
                     <button
-                      onClick={handleAddBoutiqSwitches}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-bold"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Boutiq Switches
-                    </button>
-                    <button
                       onClick={async () => {
                         console.log("DEBUG: Sync started");
                         if (!products || products.length === 0) {
@@ -1352,33 +1396,54 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                           })}
 
                           {/* Add New Product Card - Directly at the end of the grid */}
-                          <button
-                            onClick={() => {
-                              setEditingProduct({
-                                brandId: brand.id,
-                                brandName: brand.name,
-                                inStock: true
-                              } as any);
-                              // Route to the correct form based on brand category
-                              const brandCat = (brand.category || '').toLowerCase();
-                              if (brandCat.includes('edible')) {
-                                setShowEdiblesForm(true);
-                              } else if (brandCat.includes('thc')) {
-                                setShowTHCForm(true);
-                              } else {
-                                setShowForm(true);
-                              }
-                            }}
-                            className="group relative p-4 rounded-xl border border-dashed border-black/10 bg-black/5 hover:bg-black/10 hover:border-gold/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[300px] gap-4"
-                          >
-                            <div className="w-16 h-16 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-gold/10 group-hover:text-gold transition-colors">
-                              <Plus className="w-8 h-8 opacity-50 group-hover:opacity-100" />
-                            </div>
-                            <div className="text-center">
-                              <span className="block font-bold text-text-primary mb-1">Add Product</span>
-                              <span className="text-xs text-text-tertiary">to {brand.name}</span>
-                            </div>
-                          </button>
+                          <div className="flex flex-col gap-2 relative p-4 rounded-xl border border-dashed border-black/10 bg-black/5 hover:bg-black/10 hover:border-gold/30 transition-all duration-300 min-h-[300px] justify-center items-center">
+                            <button
+                              onClick={() => {
+                                setEditingProduct({
+                                  brandId: brand.id,
+                                  brandName: brand.name,
+                                  inStock: true
+                                } as any);
+                                // Route to the correct form based on brand category
+                                const brandCat = (brand.category || '').toLowerCase();
+                                if (brandCat.includes('edible')) {
+                                  setShowEdiblesForm(true);
+                                } else if (brandCat.includes('thc')) {
+                                  setShowTHCForm(true);
+                                } else {
+                                  setShowForm(true);
+                                }
+                              }}
+                              className="group flex flex-col items-center justify-center gap-4 w-full h-full"
+                            >
+                              <div className="w-16 h-16 rounded-full bg-gold/10 text-gold flex items-center justify-center group-hover:scale-110 group-hover:bg-gold/20 transition-all duration-300 shadow-sm">
+                                <Plus className="w-8 h-8" />
+                              </div>
+                              <div className="text-center">
+                                <span className="block font-bold text-text-primary group-hover:text-gold transition-colors">Add Product</span>
+                                <span className="text-xs text-text-tertiary">to {brand.name}</span>
+                              </div>
+                            </button>
+                            {/* Seed buttons for specific brands if applicable */}
+                            {brand.id === 'boutique-switch' && (
+                              <button
+                                onClick={handleAddBoutiqSwitches}
+                                className="mt-4 px-4 py-2 w-full flex items-center justify-center gap-2 bg-black border border-black/20 text-text-primary rounded-lg hover:bg-black/10 transition-colors text-sm font-medium shadow-sm transition-all duration-300 hover:border-gold/30"
+                              >
+                                <Database className="w-4 h-4" />
+                                Seed Boutiq Switches
+                              </button>
+                            )}
+                            {brand.id === 'big-chiefs' && (
+                              <button
+                                onClick={handleAddBigChiefs}
+                                className="mt-4 px-4 py-2 w-full flex items-center justify-center gap-2 bg-black border border-black/20 text-text-primary rounded-lg hover:bg-black/10 transition-colors text-sm font-medium shadow-sm transition-all duration-300 hover:border-gold/30"
+                              >
+                                <Database className="w-4 h-4" />
+                                Seed Big Chiefs
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -1426,8 +1491,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                   )}
                 </div>
               </>
-            )
-          }
+            )}
 
           {/* BRANDS VIEW */}
           {
@@ -1643,9 +1707,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               </div>
             )
           }
-        </div >
-      </main >
-
+        </div>
+      </main>
       {/* Modals */}
       {
         showForm && (
