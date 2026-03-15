@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Search, ShoppingBag, Compass, User, ShoppingCart, ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import StoreSelector from '../src/components/StoreSelector';
+import { useCart } from '../src/context/CartContext';
 import { Category } from '../types';
 
 export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const location = useLocation();
+  const { itemCount } = useCart();
 
   const links = [
     { name: 'Brands', path: '/catalog' },
@@ -58,9 +60,13 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
             <button className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300">
               <Search className="w-6 h-6" />
             </button>
-            <Link to="/catalog" className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300 relative">
+            <Link to="/cart" className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300 relative">
               <ShoppingBag className="w-6 h-6" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+              {itemCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -178,6 +184,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 export const BottomNav: React.FC = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
+  const { itemCount } = useCart();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50">
@@ -189,9 +196,14 @@ export const BottomNav: React.FC = () => {
         <Compass className="w-6 h-6" />
         <span className="text-[10px] font-bold uppercase tracking-widest">Explore</span>
       </Link>
-      <Link to="/about" className={`flex flex-col items-center gap-1 ${isActive('/about') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
+      <Link to="/cart" className={`flex flex-col items-center gap-1 relative ${isActive('/cart') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
         <ShoppingCart className="w-6 h-6" />
-        <span className="text-[10px] font-bold uppercase tracking-widest">About</span>
+        {itemCount > 0 && (
+          <span className="absolute -top-1 right-0 w-4 h-4 bg-primary text-white text-[8px] font-bold rounded-full flex items-center justify-center">
+            {itemCount > 99 ? '99+' : itemCount}
+          </span>
+        )}
+        <span className="text-[10px] font-bold uppercase tracking-widest">Cart</span>
       </Link>
       <Link to="/login" className={`flex flex-col items-center gap-1 ${isActive('/login') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
         <User className="w-6 h-6" />

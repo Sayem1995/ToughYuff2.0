@@ -8,6 +8,7 @@ import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
+import Cart from './pages/Cart';
 import AdminDashboard from './pages/AdminDashboard';
 import { INITIAL_PRODUCTS } from './constants';
 import { Product } from './types';
@@ -26,6 +27,7 @@ import { ProductService } from './src/services/productService';
 import { CategoryService } from './src/services/categoryService';
 import { collection, onSnapshot, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { useStore } from './src/context/StoreContext';
+import { CartProvider } from './src/context/CartContext';
 import StoreLockScreen from './src/components/StoreLockScreen';
 
 const App: React.FC = () => {
@@ -288,6 +290,7 @@ const App: React.FC = () => {
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
   return (
+    <CartProvider>
     <Router>
       <ScrollToTop />
       {/* Lock Screen Logic: If not admin authenticated AND not session valid, show lock screen. 
@@ -312,6 +315,9 @@ const App: React.FC = () => {
         } />
         <Route path="/contact" element={
           !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Contact /></Layout>
+        } />
+        <Route path="/cart" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Cart /></Layout>
         } />
 
         {/* Login Route - Always Accessible? 
@@ -343,6 +349,7 @@ const App: React.FC = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
+    </CartProvider>
   );
 };
 

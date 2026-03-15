@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
 import { Product } from '../types';
+import { useCart } from '../src/context/CartContext';
 
 interface HomeProps {
   brands?: any[];
@@ -9,6 +11,8 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
+  const { addToCart } = useCart();
+
   return (
     <div className="pb-20">
       {/* Hero Banner Subtle */}
@@ -55,9 +59,17 @@ const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
             <div className="mt-4 flex flex-col items-center text-center">
               <h3 className="text-slate-900 dark:text-white text-base font-semibold tracking-tight line-clamp-1">{product.name}</h3>
               <p className="text-primary font-bold mt-1">${product.price || '0.00'}</p>
-              <span className="mt-3 w-full py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg border border-transparent hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all duration-300 uppercase tracking-widest text-center">
-                View Details
-              </span>
+              <div className="mt-3 flex gap-2 w-full">
+                <Link to={`/product/${product.id}`} className="flex-1 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all duration-300 uppercase tracking-widest text-center">
+                  Details
+                </Link>
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product); }}
+                  className="flex-1 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-orange-600 transition-all duration-300 uppercase tracking-widest flex items-center justify-center gap-1"
+                >
+                  <ShoppingCart className="w-3 h-3" /> Cart
+                </button>
+              </div>
             </div>
           </Link>
         ))}

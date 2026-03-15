@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag, Store, ShieldCheck, Percent, Wind, Award } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag, Store, ShieldCheck, Percent, Wind, Award, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../src/context/CartContext';
 
 interface WrapsProductDetailProps {
     product: Product;
@@ -11,6 +12,8 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
     const allImages = [product.image, ...(product.images || [])].filter(Boolean);
     const [selectedImageIdx, setSelectedImageIdx] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const { addToCart } = useCart();
+    const [addedToCart, setAddedToCart] = useState(false);
 
     // Default to the first flavor if available, or just an empty string
     const defaultFlavor = product.flavorProfile && product.flavorProfile.length > 0 ? product.flavorProfile[0] : '';
@@ -110,6 +113,28 @@ export const WrapsProductDetail: React.FC<WrapsProductDetailProps> = ({ product 
                         </div>
 
                         {/* Checkout elements removed as per user request */}
+
+                        {/* Add to Cart */}
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center border border-white/10 rounded-lg">
+                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-gray-400 hover:text-amber-500 transition-colors">
+                                    <Minus className="w-4 h-4" />
+                                </button>
+                                <span className="px-4 py-2 font-bold text-white border-x border-white/10">{quantity}</span>
+                                <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-gray-400 hover:text-amber-500 transition-colors">
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => { addToCart(product, quantity); setAddedToCart(true); setTimeout(() => setAddedToCart(false), 2000); }}
+                                className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 ${
+                                    addedToCart ? 'bg-green-500 text-white' : 'bg-amber-500 text-black hover:bg-amber-400'
+                                }`}
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                {addedToCart ? 'Added!' : 'Add to Cart'}
+                            </button>
+                        </div>
 
                         {/* Description & Specs Accordion/List */}
                         <div className="space-y-6">

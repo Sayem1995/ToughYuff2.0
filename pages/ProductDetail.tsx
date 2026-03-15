@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
-import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings, ChevronDown, Percent, Award } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, Battery, Zap, Droplet, Wind, Plus, Minus, Settings, ChevronDown, Percent, Award, ShoppingCart } from 'lucide-react';
+import { useCart } from '../src/context/CartContext';
 import { THCProductDetail } from '../components/THCProductDetail';
 import { EdiblesProductDetail } from '../components/EdiblesProductDetail';
 import { WrapsProductDetail } from '../components/WrapsProductDetail';
@@ -39,6 +40,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
   const [selectedImage, setSelectedImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+  const { addToCart } = useCart();
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const found = products.find(p => p.id === id);
@@ -113,6 +116,28 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ products = [] }) =
             {/* Price */}
             <div className="text-2xl font-bold text-text-primary mb-6 pb-6 border-b border-black/10">
               ${product.price ? product.price.toFixed(2) : '0.00'}
+            </div>
+
+            {/* Add to Cart */}
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="px-4 py-2 font-bold text-slate-900 dark:text-white border-x border-slate-200 dark:border-slate-700">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+              <button
+                onClick={() => { addToCart(product, quantity); setAddedToCart(true); setTimeout(() => setAddedToCart(false), 2000); }}
+                className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 ${
+                  addedToCart ? 'bg-green-500 text-white' : 'bg-primary text-white hover:bg-orange-600'
+                }`}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                {addedToCart ? 'Added!' : 'Add to Cart'}
+              </button>
             </div>
 
             {/* Highlights Section */}

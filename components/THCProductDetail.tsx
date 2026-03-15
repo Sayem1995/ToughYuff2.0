@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award, Battery, Settings, Beaker, CheckCircle2, Flame, Droplets, Leaf } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ChevronDown, ChevronRight as BreadcrumbArrow, Minus, Plus, Truck, Zap, Wind, Percent, Award, Battery, Settings, Beaker, CheckCircle2, Flame, Droplets, Leaf, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../src/context/CartContext';
 
 // Helper component for Accordion
 const AccordionItem = ({ title, children, icon: Icon }: { title: React.ReactNode | string, children: React.ReactNode, icon?: React.ElementType }) => {
@@ -33,6 +34,9 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
 
     const prevImage = () => setCurrentImageIndex(i => (i - 1 + allImages.length) % allImages.length);
     const nextImage = () => setCurrentImageIndex(i => (i + 1) % allImages.length);
+    const { addToCart } = useCart();
+    const [addedToCart, setAddedToCart] = useState(false);
+    const [quantity, setQuantity] = useState(1);
 
     // Title: "Brand Name Product Name | (count) strength"
     const titleParts = [product.brandName, product.name].filter(Boolean).join(' ');
@@ -169,6 +173,28 @@ export const THCProductDetail: React.FC<THCProductDetailProps> = ({ product }) =
                         {/* Price */}
                         <div className="text-2xl font-bold text-text-primary mb-6 pb-6 border-b border-black/10">
                             ${product.price ? product.price.toFixed(2) : '0.00'}
+                        </div>
+
+                        {/* Add to Cart */}
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center border border-black/10 rounded-lg">
+                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-text-secondary hover:text-primary transition-colors">
+                                    <Minus className="w-4 h-4" />
+                                </button>
+                                <span className="px-4 py-2 font-bold text-text-primary border-x border-black/10">{quantity}</span>
+                                <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-text-secondary hover:text-primary transition-colors">
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => { addToCart(product, quantity); setAddedToCart(true); setTimeout(() => setAddedToCart(false), 2000); }}
+                                className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 ${
+                                    addedToCart ? 'bg-green-500 text-white' : 'bg-primary text-white hover:bg-orange-600'
+                                }`}
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                {addedToCart ? 'Added!' : 'Add to Cart'}
+                            </button>
                         </div>
 
                         {/* Highlights Section */}

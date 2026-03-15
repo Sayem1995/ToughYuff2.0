@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { Star, ChevronLeft, ChevronRight, Truck, Minus, Plus, Zap, Wind, Percent, Award } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, Truck, Minus, Plus, Zap, Wind, Percent, Award, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../src/context/CartContext';
 
 interface EdiblesProductDetailProps {
     product: Product;
@@ -14,6 +15,8 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState<'description' | 'loyalty'>('description');
     const [selectedOption, setSelectedOption] = useState('');
+    const { addToCart } = useCart();
+    const [addedToCart, setAddedToCart] = useState(false);
 
     const selectedImage = allImages[selectedImageIdx] || product.image;
 
@@ -124,6 +127,28 @@ export const EdiblesProductDetail: React.FC<EdiblesProductDetailProps> = ({ prod
                         {/* Price */}
                         <div className="text-2xl font-bold text-text-primary mb-6 pb-6 border-b border-black/10">
                             ${product.price ? product.price.toFixed(2) : '0.00'}
+                        </div>
+
+                        {/* Add to Cart */}
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center border border-black/10 rounded-lg">
+                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-text-secondary hover:text-primary transition-colors">
+                                    <Minus className="w-4 h-4" />
+                                </button>
+                                <span className="px-4 py-2 font-bold text-text-primary border-x border-black/10">{quantity}</span>
+                                <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-text-secondary hover:text-primary transition-colors">
+                                    <Plus className="w-4 h-4" />
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => { addToCart(product, quantity); setAddedToCart(true); setTimeout(() => setAddedToCart(false), 2000); }}
+                                className={`flex-1 py-3 rounded-lg font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 ${
+                                    addedToCart ? 'bg-green-500 text-white' : 'bg-primary text-white hover:bg-orange-600'
+                                }`}
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                {addedToCart ? 'Added!' : 'Add to Cart'}
+                            </button>
                         </div>
 
                         {/* Highlights Section */}
