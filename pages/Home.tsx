@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { Product } from '../types';
 import { useCart } from '../src/context/CartContext';
 
@@ -10,9 +10,75 @@ interface HomeProps {
   products?: Product[];
 }
 
-const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
+/* Small wrapper so each card can track its own "just added" state */
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
 
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1400);
+  };
+
+  return (
+    <Link to={`/product/${product.id}`} className="flex flex-col group">
+      {/* Image container */}
+      <div className="relative w-full aspect-[4/5] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-shadow duration-500 group-hover:shadow-xl">
+        {/* Product image — zooms on hover */}
+        <div
+          className="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-700 group-hover:scale-110"
+          style={{ backgroundImage: `url(${product.image || 'https://via.placeholder.com/400x500?text=No+Image'})` }}
+        />
+
+        {/* Badges */}
+        {!product.inStock && (
+          <div className="absolute top-3 left-3 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider z-10">Out of Stock</div>
+        )}
+        {product.features && product.features.length > 0 && (
+          <div className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider z-10">Featured</div>
+        )}
+
+        {/* ── Hover overlay with animated Add-to-Cart ── */}
+        <div className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+          {/* Frosted gradient backdrop */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+          {/* Button slides up */}
+          <button
+            onClick={handleAdd}
+            className={`relative mb-4 mx-4 w-[calc(100%-2rem)] py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2
+              translate-y-4 group-hover:translate-y-0 transition-all duration-300 ease-out
+              ${added
+                ? 'bg-green-500 text-white scale-95'
+                : 'bg-white text-slate-900 hover:bg-primary hover:text-white shadow-lg'
+              }`}
+          >
+            {added ? (
+              <>
+                <Check className="w-4 h-4 animate-bounce" /> Added!
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="w-4 h-4" /> Add to Cart
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Product info */}
+      <div className="mt-4 flex flex-col items-center text-center">
+        <h3 className="text-slate-900 dark:text-white text-base font-semibold tracking-tight line-clamp-1">{product.name}</h3>
+        <p className="text-primary font-bold mt-1">${product.price || '0.00'}</p>
+      </div>
+    </Link>
+  );
+};
+
+const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
   return (
     <div className="pb-20">
       {/* Hero Banner Subtle */}
@@ -43,35 +109,7 @@ const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
       {/* Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {products.map((product) => (
-          <Link to={`/product/${product.id}`} key={product.id} className="flex flex-col group">
-            <div className="relative w-full aspect-[4/5] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-transform duration-500 group-hover:shadow-lg">
-              <div 
-                className="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-700 group-hover:scale-110" 
-                style={{ backgroundImage: `url(${product.image || 'https://via.placeholder.com/400x500?text=No+Image'})` }}
-              ></div>
-              {!product.inStock && (
-                <div className="absolute top-3 left-3 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">Out of Stock</div>
-              )}
-              {product.features && product.features.length > 0 && (
-                <div className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wider">Featured</div>
-              )}
-            </div>
-            <div className="mt-4 flex flex-col items-center text-center">
-              <h3 className="text-slate-900 dark:text-white text-base font-semibold tracking-tight line-clamp-1">{product.name}</h3>
-              <p className="text-primary font-bold mt-1">${product.price || '0.00'}</p>
-              <div className="mt-3 flex gap-2 w-full">
-                <Link to={`/product/${product.id}`} className="flex-1 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all duration-300 uppercase tracking-widest text-center">
-                  Details
-                </Link>
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product); }}
-                  className="flex-1 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-orange-600 transition-all duration-300 uppercase tracking-widest flex items-center justify-center gap-1"
-                >
-                  <ShoppingCart className="w-3 h-3" /> Cart
-                </button>
-              </div>
-            </div>
-          </Link>
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>
