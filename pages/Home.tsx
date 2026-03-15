@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Product } from '../types';
 
 interface HomeProps {
@@ -25,20 +26,20 @@ const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
 
       {/* Category Horizontal Scroll */}
       <div className="flex gap-3 px-6 py-4 overflow-x-auto no-scrollbar scroll-smooth">
-        <button className="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 transition-all duration-300 text-sm font-semibold">
+        <Link to="/catalog" className="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 transition-all duration-300 text-sm font-semibold">
           All
-        </button>
+        </Link>
         {categories.map((cat) => (
-          <button key={cat.id} className="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 text-slate-600 dark:text-slate-300 hover:border-primary transition-all duration-300 text-sm font-medium">
+          <Link to={`/catalog?category=${cat.id}`} key={cat.id} className="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 text-slate-600 dark:text-slate-300 hover:border-primary transition-all duration-300 text-sm font-medium">
             {cat.name}
-          </button>
+          </Link>
         ))}
       </div>
 
       {/* Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {products.map((product) => (
-          <div key={product.id} className="flex flex-col group">
+          <Link to={`/product/${product.id}`} key={product.id} className="flex flex-col group">
             <div className="relative w-full aspect-[4/5] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 transition-transform duration-500 group-hover:shadow-lg">
               <div 
                 className="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-700 group-hover:scale-110" 
@@ -54,11 +55,11 @@ const Home: React.FC<HomeProps> = ({ products = [], categories = [] }) => {
             <div className="mt-4 flex flex-col items-center text-center">
               <h3 className="text-slate-900 dark:text-white text-base font-semibold tracking-tight line-clamp-1">{product.name}</h3>
               <p className="text-primary font-bold mt-1">${product.price || '0.00'}</p>
-              <button className="mt-3 w-full py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg border border-transparent hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all duration-300 uppercase tracking-widest">
+              <span className="mt-3 w-full py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-lg border border-transparent hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all duration-300 uppercase tracking-widest text-center">
                 View Details
-              </button>
+              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
