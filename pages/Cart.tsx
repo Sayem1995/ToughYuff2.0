@@ -142,10 +142,10 @@ const Cart: React.FC = () => {
 
         {/* ── Checkout Button ── */}
         <div className="mt-8 mb-24">
-          <button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2">
+          <Link to="/checkout" className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2">
             <span>Proceed to Checkout</span>
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </Link>
           <p className="text-center text-slate-400 text-[10px] mt-4 uppercase tracking-[0.2em]">
             * Visit our store to complete your purchase. Must be 21+ with valid ID.
           </p>

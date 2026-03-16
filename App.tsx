@@ -9,6 +9,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import OrderConfirmation from './pages/OrderConfirmation';
 import AdminDashboard from './pages/AdminDashboard';
 import { INITIAL_PRODUCTS } from './constants';
 import { Product } from './types';
@@ -318,6 +320,12 @@ const App: React.FC = () => {
         } />
         <Route path="/cart" element={
           !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Layout categories={categories}><Cart /></Layout>
+        } />
+        <Route path="/checkout" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <Checkout />
+        } />
+        <Route path="/order-confirmation" element={
+          !isSessionValid && !isAdminAuthenticated ? <StoreLockScreen /> : <OrderConfirmation />
         } />
 
         {/* Login Route - Always Accessible? 
