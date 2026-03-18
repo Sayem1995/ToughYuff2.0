@@ -117,7 +117,22 @@ const App: React.FC = () => {
       // Sort alphabetically by name
       deduplicatedCats.sort((a: any, b: any) => (a.name || '').localeCompare(b.name || ''));
 
-      setCategories(deduplicatedCats);
+      if (deduplicatedCats.length === 0) {
+        console.warn(`Firestore categories are empty for ${currentStore}. Applying offline fallback categories.`);
+        const fallbackCats = [
+          'DISPOSABLE VAPES', 'THC DISPOSABLES', 'THC CARTRIDGES', 
+          'EDIBLES', 'PRE ROLLS', 'HOOKAH FLAVORS', 
+          'NICOTINE POUCHES', 'PODS', 'WRAPS AND BLUNTS', 'CIGARETTES'
+        ].map(name => ({
+          id: name.toLowerCase().replace(/ /g, '-'),
+          name,
+          slug: name.toLowerCase().replace(/ /g, '-'),
+          storeId: currentStore
+        }));
+        setCategories(fallbackCats);
+      } else {
+        setCategories(deduplicatedCats);
+      }
 
       // Rename 'THC & DELTA GUMMIES' to 'EDIBLES' if it exists (Migration)
       CategoryService.renameCategoryByName(currentStore as any, 'THC & DELTA GUMMIES', 'EDIBLES')
@@ -171,8 +186,35 @@ const App: React.FC = () => {
 
         // Sort alphabetically by name
         deduplicatedCats.sort((a: any, b: any) => (a.name || '').localeCompare(b.name || ''));
-        setCategories(deduplicatedCats);
-      }).catch(e => console.error("Fallback fetch failed", e));
+        if (deduplicatedCats.length === 0) {
+          const fallbackCats = [
+            'DISPOSABLE VAPES', 'THC DISPOSABLES', 'THC CARTRIDGES', 
+            'EDIBLES', 'PRE ROLLS', 'HOOKAH FLAVORS', 
+            'NICOTINE POUCHES', 'PODS', 'WRAPS AND BLUNTS', 'CIGARETTES'
+          ].map(name => ({
+            id: name.toLowerCase().replace(/ /g, '-'),
+            name,
+            slug: name.toLowerCase().replace(/ /g, '-'),
+            storeId: currentStore
+          }));
+          setCategories(fallbackCats);
+        } else {
+          setCategories(deduplicatedCats);
+        }
+      }).catch(e => {
+        console.error("Fallback fetch failed", e);
+        const offlineCats = [
+          'DISPOSABLE VAPES', 'THC DISPOSABLES', 'THC CARTRIDGES', 
+          'EDIBLES', 'PRE ROLLS', 'HOOKAH FLAVORS', 
+          'NICOTINE POUCHES', 'PODS', 'WRAPS AND BLUNTS', 'CIGARETTES'
+        ].map(name => ({
+          id: name.toLowerCase().replace(/ /g, '-'),
+          name,
+          slug: name.toLowerCase().replace(/ /g, '-'),
+          storeId: currentStore
+        }));
+        setCategories(offlineCats);
+      });
     });
 
     return () => unsubscribe();
