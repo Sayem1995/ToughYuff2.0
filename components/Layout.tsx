@@ -15,10 +15,10 @@ function useScrollDirection() {
 
   useEffect(() => {
     let ticking = false;
+    let latestScrollY = 0;
 
     const updateScrollDirection = () => {
-      // Use multiple fallback properties to get the actual scroll position across different mobile browsers
-      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const scrollY = latestScrollY;
       
       if (scrollY < 50) {
         if (scrollDirection !== 'top') setScrollDirection('top');
@@ -41,20 +41,29 @@ function useScrollDirection() {
       ticking = false;
     };
 
-    const onScroll = () => {
+    const onScroll = (e: Event) => {
+      // Get the scroll position of whatever element just scrolled!
+      const target = e.target as HTMLElement | Document;
+      const currentScrollY = target === document || target === document.documentElement || target === document.body
+        ? window.scrollY || document.documentElement.scrollTop
+        : (target as HTMLElement).scrollTop;
+        
+      // Ensure we only listen to vertical scrolling elements
+      if (currentScrollY === undefined) return;
+      
+      latestScrollY = currentScrollY;
+
       if (!ticking) {
         window.requestAnimationFrame(updateScrollDirection);
         ticking = true;
       }
     };
 
-    // Attach to window AND document body as a fallback for some PWA contexts
-    window.addEventListener('scroll', onScroll, { passive: true });
-    document.body.addEventListener('scroll', onScroll, { passive: true });
+    // Use capture: true to perfectly intercept scroll events emitted by ANY inner div!
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
     
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      document.body.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll, { capture: true });
     };
   }, [scrollDirection]);
 
