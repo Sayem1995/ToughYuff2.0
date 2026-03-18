@@ -30,6 +30,7 @@ import { CategoryService } from './src/services/categoryService';
 import { collection, onSnapshot, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { useStore } from './src/context/StoreContext';
 import { CartProvider } from './src/context/CartContext';
+import { AuthProvider } from './src/context/AuthContext';
 import StoreLockScreen from './src/components/StoreLockScreen';
 
 const App: React.FC = () => {
@@ -71,8 +72,7 @@ const App: React.FC = () => {
 
       if (productList.length === 0) {
         console.warn(`Firestore collection is empty for store: ${currentStore}. Using fallback data.`);
-        setProducts([]);
-        // setProducts(INITIAL_PRODUCTS); // Disable fallback for multi-store clarity
+        setProducts(INITIAL_PRODUCTS.filter(p => p.storeId === currentStore));
       } else {
         setProducts(productList);
         setConnectionError(null); // Clear error if we got data
@@ -288,10 +288,11 @@ const App: React.FC = () => {
 
   // Filter public products for out-of-stock items, sort alphabetically
   const publicProducts = products
-    .filter(p => p.inStock)
+    .filter(p => p.inStock !== false)
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
   return (
+    <AuthProvider>
     <CartProvider>
     <Router>
       <ScrollToTop />
@@ -358,6 +359,7 @@ const App: React.FC = () => {
       </Routes>
     </Router>
     </CartProvider>
+    </AuthProvider>
   );
 };
 
