@@ -11,15 +11,15 @@ import { Category } from '../types';
 // Custom Hook to detect scroll direction
 function useScrollDirection() {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | 'top'>('top');
-  const lastScrollY = useRef(typeof window !== 'undefined' ? window.pageYOffset : 0);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     let ticking = false;
 
     const updateScrollDirection = () => {
-      const scrollY = window.pageYOffset;
+      // Use multiple fallback properties to get the actual scroll position across different mobile browsers
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
       
-      // Top boundary escape hatch
       if (scrollY < 50) {
         if (scrollDirection !== 'top') setScrollDirection('top');
         lastScrollY.current = scrollY;
@@ -27,7 +27,6 @@ function useScrollDirection() {
         return;
       }
       
-      // Minimum scroll distance before triggering a nav hide/show
       if (Math.abs(scrollY - lastScrollY.current) < 10) {
         ticking = false;
         return;
@@ -49,8 +48,14 @@ function useScrollDirection() {
       }
     };
 
+    // Attach to window AND document body as a fallback for some PWA contexts
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    document.body.addEventListener('scroll', onScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.body.removeEventListener('scroll', onScroll);
+    };
   }, [scrollDirection]);
 
   return scrollDirection;
@@ -87,7 +92,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
   return (
     <>
-      <header className={`sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'}`}>
+      <header className={`fixed top-0 left-0 right-0 w-full z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
           {/* Menu Button - Opens Mobile Drawer */}
           <button
@@ -392,7 +397,7 @@ export const Layout: React.FC<{ children: React.ReactNode; categories?: Category
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark font-display flex flex-col">
       <Navbar categories={categories} />
-      <main className="max-w-7xl mx-auto flex-grow w-full">
+      <main className="max-w-7xl mx-auto flex-grow w-full pt-20">
         {children}
       </main>
       <Footer />
