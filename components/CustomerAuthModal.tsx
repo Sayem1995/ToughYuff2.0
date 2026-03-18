@@ -28,7 +28,7 @@ const CustomerAuthModal: React.FC = () => {
       } else if (err.code === 'auth/popup-blocked') {
         setError('Popup was blocked. Please allow popups for this site.');
       } else {
-        setError('Sign-in failed. Please try again.');
+        setError(`Sign-in failed: ${err.message}`);
       }
     } finally {
       setLoading(false);
