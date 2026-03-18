@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Brand, Category } from '../types';
-import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X, ShieldAlert, Database } from 'lucide-react';
+import { Search, LogOut, Package, CheckSquare, Plus, Edit2, Trash2, BarChart, Filter as FilterIcon, Menu, X, ShieldAlert, Database, Users, Mail, Calendar, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProductService } from '../src/services/productService';
 import { BrandService } from '../src/services/brandService';
 import { SystemStatus } from '../components/SystemStatus';
 import { migrateDataToFirestore } from '../src/utils/migration';
+import { CustomerService, CustomerProfile } from '../src/services/customerService';
 
 import AdminProductForm from '../components/AdminProductForm';
 import AdminTHCProductForm from '../components/AdminTHCProductForm';
@@ -60,6 +61,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
   const [isMigrating, setIsMigrating] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [customers, setCustomers] = useState<CustomerProfile[]>([]);
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [customerSearch, setCustomerSearch] = useState('');
 
   // Note: We use 'products' from props directly.
   // App.tsx handles the fetching and real-time updates.
@@ -980,6 +984,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
           >
             <Package className="w-4 h-4" /> Manage Brands
           </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('customers');
+              setIsMobileMenuOpen(false);
+              // Load customers when tab is opened
+              setCustomersLoading(true);
+              CustomerService.getAllCustomers().then(data => {
+                setCustomers(data);
+                setCustomersLoading(false);
+              });
+            }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'customers' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+          >
+            <Users className="w-4 h-4" /> CRM — Customers
+          </button>
         </div>
 
 
@@ -1006,6 +1026,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               {activeTab === 'products' ? 'Products Management' :
                 activeTab === 'categories' ? 'Category Management' :
                   activeTab === 'brands' ? 'Brand Management' :
+                    activeTab === 'customers' ? 'CRM — Customer Directory' :
                     `${sidebarCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
             </h2>
           </div>
@@ -1089,6 +1110,123 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
+
+          {/* CUSTOMERS CRM VIEW */}
+          {activeTab === 'customers' && (
+            <div>
+              {/* Stats Row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {[
+                  { label: 'Total Customers', value: customers.length, icon: Users, color: 'text-blue-500' },
+                  { label: 'This Month', value: customers.filter(c => { if (!c.firstSeen?.toDate) return false; const d = c.firstSeen.toDate(); const now = new Date(); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length, icon: Calendar, color: 'text-green-500' },
+                  { label: 'Active (7 days)', value: customers.filter(c => { if (!c.lastSeen?.toDate) return false; const d = c.lastSeen.toDate(); return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000; }).length, icon: RefreshCw, color: 'text-gold' },
+                  { label: 'Total Logins', value: customers.reduce((sum, c) => sum + (c.loginCount || 0), 0), icon: Mail, color: 'text-purple-500' },
+                ].map(stat => (
+                  <div key={stat.label} className="bg-surface border border-black/5 rounded-2xl p-5 flex items-center gap-4">
+                    <div className={`p-3 rounded-xl bg-black/5 ${stat.color}`}>
+                      <stat.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-text-primary">{stat.value}</p>
+                      <p className="text-xs text-text-tertiary">{stat.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Search + Refresh */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                  <input
+                    type="text"
+                    placeholder="Search by name or email..."
+                    value={customerSearch}
+                    onChange={e => setCustomerSearch(e.target.value)}
+                    className="w-full bg-surface border border-black/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-gold"
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    setCustomersLoading(true);
+                    CustomerService.getAllCustomers().then(data => {
+                      setCustomers(data);
+                      setCustomersLoading(false);
+                    });
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-black/10 rounded-lg text-sm font-medium hover:bg-black/5 transition-colors"
+                >
+                  <RefreshCw className={`w-4 h-4 ${customersLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+              </div>
+
+              {/* Table */}
+              {customersLoading ? (
+                <div className="flex items-center justify-center py-20 text-text-tertiary">
+                  <RefreshCw className="w-6 h-6 animate-spin mr-3" /> Loading customers...
+                </div>
+              ) : customers.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-text-tertiary">
+                  <Users className="w-12 h-12 mb-4 opacity-30" />
+                  <p className="font-semibold">No customers yet</p>
+                  <p className="text-sm mt-1">Customers will appear here once they sign in with Google.</p>
+                </div>
+              ) : (
+                <div className="bg-surface border border-black/5 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-black/5 bg-black/2">
+                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Customer</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Email</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">First Visit</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Last Seen</th>
+                          <th className="text-center px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Logins</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-black/5">
+                        {customers
+                          .filter(c => {
+                            if (!customerSearch) return true;
+                            const q = customerSearch.toLowerCase();
+                            return (c.displayName || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q);
+                          })
+                          .map(customer => (
+                            <tr key={customer.uid} className="hover:bg-black/2 transition-colors">
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-3">
+                                  {customer.photoURL ? (
+                                    <img src={customer.photoURL} alt="" className="w-9 h-9 rounded-full object-cover border border-black/10 flex-shrink-0" />
+                                  ) : (
+                                    <div className="w-9 h-9 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0">
+                                      <Users className="w-4 h-4 text-gold" />
+                                    </div>
+                                  )}
+                                  <p className="font-semibold text-sm text-text-primary">{customer.displayName || 'Anonymous'}</p>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 text-sm text-text-secondary">{customer.email || '—'}</td>
+                              <td className="px-5 py-4 text-sm text-text-tertiary">
+                                {customer.firstSeen?.toDate ? customer.firstSeen.toDate().toLocaleDateString() : '—'}
+                              </td>
+                              <td className="px-5 py-4 text-sm text-text-tertiary">
+                                {customer.lastSeen?.toDate ? customer.lastSeen.toDate().toLocaleDateString() : '—'}
+                              </td>
+                              <td className="px-5 py-4 text-center">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">
+                                  {customer.loginCount || 0}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* PRODUCT VIEW */}
           {
