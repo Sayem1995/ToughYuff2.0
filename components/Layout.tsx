@@ -11,27 +11,46 @@ import { Category } from '../types';
 // Custom Hook to detect scroll direction
 function useScrollDirection() {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | 'top'>('top');
+  const lastScrollY = useRef(typeof window !== 'undefined' ? window.pageYOffset : 0);
 
   useEffect(() => {
-    let lastScrollY = window.pageYOffset;
+    let ticking = false;
 
     const updateScrollDirection = () => {
       const scrollY = window.pageYOffset;
-      // Define a minimum scroll distance before triggering a change (tolerance)
-      if (Math.abs(scrollY - lastScrollY) < 10) return;
+      
+      // Top boundary escape hatch
+      if (scrollY < 50) {
+        if (scrollDirection !== 'top') setScrollDirection('top');
+        lastScrollY.current = scrollY;
+        ticking = false;
+        return;
+      }
+      
+      // Minimum scroll distance before triggering a nav hide/show
+      if (Math.abs(scrollY - lastScrollY.current) < 10) {
+        ticking = false;
+        return;
+      }
 
-      const direction = scrollY > lastScrollY ? 'down' : 'up';
+      const direction = scrollY > lastScrollY.current ? 'down' : 'up';
       if (direction !== scrollDirection) {
         setScrollDirection(direction);
       }
-      if (scrollY < 50) {
-        setScrollDirection('top');
-      }
-      lastScrollY = scrollY > 0 ? scrollY : 0;
+      
+      lastScrollY.current = scrollY > 0 ? scrollY : 0;
+      ticking = false;
     };
 
-    window.addEventListener('scroll', updateScrollDirection, { passive: true });
-    return () => window.removeEventListener('scroll', updateScrollDirection);
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDirection);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, [scrollDirection]);
 
   return scrollDirection;
