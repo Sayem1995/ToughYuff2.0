@@ -73,9 +73,18 @@ export const SortableCategoryItem: React.FC<SortableCategoryItemProps> = ({ cate
                 {/* Clickable Area for Filtering */}
                 <button
                     onClick={onClick}
-                    className="flex-grow text-left py-2 flex items-center justify-between"
+                    className="flex-grow text-left py-2 flex items-center justify-between pr-4"
                 >
-                    <span>{category.name}</span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-black/5 dark:bg-white/5 border border-black/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {category.image ? (
+                                <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-[10px] font-bold text-text-tertiary">N/A</span>
+                            )}
+                        </div>
+                        <span className="font-medium">{category.name}</span>
+                    </div>
                 </button>
 
                 {/* Status Indicator (Only if active) */}
