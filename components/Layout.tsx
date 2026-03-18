@@ -1,15 +1,61 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, ShoppingBag, Compass, User, ShoppingCart, ChevronDown } from 'lucide-react';
+import { Menu, X, Search, ShoppingBag, Compass, User, ShoppingCart, ChevronDown, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import StoreSelector from '../src/components/StoreSelector';
 import { useCart } from '../src/context/CartContext';
+import { useAuth } from '../src/context/AuthContext';
+import CustomerAuthModal from './CustomerAuthModal';
 import { Category } from '../types';
 
+// Custom Hook to detect scroll direction
+function useScrollDirection() {
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | 'top'>('top');
+
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset;
+
+    const updateScrollDirection = () => {
+      const scrollY = window.pageYOffset;
+      // Define a minimum scroll distance before triggering a change (tolerance)
+      if (Math.abs(scrollY - lastScrollY) < 10) return;
+
+      const direction = scrollY > lastScrollY ? 'down' : 'up';
+      if (direction !== scrollDirection) {
+        setScrollDirection(direction);
+      }
+      if (scrollY < 50) {
+        setScrollDirection('top');
+      }
+      lastScrollY = scrollY > 0 ? scrollY : 0;
+    };
+
+    window.addEventListener('scroll', updateScrollDirection, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollDirection);
+  }, [scrollDirection]);
+
+  return scrollDirection;
+}
+
 export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
+  const scrollDirection = useScrollDirection();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { itemCount } = useCart();
+  const { currentUser, signOutUser, setShowAuthModal } = useAuth();
+
+  // Close user menu on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const links = [
     { name: 'Brands', path: '/catalog' },
@@ -22,7 +68,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+      <header className={`sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
           {/* Menu Button - Opens Mobile Drawer */}
           <button
@@ -68,6 +114,56 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 </span>
               )}
             </Link>
+
+            {/* User Account Button */}
+            <div className="relative" ref={userMenuRef}>
+              {currentUser ? (
+                <>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden border-2 border-primary shadow-sm hover:scale-105 transition-transform"
+                    title={currentUser.displayName || 'Account'}
+                  >
+                    {currentUser.photoURL ? (
+                      <img src={currentUser.photoURL} alt="avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5 text-primary" />
+                    )}
+                  </button>
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-12 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{currentUser.displayName}</p>
+                          <p className="text-xs text-slate-500 truncate">{currentUser.email}</p>
+                        </div>
+                        <button
+                          onClick={() => { signOutUser(); setUserMenuOpen(false); }}
+                          className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Sign out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <User className="w-5 h-5" />
+                  <span className="hidden md:inline">Sign In</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -177,6 +273,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
           </>
         )}
       </AnimatePresence>
+      <CustomerAuthModal />
     </>
   );
 };
@@ -185,9 +282,10 @@ export const BottomNav: React.FC = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const { itemCount } = useCart();
+  const scrollDirection = useScrollDirection();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50">
+    <nav className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? 'translate-y-full' : 'translate-y-0'}`}>
       <Link to="/" className={`flex flex-col items-center gap-1 ${isActive('/') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
         <ShoppingBag className={`w-6 h-6 ${isActive('/') ? 'fill-current' : ''}`} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Shop</span>
@@ -205,11 +303,41 @@ export const BottomNav: React.FC = () => {
         )}
         <span className="text-[10px] font-bold uppercase tracking-widest">Cart</span>
       </Link>
-      <Link to="/login" className={`flex flex-col items-center gap-1 ${isActive('/login') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
-        <User className="w-6 h-6" />
-        <span className="text-[10px] font-bold uppercase tracking-widest">Account</span>
-      </Link>
+      <BottomNavAccount />
     </nav>
+  );
+};
+
+// Separate component so it can access AuthContext
+const BottomNavAccount: React.FC = () => {
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+  const { currentUser, signOutUser, setShowAuthModal } = useAuth();
+
+  if (currentUser) {
+    return (
+      <button
+        onClick={() => signOutUser()}
+        className="flex flex-col items-center gap-1 text-primary"
+      >
+        {currentUser.photoURL ? (
+          <img src={currentUser.photoURL} alt="avatar" className="w-6 h-6 rounded-full border border-primary object-cover" />
+        ) : (
+          <User className="w-6 h-6" />
+        )}
+        <span className="text-[10px] font-bold uppercase tracking-widest">Me</span>
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setShowAuthModal(true)}
+      className={`flex flex-col items-center gap-1 ${isActive('/login') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}
+    >
+      <User className="w-6 h-6" />
+      <span className="text-[10px] font-bold uppercase tracking-widest">Sign In</span>
+    </button>
   );
 };
 
