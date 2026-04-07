@@ -22,13 +22,23 @@ const CustomerAuthModal: React.FC = () => {
     setError('');
     try {
       await signInWithGoogle();
+      // Modal will auto-close via auth state change in AuthContext
     } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
+      console.error('Google Sign-In Error:', err);
+      const errorCode = err.code || (err.originalError && err.originalError.code) || 'auth/unknown';
+      
+      if (errorCode === 'auth/popup-closed-by-user') {
         setError('Sign-in was cancelled. Try again.');
-      } else if (err.code === 'auth/popup-blocked') {
+      } else if (errorCode === 'auth/popup-blocked') {
         setError('Popup was blocked. Please allow popups for this site.');
+      } else if (errorCode === 'auth/unauthorized-domain') {
+        setError('Google Sign-In is not configured for this domain. Contact support.');
+      } else if (errorCode === 'auth/operation-not-allowed') {
+        setError('Google Sign-In is not enabled. Please enable it in Firebase Console.');
+      } else if (errorCode === 'auth/network-request-failed') {
+        setError('Network error. Please check your connection and try again.');
       } else {
-        setError(`Sign-in failed: ${err.message}`);
+        setError(err.message || 'Sign-in failed. Please try again.');
       }
     } finally {
       setLoading(false);

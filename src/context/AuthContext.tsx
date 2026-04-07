@@ -29,6 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user) {
+        // Auto-close modal on successful sign-in
+        setShowAuthModal(false);
         // Save/update customer profile in Firestore CRM
         await CustomerService.upsertCustomer(user);
       }
@@ -41,12 +43,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const provider = new GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');
+    // Force re-authentication to ensure fresh login
+    provider.setCustomParameters({ prompt: 'select_account' });
+    
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      console.log('Google sign-in successful:', result.user.email);
       setShowAuthModal(false);
+      return result;
     } catch (error: any) {
       console.error('Google sign-in error:', error);
-      throw error;
+      // Re-throw with more context
+      throw {
+        code: error.code || 'auth/unknown-error',
+        message: error.message || 'An unknown error occurred during sign-in',
+        originalError: error,
+      };
     }
   };
 
