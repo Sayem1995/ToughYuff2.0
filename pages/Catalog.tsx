@@ -363,37 +363,7 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
         </div>
       </div>
 
-      {/* Filter Bar — only shown in products view */}
-      {viewMode === 'products' && (
-        <div className="sticky top-[72px] md:top-[88px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-4 md:px-8">
-          <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
-
-            <div className="flex flex-wrap gap-3 items-center">
-              {/* Back to brands/categories button */}
-              <button
-                onClick={() => handleBrandSelect('all')}
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-all duration-200 border border-black/10 px-4 py-2.5 rounded-xl bg-surface hover:border-primary/50 hover:bg-primary/5 font-medium"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                {filters.category === 'all' ? 'Back to Categories' : 'Back to Brands'}
-              </button>
-            </div>
-
-            {/* Search */}
-            <div className="relative w-full lg:w-72">
-              <Search className="w-4 h-4 text-text-tertiary absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-surface border border-black/10 text-text-primary pl-11 pr-4 py-3 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm placeholder:text-text-tertiary transition-all duration-200 shadow-soft"
-              />
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Filter Bar Removed */}
 
       {/* Brands view: back button in a lighter bar */}
       {viewMode === 'brands' && (
