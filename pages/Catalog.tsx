@@ -321,21 +321,21 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Strip */}
-      <div className="pt-12 pb-12 px-6 border-b border-black/5 bg-elevated/50">
+      {/* Hero Strip - Enhanced */}
+      <div className="pt-16 pb-14 px-4 md:px-8 border-b border-black/5 bg-gradient-to-b from-elevated/50 to-transparent">
         <div className="max-w-[1200px] mx-auto">
           {/* Breadcrumb */}
           {viewMode !== 'categories' && (
-            <div className="flex items-center gap-2 text-sm text-text-tertiary mb-3">
-              <button onClick={() => handleCategorySelect('all')} className="hover:text-gold transition-colors">
+            <div className="flex items-center gap-2 text-sm text-text-tertiary mb-4 animate-fade-in">
+              <button onClick={() => handleCategorySelect('all')} className="hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-black/5">
                 All Categories
               </button>
               {selectedCategoryObj && (
                 <>
-                  <span>/</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                   <button
                     onClick={() => handleBrandSelect('all')}
-                    className={`hover:text-gold transition-colors ${viewMode === 'brands' ? 'text-text-primary font-medium' : ''}`}
+                    className={`hover:text-primary transition-colors px-2 py-1 rounded-md ${viewMode === 'brands' ? 'text-text-primary font-semibold bg-black/5' : 'hover:bg-black/5'}`}
                   >
                     {selectedCategoryObj.name}
                   </button>
@@ -343,19 +343,19 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               )}
               {viewMode === 'products' && selectedBrandObj && (
                 <>
-                  <span>/</span>
-                  <span className="text-text-primary font-medium">{selectedBrandObj.name}</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  <span className="text-text-primary font-semibold px-2 py-1 bg-primary/5 rounded-md">{selectedBrandObj.name}</span>
                 </>
               )}
             </div>
           )}
 
-          <h1 className="text-4xl font-bold mb-2 text-text-primary">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary animate-slide-up">
             {viewMode === 'categories' && 'Browse by Category'}
             {viewMode === 'brands' && (selectedCategoryObj?.name || 'Brands')}
             {viewMode === 'products' && (selectedBrandObj?.name || 'Products')}
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-text-secondary text-sm md:text-base">
             {viewMode === 'categories' && 'Choose a category to explore available brands.'}
             {viewMode === 'brands' && 'Choose a brand to see all available products.'}
             {viewMode === 'products' && `All ${selectedBrandObj?.name || ''} products.`}
@@ -365,31 +365,29 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
       {/* Filter Bar — only shown in products view */}
       {viewMode === 'products' && (
-        <div className="sticky top-[88px] md:top-[104px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-6">
+        <div className="sticky top-[72px] md:top-[88px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-4 px-4 md:px-8">
           <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
 
             <div className="flex flex-wrap gap-3 items-center">
               {/* Back to brands/categories button */}
               <button
                 onClick={() => handleBrandSelect('all')}
-                className="flex items-center gap-1 text-sm text-text-secondary hover:text-gold transition-colors border border-black/10 px-3 py-2 rounded-lg bg-surface"
+                className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-all duration-200 border border-black/10 px-4 py-2.5 rounded-xl bg-surface hover:border-primary/50 hover:bg-primary/5 font-medium"
               >
                 <ArrowLeft className="w-4 h-4" />
                 {filters.category === 'all' ? 'Back to Categories' : 'Back to Brands'}
               </button>
-
-
             </div>
 
             {/* Search */}
-            <div className="relative w-full lg:w-64">
-              <Search className="w-4 h-4 text-text-tertiary absolute left-3 top-1/2 -translate-y-1/2" />
+            <div className="relative w-full lg:w-72">
+              <Search className="w-4 h-4 text-text-tertiary absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search flavors..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-surface border border-black/10 text-text-primary pl-10 pr-4 py-2 rounded-lg focus:border-gold focus:outline-none text-sm placeholder:text-text-tertiary"
+                className="w-full bg-surface border border-black/10 text-text-primary pl-11 pr-4 py-3 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm placeholder:text-text-tertiary transition-all duration-200 shadow-soft"
               />
             </div>
 
@@ -422,15 +420,15 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
               <p className="text-text-tertiary text-lg">No categories found.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 animate-fade-in">
               {[...categories].sort((a, b) => (a.name || '').localeCompare(b.name || '')).map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category.id)}
-                  className="group bg-surface shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface shadow-soft rounded-2xl p-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-large hover:shadow-primary/10 text-left flex flex-col border border-black/5 hover:border-primary/30"
                 >
                   {/* Category image or icon placeholder */}
-                  <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
+                  <div className="aspect-square bg-gradient-to-br from-primary/5 to-gold/5 rounded-2xl mb-4 overflow-hidden flex items-center justify-center p-6 group-hover:from-primary/10 group-hover:to-gold/10 transition-all duration-300">
                     {category.image ? (
                       <img
                         src={category.image}
@@ -439,19 +437,24 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-2 text-text-tertiary">
-                        <Tag className="w-10 h-10 opacity-40" />
+                        <Tag className="w-12 h-12 opacity-30 group-hover:opacity-50 group-hover:text-primary transition-all duration-300" />
                       </div>
                     )}
                   </div>
-                  <h3 className="text-base font-bold text-text-primary group-hover:text-gold transition-colors">
+                  <h3 className="text-base font-bold text-text-primary group-hover:text-primary transition-colors duration-200">
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-sm text-text-secondary mt-1 line-clamp-2">{category.description}</p>
+                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{category.description}</p>
                   )}
-                  <p className="text-xs text-text-tertiary mt-2">
-                    {productCountByCategory[category.id] ?? 0} products
-                  </p>
+                  <div className="mt-auto pt-4 flex items-center justify-between">
+                    <p className="text-xs text-text-tertiary font-medium">
+                      {productCountByCategory[category.id] ?? 0} products
+                    </p>
+                    <svg className="w-4 h-4 text-text-tertiary group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </button>
               ))}
             </div>
@@ -463,31 +466,36 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
           availableBrands.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-text-tertiary text-lg">No brands found for this category.</p>
-              <button onClick={() => handleCategorySelect('all')} className="mt-4 text-gold hover:underline">
+              <button onClick={() => handleCategorySelect('all')} className="mt-4 text-primary hover:underline font-medium">
                 Back to categories
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 animate-fade-in">
               {availableBrands.map((brand) => (
                 <button
                   key={brand.id}
                   onClick={() => handleBrandSelect(brand.id)}
-                  className="group bg-surface shadow-sm rounded-xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 text-left flex flex-col"
+                  className="group bg-surface shadow-soft rounded-2xl p-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-large hover:shadow-primary/10 text-left flex flex-col border border-black/5 hover:border-primary/30"
                 >
-                  <div className="aspect-square bg-gradient-to-br from-black/5 to-transparent rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4 group-hover:bg-gradient-to-br group-hover:from-black/10 group-hover:to-transparent transition-colors">
+                  <div className="aspect-square bg-gradient-to-br from-primary/5 to-gold/5 rounded-2xl mb-4 overflow-hidden flex items-center justify-center p-6 group-hover:from-primary/10 group-hover:to-gold/10 transition-all duration-300">
                     <img src={brand.image} alt={brand.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-md" />
                   </div>
-                  <h3 className="text-base font-bold text-text-primary group-hover:text-gold transition-colors">{brand.name}</h3>
+                  <h3 className="text-base font-bold text-text-primary group-hover:text-primary transition-colors duration-200">{brand.name}</h3>
                   {brand.puffRange && (
-                    <p className="text-xs text-text-tertiary mt-1">{brand.puffRange}</p>
+                    <p className="text-xs text-text-tertiary mt-2">{brand.puffRange}</p>
                   )}
-                  <div className="mt-auto pt-4 flex justify-start w-full">
-                    {priceByBrand[brand.id] !== undefined && priceByBrand[brand.id] > 0 && (
-                      <p className="text-sm font-bold text-text-primary">
-                        ${priceByBrand[brand.id].toFixed(2)}
+                  <div className="mt-auto pt-4 flex justify-between items-center w-full">
+                    {priceByBrand[brand.id] !== undefined && priceByBrand[brand.id] > 0 ? (
+                      <p className="text-sm font-bold text-primary">
+                        From ${priceByBrand[brand.id].toFixed(2)}
                       </p>
+                    ) : (
+                      <p className="text-xs text-text-tertiary">{productCountByBrand[brand.id] ?? 0} items</p>
                     )}
+                    <svg className="w-4 h-4 text-text-tertiary group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </button>
               ))}

@@ -101,23 +101,27 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 w-full z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'}`}>
-        <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+      <header className={`fixed top-0 left-0 right-0 w-full z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm transition-all duration-500 ease-in-out ${scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'}`}>
+        <div className="flex items-center justify-between px-4 md:px-8 py-3 max-w-7xl mx-auto">
           {/* Menu Button - Opens Mobile Drawer */}
           <button
-            className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300 md:hidden"
+            className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 md:hidden"
             onClick={() => setIsOpen(true)}
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </button>
 
           {/* Desktop Nav Links (left side) */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-1">
             {links.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-primary ${isActive(link.path) ? 'text-primary' : 'text-slate-600 dark:text-slate-300'}`}
+                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 
+                  ${isActive(link.path) 
+                    ? 'text-primary bg-primary/5' 
+                    : 'text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                  }`}
               >
                 {link.name}
               </Link>
@@ -125,24 +129,27 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
           </div>
 
           {/* Logo (center) */}
-          <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold tracking-widest uppercase text-slate-900 dark:text-white">
-              Toughyuff<span className="text-primary text-xs align-top">®</span>
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform duration-300">
+              <span className="text-white font-bold text-sm">TY</span>
+            </div>
+            <h1 className="text-xl font-bold tracking-tight uppercase text-slate-900 dark:text-white group-hover:text-primary transition-colors duration-200">
+              Toughyuff
             </h1>
           </Link>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="hidden md:block">
               <StoreSelector />
             </div>
-            <button className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300">
-              <Search className="w-6 h-6" />
+            <button className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary transition-all duration-200">
+              <Search className="w-5 h-5" />
             </button>
-            <Link to="/cart" className="flex items-center justify-center p-2 text-slate-700 dark:text-slate-300 relative">
-              <ShoppingBag className="w-6 h-6" />
+            <Link to="/cart" className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary transition-all duration-200 relative">
+              <ShoppingBag className="w-5 h-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-gradient-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-glow animate-scale-in">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -154,7 +161,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 <>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden border-2 border-primary shadow-sm hover:scale-105 transition-transform"
+                    className="flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden border-2 border-primary/30 shadow-sm hover:border-primary hover:scale-105 transition-all duration-200"
                     title={currentUser.displayName || 'Account'}
                   >
                     {currentUser.photoURL ? (
@@ -170,15 +177,15 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-12 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden"
+                        className="absolute right-0 top-14 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden"
                       >
-                        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                        <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-br from-primary/5 to-transparent">
                           <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{currentUser.displayName}</p>
-                          <p className="text-xs text-slate-500 truncate">{currentUser.email}</p>
+                          <p className="text-xs text-slate-500 truncate mt-0.5">{currentUser.email}</p>
                         </div>
                         <button
                           onClick={() => { signOutUser(); setUserMenuOpen(false); }}
-                          className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="w-full flex items-center gap-2 px-5 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
                           Sign out
@@ -190,9 +197,9 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               ) : (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-all duration-200 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
-                  <User className="w-5 h-5" />
+                  <User className="w-4 h-4" />
                   <span className="hidden md:inline">Sign In</span>
                 </button>
               )}
@@ -220,19 +227,24 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
+              className="fixed top-0 left-0 w-[85%] max-w-[340px] h-full bg-white dark:bg-slate-900 border-r border-slate-200/50 dark:border-slate-800/50 z-[10001] md:hidden overflow-y-auto shadow-2xl flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
-                <div className="flex flex-col">
-                  <span className="block text-primary font-bold tracking-widest text-sm uppercase">Tough Yuff</span>
-                  <span className="block text-[10px] text-slate-400 tracking-[0.2em] uppercase">Vape Store</span>
+              <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
+                    <span className="text-white font-bold">TY</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="block text-primary font-bold tracking-tight text-sm uppercase">Tough Yuff</span>
+                    <span className="block text-[10px] text-slate-400 tracking-wider uppercase">Premium Vape Store</span>
+                  </div>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 rounded-full"
+                  className="flex items-center justify-center w-9 h-9 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 rounded-lg hover:scale-110"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -318,23 +330,25 @@ export const BottomNav: React.FC = () => {
   const scrollDirection = useScrollDirection();
 
   return (
-    <nav className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50 transition-transform duration-300 ease-in-out ${scrollDirection === 'down' ? 'translate-y-full' : 'translate-y-0'}`}>
-      <Link to="/" className={`flex flex-col items-center gap-1 ${isActive('/') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
-        <ShoppingBag className={`w-6 h-6 ${isActive('/') ? 'fill-current' : ''}`} />
-        <span className="text-[10px] font-bold uppercase tracking-widest">Shop</span>
+    <nav className={`fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800/50 px-4 py-2 flex justify-between items-center z-50 transition-transform duration-300 ease-in-out shadow-[0_-4px_20px_rgba(0,0,0,0.05)] ${scrollDirection === 'down' ? 'translate-y-full' : 'translate-y-0'}`}>
+      <Link to="/" className={`flex flex-col items-center gap-1 min-w-[60px] py-1 px-3 rounded-xl transition-all duration-200 ${isActive('/') ? 'text-primary bg-primary/5' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+        <ShoppingBag className={`w-5 h-5 transition-all duration-200 ${isActive('/') ? 'fill-current scale-110' : ''}`} />
+        <span className="text-[10px] font-semibold uppercase tracking-wide">Shop</span>
       </Link>
-      <Link to="/catalog" className={`flex flex-col items-center gap-1 ${isActive('/catalog') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
-        <Compass className="w-6 h-6" />
-        <span className="text-[10px] font-bold uppercase tracking-widest">Explore</span>
+      <Link to="/catalog" className={`flex flex-col items-center gap-1 min-w-[60px] py-1 px-3 rounded-xl transition-all duration-200 ${isActive('/catalog') ? 'text-primary bg-primary/5' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+        <Compass className={`w-5 h-5 transition-all duration-200 ${isActive('/catalog') ? 'scale-110' : ''}`} />
+        <span className="text-[10px] font-semibold uppercase tracking-wide">Explore</span>
       </Link>
-      <Link to="/cart" className={`flex flex-col items-center gap-1 relative ${isActive('/cart') ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary transition-colors'}`}>
-        <ShoppingCart className="w-6 h-6" />
-        {itemCount > 0 && (
-          <span className="absolute -top-1 right-0 w-4 h-4 bg-primary text-white text-[8px] font-bold rounded-full flex items-center justify-center">
-            {itemCount > 99 ? '99+' : itemCount}
-          </span>
-        )}
-        <span className="text-[10px] font-bold uppercase tracking-widest">Cart</span>
+      <Link to="/cart" className={`flex flex-col items-center gap-1 min-w-[60px] py-1 px-3 rounded-xl transition-all duration-200 relative ${isActive('/cart') ? 'text-primary bg-primary/5' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+        <div className="relative">
+          <ShoppingCart className={`w-5 h-5 transition-all duration-200 ${isActive('/cart') ? 'scale-110' : ''}`} />
+          {itemCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-gradient-primary text-white text-[8px] font-bold rounded-full flex items-center justify-center shadow-glow animate-scale-in">
+              {itemCount > 99 ? '99+' : itemCount}
+            </span>
+          )}
+        </div>
+        <span className="text-[10px] font-semibold uppercase tracking-wide">Cart</span>
       </Link>
       <BottomNavAccount />
     </nav>
@@ -376,26 +390,26 @@ const BottomNavAccount: React.FC = () => {
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 px-6 mb-20">
+    <footer className="bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border-t border-slate-200/50 dark:border-slate-800/50 py-16 px-6 mb-20">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <h2 className="text-xl font-bold tracking-widest uppercase text-slate-900 dark:text-white">
-            Toughyuff<span className="text-primary text-xs align-top">®</span>
+        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-all duration-200 group">
+          <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform duration-300">
+            <span className="text-white font-bold text-sm">TY</span>
+          </div>
+          <h2 className="text-xl font-bold tracking-tight uppercase text-slate-900 dark:text-white">
+            Toughyuff
           </h2>
         </Link>
 
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-slate-500">
-          <Link to="/catalog" className="hover:text-primary transition-colors">Brands</Link>
-          <Link to="/catalog" className="hover:text-primary transition-colors">Flavors</Link>
-          <Link to="/about" className="hover:text-primary transition-colors">About</Link>
-          <Link to="/contact" className="hover:text-primary transition-colors">Contact</Link>
-          <span className="hover:text-primary cursor-pointer transition-colors">Age Policy</span>
-          <span className="hover:text-primary cursor-pointer transition-colors">Disclaimer</span>
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-sm text-slate-600 dark:text-slate-400">
+          <Link to="/catalog" className="hover:text-primary transition-colors duration-200 font-medium">Catalog</Link>
+          <Link to="/about" className="hover:text-primary transition-colors duration-200 font-medium">About</Link>
+          <Link to="/contact" className="hover:text-primary transition-colors duration-200 font-medium">Contact</Link>
         </div>
 
-        <div className="text-xs text-slate-400 text-center md:text-right">
-          <p>© 2026 ToughYuff. All rights reserved.</p>
-          <p className="mt-1 text-primary">For adults 21+ only.</p>
+        <div className="text-xs text-slate-500 text-center md:text-right">
+          <p className="font-medium">© 2026 ToughYuff. All rights reserved.</p>
+          <p className="mt-1 text-primary font-semibold">For adults 21+ only.</p>
         </div>
       </div>
     </footer>
@@ -404,7 +418,7 @@ export const Footer: React.FC = () => {
 
 export const Layout: React.FC<{ children: React.ReactNode; categories?: Category[] }> = ({ children, categories = [] }) => {
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark font-display flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-background-light to-background dark:from-background-dark dark:to-background font-display flex flex-col">
       <Navbar categories={categories} />
       <main className="max-w-7xl mx-auto flex-grow w-full pt-20">
         {children}
