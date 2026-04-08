@@ -960,12 +960,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               <button
                 key={category.id}
                 onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === category.slug 
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wider transition-all duration-200 ${activeTab === category.slug 
                   ? 'bg-gradient-primary text-white shadow-glow scale-105' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102 uppercase'}`}
               >
                 <Package className="w-4 h-4" />
-                <span className="capitalize">{(category.name || '').toLowerCase()}</span>
+                <span className="uppercase">{(category.name || '').toUpperCase()}</span>
               </button>
             ));
           })()}
@@ -974,29 +974,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           <button
             onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'products' 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wider transition-all duration-200 ${activeTab === 'products' 
               ? 'bg-gradient-primary text-white shadow-glow scale-105' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102 uppercase'}`}
           >
-            <CheckSquare className="w-4 h-4" /> All Items (Inventory)
+            <CheckSquare className="w-4 h-4" /> <span className="uppercase">All Items (Inventory)</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('categories'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'categories' 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wider transition-all duration-200 ${activeTab === 'categories' 
               ? 'bg-gradient-primary text-white shadow-glow scale-105' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102 uppercase'}`}
           >
-            <BarChart className="w-4 h-4" /> Manage Categories
+            <BarChart className="w-4 h-4" /> <span className="uppercase">Manage Categories</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('brands'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'brands' 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wider transition-all duration-200 ${activeTab === 'brands' 
               ? 'bg-gradient-primary text-white shadow-glow scale-105' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102 uppercase'}`}
           >
-            <Package className="w-4 h-4" /> Manage Brands
+            <Package className="w-4 h-4" /> <span className="uppercase">Manage Brands</span>
           </button>
 
           <button
@@ -1009,11 +1009,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 setCustomersLoading(false);
               });
             }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'customers' 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wider transition-all duration-200 ${activeTab === 'customers' 
               ? 'bg-gradient-primary text-white shadow-glow scale-105' 
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102 uppercase'}`}
           >
-            <Users className="w-4 h-4" /> CRM — Customers
+            <Users className="w-4 h-4" /> <span className="uppercase">CRM — Customers</span>
           </button>
         </div>
 
@@ -1021,7 +1021,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50">
           <button 
             onClick={onLogout} 
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-error hover:bg-error/5 transition-all duration-200"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 hover:text-error hover:bg-error/5 transition-all duration-200 uppercase"
           >
             <LogOut className="w-4 h-4" /> Logout
           </button>
