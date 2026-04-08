@@ -324,32 +324,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
       {/* Hero Strip - Enhanced */}
       <div className="pt-16 pb-14 px-4 md:px-8 border-b border-black/5 bg-gradient-to-b from-elevated/50 to-transparent">
         <div className="max-w-[1200px] mx-auto">
-          {/* Breadcrumb */}
-          {viewMode !== 'categories' && (
-            <div className="flex items-center gap-2 text-sm text-text-tertiary mb-4 animate-fade-in">
-              <button onClick={() => handleCategorySelect('all')} className="hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-black/5">
-                All Categories
-              </button>
-              {selectedCategoryObj && (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                  <button
-                    onClick={() => handleBrandSelect('all')}
-                    className={`hover:text-primary transition-colors px-2 py-1 rounded-md ${viewMode === 'brands' ? 'text-text-primary font-semibold bg-black/5' : 'hover:bg-black/5'}`}
-                  >
-                    {selectedCategoryObj.name}
-                  </button>
-                </>
-              )}
-              {viewMode === 'products' && selectedBrandObj && (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                  <span className="text-text-primary font-semibold px-2 py-1 bg-primary/5 rounded-md">{selectedBrandObj.name}</span>
-                </>
-              )}
-            </div>
-          )}
-
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-text-primary animate-slide-up">
             {viewMode === 'categories' && 'Browse by Category'}
             {viewMode === 'brands' && (selectedCategoryObj?.name || 'Brands')}
