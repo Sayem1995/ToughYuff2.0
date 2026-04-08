@@ -365,21 +365,6 @@ const Catalog: React.FC<CatalogProps> = ({ products, brands = [], categories = [
 
       {/* Filter Bar Removed */}
 
-      {/* Brands view: back button in a lighter bar */}
-      {viewMode === 'brands' && (
-        <div className="sticky top-[88px] md:top-[104px] z-40 bg-background/95 backdrop-blur-xl border-b border-black/10 py-3 px-6">
-          <div className="max-w-[1200px] mx-auto">
-            <button
-              onClick={() => handleCategorySelect('all')}
-              className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-gold transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Categories
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <div className="max-w-[1200px] mx-auto px-6 py-12">
 
