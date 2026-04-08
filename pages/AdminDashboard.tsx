@@ -1650,7 +1650,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
           {/* BRANDS VIEW */}
           {
-            activeTab !== 'products' && activeTab !== 'categories' && (() => {
+            activeTab !== 'products' && activeTab !== 'categories' && activeTab !== 'customers' && activeTab !== 'brands' && (() => {
               const currentCategoryObj = sidebarCategories.find(c => c.slug === activeTab);
               const isDisposable = activeTab.includes('disposable');
 
