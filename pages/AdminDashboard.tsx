@@ -931,29 +931,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
       {/* Sidebar */}
       <aside className={`
-        fixed md:relative inset-y-0 left-0 z-50 transform 
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
+        fixed md:relative inset-y-0 left-0 z-50 transform
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0 transition-transform duration-300 ease-in-out
-        w-64 border-r border-black/5 bg-surface flex flex-col shadow-2xl md:shadow-none
+        w-72 border-r border-slate-200/50 dark:border-slate-800/50 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 flex flex-col shadow-2xl md:shadow-none
       `}>
 
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-black/5">
-          <div className="flex items-center gap-2 mb-1">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
-            <h1 className="text-lg font-bold text-gold tracking-widest">ADMIN</h1>
+        <div className="p-6 border-b border-slate-200/50 dark:border-slate-800/50">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
+              <ShieldAlert className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gradient tracking-tight">ADMIN</h1>
+              <div className="flex items-center gap-1.5">
+                <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-success' : 'bg-error animate-pulse'}`} />
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">{currentStore === 'goldmine' ? 'Goldmine Vape' : 'Ten 2 Ten'}</span>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-text-tertiary uppercase tracking-wider">{currentStore === 'goldmine' ? 'Goldmine Vape' : 'Ten 2 Ten'}</p>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="p-4 space-y-2 flex-1 overflow-y-auto">
+        <div className="p-4 space-y-1.5 flex-1 overflow-y-auto">
           {(() => {
             return sidebarCategories.map(category => (
               <button
                 key={category.id}
                 onClick={() => { setActiveTab(category.slug); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === category.slug ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === category.slug 
+                  ? 'bg-gradient-primary text-white shadow-glow scale-105' 
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
               >
                 <Package className="w-4 h-4" />
                 <span className="capitalize">{(category.name || '').toLowerCase()}</span>
@@ -961,26 +970,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             ));
           })()}
 
-          <div className="my-2 border-t border-black/5 mx-4" />
+          <div className="my-3 mx-4" />
 
-          {/* Fallback/Utility for All Products if needed, or just Manage Categories */}
           <button
             onClick={() => { setActiveTab('products'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'products' 
+              ? 'bg-gradient-primary text-white shadow-glow scale-105' 
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
           >
             <CheckSquare className="w-4 h-4" /> All Items (Inventory)
           </button>
 
           <button
             onClick={() => { setActiveTab('categories'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'categories' 
+              ? 'bg-gradient-primary text-white shadow-glow scale-105' 
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
           >
             <BarChart className="w-4 h-4" /> Manage Categories
           </button>
 
           <button
             onClick={() => { setActiveTab('brands'); setIsMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'brands' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'brands' 
+              ? 'bg-gradient-primary text-white shadow-glow scale-105' 
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
           >
             <Package className="w-4 h-4" /> Manage Brands
           </button>
@@ -989,23 +1003,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             onClick={() => {
               setActiveTab('customers');
               setIsMobileMenuOpen(false);
-              // Load customers when tab is opened
               setCustomersLoading(true);
               CustomerService.getAllCustomers().then(data => {
                 setCustomers(data);
                 setCustomersLoading(false);
               });
             }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'customers' ? 'bg-gold text-black' : 'text-text-secondary hover:text-text-primary hover:bg-black/5'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'customers' 
+              ? 'bg-gradient-primary text-white shadow-glow scale-105' 
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:scale-102'}`}
           >
             <Users className="w-4 h-4" /> CRM — Customers
           </button>
         </div>
 
-
-
-        <div className="p-4 mt-auto border-t border-black/5 space-y-2">
-          <button onClick={onLogout} className="w-full flex items-center gap-2 text-text-secondary hover:text-text-primary text-sm">
+        {/* Sidebar Footer */}
+        <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50">
+          <button 
+            onClick={onLogout} 
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-error hover:bg-error/5 transition-all duration-200"
+          >
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -1014,15 +1031,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
       {/* Main Content */}
       < main className="flex-1 flex flex-col min-w-0" >
         {/* Header */}
-        <header className="h-[72px] border-b border-black/5 flex items-center justify-between px-4 md:px-8 bg-surface/50 backdrop-blur-sm">
-          <div className="flex items-center gap-3">
+        <header className="h-[72px] border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between px-4 md:px-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-text-secondary hover:text-text-primary md:hidden"
+              className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 md:hidden"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-xl font-bold text-text-primary capitalize truncate max-w-[200px] md:max-w-none">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white capitalize truncate max-w-[200px] md:max-w-none">
               {activeTab === 'products' ? 'Products Management' :
                 activeTab === 'categories' ? 'Category Management' :
                   activeTab === 'brands' ? 'Brand Management' :
@@ -1030,11 +1047,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                     `${sidebarCategories.find(c => c.slug === activeTab)?.name || 'Item'} Management`}
             </h2>
           </div>
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-3">
             {activeTab === 'products' && (
               <button
                 onClick={() => { setEditingProduct(undefined); setShowForm(true); }}
-                className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                className="bg-gradient-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:shadow-glow hover:scale-105 transition-all duration-200 shadow-soft"
               >
                 <Plus className="w-4 h-4" /> Add Product
               </button>
@@ -1044,7 +1061,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 {activeTab === 'thc-disposables' && (
                   <button
                     onClick={handleSeedTHCBrands}
-                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                    className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
                   >
                     <Plus className="w-4 h-4" /> Add Default Brands
                   </button>
@@ -1055,7 +1072,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 })() && (
                     <button
                       onClick={handleSeedEdibleBrands}
-                      className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                      className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
                     >
                       <Plus className="w-4 h-4" /> Add Default Brands
                     </button>
@@ -1063,7 +1080,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                 {activeTab === 'wraps-and-blunts' && (
                   <button
                     onClick={handleSeedWrapsBrands}
-                    className="bg-black/5 text-text-primary border border-black/10 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-black/10 transition-colors"
+                    className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
                   >
                     <Plus className="w-4 h-4" /> Add Default Brands
                   </button>
@@ -1082,7 +1099,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       setShowForm(true);
                     }
                   }}
-                  className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                  className="bg-gradient-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:shadow-glow hover:scale-105 transition-all duration-200 shadow-soft"
                   title={`Add ${sidebarCategories.find(c => c.slug === activeTab)?.name || 'Item'}`}
                 >
                   <Plus className="w-4 h-4" /> Add Item
@@ -1092,7 +1109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             {activeTab === 'categories' && (
               <button
                 onClick={() => { setEditingCategory(undefined); setShowCategoryForm(true); }}
-                className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                className="bg-gradient-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:shadow-glow hover:scale-105 transition-all duration-200 shadow-soft"
               >
                 <Plus className="w-4 h-4" /> Add Category
               </button>
@@ -1100,7 +1117,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
             {activeTab === 'brands' && (
               <button
                 onClick={() => { setEditingBrand(undefined); setShowBrandForm(true); }}
-                className="bg-gold text-black px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-yellow-500 transition-colors"
+                className="bg-gradient-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:shadow-glow hover:scale-105 transition-all duration-200 shadow-soft"
               >
                 <Plus className="w-4 h-4" /> Add Brand
               </button>
@@ -1109,7 +1126,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
 
           {/* CUSTOMERS CRM VIEW */}
           {activeTab === 'customers' && (
@@ -1117,18 +1134,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               {/* Stats Row */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 {[
-                  { label: 'Total Customers', value: customers.length, icon: Users, color: 'text-blue-500' },
-                  { label: 'This Month', value: customers.filter(c => { if (!c.firstSeen?.toDate) return false; const d = c.firstSeen.toDate(); const now = new Date(); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length, icon: Calendar, color: 'text-green-500' },
-                  { label: 'Active (7 days)', value: customers.filter(c => { if (!c.lastSeen?.toDate) return false; const d = c.lastSeen.toDate(); return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000; }).length, icon: RefreshCw, color: 'text-gold' },
-                  { label: 'Total Logins', value: customers.reduce((sum, c) => sum + (c.loginCount || 0), 0), icon: Mail, color: 'text-purple-500' },
+                  { label: 'Total Customers', value: customers.length, icon: Users, color: 'from-blue-500 to-blue-600' },
+                  { label: 'This Month', value: customers.filter(c => { if (!c.firstSeen?.toDate) return false; const d = c.firstSeen.toDate(); const now = new Date(); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length, icon: Calendar, color: 'from-green-500 to-green-600' },
+                  { label: 'Active (7 days)', value: customers.filter(c => { if (!c.lastSeen?.toDate) return false; const d = c.lastSeen.toDate(); return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000; }).length, icon: RefreshCw, color: 'from-primary to-primary-light' },
+                  { label: 'Total Logins', value: customers.reduce((sum, c) => sum + (c.loginCount || 0), 0), icon: Mail, color: 'from-purple-500 to-purple-600' },
                 ].map(stat => (
-                  <div key={stat.label} className="bg-surface border border-black/5 rounded-2xl p-5 flex items-center gap-4">
-                    <div className={`p-3 rounded-xl bg-black/5 ${stat.color}`}>
-                      <stat.icon className="w-5 h-5" />
+                  <div key={stat.label} className="bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-5 flex items-center gap-4 shadow-soft hover:shadow-medium transition-all duration-200 hover:-translate-y-1">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-md`}>
+                      <stat.icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-text-primary">{stat.value}</p>
-                      <p className="text-xs text-text-tertiary">{stat.label}</p>
+                      <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{stat.label}</p>
                     </div>
                   </div>
                 ))}
@@ -1137,13 +1154,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
               {/* Search + Refresh */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     placeholder="Search by name or email..."
                     value={customerSearch}
                     onChange={e => setCustomerSearch(e.target.value)}
-                    className="w-full bg-surface border border-black/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-gold"
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 shadow-soft"
                   />
                 </div>
                 <button
@@ -1154,7 +1171,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                       setCustomersLoading(false);
                     });
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-surface border border-black/10 rounded-lg text-sm font-medium hover:bg-black/5 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-soft"
                 >
                   <RefreshCw className={`w-4 h-4 ${customersLoading ? 'animate-spin' : ''}`} />
                   Refresh
@@ -1163,29 +1180,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
 
               {/* Table */}
               {customersLoading ? (
-                <div className="flex items-center justify-center py-20 text-text-tertiary">
+                <div className="flex items-center justify-center py-20 text-slate-500">
                   <RefreshCw className="w-6 h-6 animate-spin mr-3" /> Loading customers...
                 </div>
               ) : customers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-text-tertiary">
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                   <Users className="w-12 h-12 mb-4 opacity-30" />
                   <p className="font-semibold">No customers yet</p>
                   <p className="text-sm mt-1">Customers will appear here once they sign in with Google.</p>
                 </div>
               ) : (
-                <div className="bg-surface border border-black/5 rounded-2xl overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl overflow-hidden shadow-soft">
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b border-black/5 bg-black/2">
-                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Customer</th>
-                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Email</th>
-                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">First Visit</th>
-                          <th className="text-left px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Last Seen</th>
-                          <th className="text-center px-5 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Logins</th>
+                        <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                          <th className="text-left px-5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Customer</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">First Visit</th>
+                          <th className="text-left px-5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last Seen</th>
+                          <th className="text-center px-5 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Logins</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-black/5">
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                         {customers
                           .filter(c => {
                             if (!customerSearch) return true;
@@ -1193,28 +1210,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, isConnected, 
                             return (c.displayName || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q);
                           })
                           .map(customer => (
-                            <tr key={customer.uid} className="hover:bg-black/2 transition-colors">
+                            <tr key={customer.uid} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                               <td className="px-5 py-4">
                                 <div className="flex items-center gap-3">
                                   {customer.photoURL ? (
-                                    <img src={customer.photoURL} alt="" className="w-9 h-9 rounded-full object-cover border border-black/10 flex-shrink-0" />
+                                    <img src={customer.photoURL} alt="" className="w-9 h-9 rounded-full object-cover border-2 border-primary/20 flex-shrink-0" />
                                   ) : (
-                                    <div className="w-9 h-9 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0">
-                                      <Users className="w-4 h-4 text-gold" />
+                                    <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">
+                                      {customer.displayName?.charAt(0).toUpperCase() || '?'}
                                     </div>
                                   )}
-                                  <p className="font-semibold text-sm text-text-primary">{customer.displayName || 'Anonymous'}</p>
+                                  <p className="font-semibold text-sm text-slate-900 dark:text-white">{customer.displayName || 'Anonymous'}</p>
                                 </div>
                               </td>
-                              <td className="px-5 py-4 text-sm text-text-secondary">{customer.email || '—'}</td>
-                              <td className="px-5 py-4 text-sm text-text-tertiary">
+                              <td className="px-5 py-4 text-sm text-slate-600 dark:text-slate-400">{customer.email || '—'}</td>
+                              <td className="px-5 py-4 text-sm text-slate-500">
                                 {customer.firstSeen?.toDate ? customer.firstSeen.toDate().toLocaleDateString() : '—'}
                               </td>
-                              <td className="px-5 py-4 text-sm text-text-tertiary">
+                              <td className="px-5 py-4 text-sm text-slate-500">
                                 {customer.lastSeen?.toDate ? customer.lastSeen.toDate().toLocaleDateString() : '—'}
                               </td>
                               <td className="px-5 py-4 text-center">
-                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gold/10 text-gold text-sm font-bold">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
                                   {customer.loginCount || 0}
                                 </span>
                               </td>
