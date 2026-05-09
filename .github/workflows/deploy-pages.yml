@@ -1,0 +1,47 @@
+name: Deploy Center City Wireless to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'center-city-wireless/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: center-city-wireless
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+Now let me enable GitHub Pages to use GitHub Actions as the source:
+
+
+```tool
+TOOL_NAME: run_terminal_command
+BEGIN_ARG: command
+"gh api repos/Sayem1995/ToughYuff2.0/pages --silent && echo 'Pages exists' || echo 'Need to create'"
