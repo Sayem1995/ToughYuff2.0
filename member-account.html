@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Center City Wireless</title>
+  <meta name="description" content="View your Center City Wireless member profile, customer ID, and purchase history.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <svg class="logo-icon" width="40" height="40" viewBox="0 0 40 40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0077ED"/><stop offset="100%" stop-color="#003F8A"/></linearGradient></defs><rect x="6" y="10" width="28" height="21" rx="4" fill="none" stroke="url(#lg)" stroke-width="2.5"/><path d="M14 22l4 4 8-9" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4c-1 3-1 5-1 6h2c0-1 0-3-1-6z" fill="url(#lg)"/><circle cx="20" cy="5" r="2.5" fill="url(#lg)"/></svg>
+        <span class="logo-text">Center City<span class="logo-highlight">Wireless</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="repairs.html">Repairs</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a href="book-repair.html" class="btn btn-primary btn-nav">Book a Repair</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>My Account</h1>
+      <p>View your member profile, customer ID, and purchase history.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:800px;margin:0 auto;">
+
+      <!-- Not logged in -->
+      <div id="accountLoginPrompt" class="member-form-card" style="display:none;">
+        <div style="text-align:center;padding:20px 0;">
+          <h3 style="margin-bottom:12px;">You are not logged in</h3>
+          <p style="color:#94A0B8;margin-bottom:20px;">Log in or sign up to view your account and purchase history.</p>
+          <a href="member-login.html" class="btn btn-accent" style="margin-right:10px;">Log In</a>
+          <a href="member-signup.html" class="btn btn-primary">Sign Up</a>
+        </div>
+      </div>
+
+      <!-- Logged in content -->
+      <div id="accountContent" style="display:none;">
+
+        <!-- Member info card -->
+        <div class="member-form-card" style="margin-bottom:32px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+            <div>
+              <h3 id="accountName" style="margin-bottom:4px;"></h3>
+              <p id="accountCustomerId" style="color:#0077ED;font-weight:600;font-size:1.1rem;margin-bottom:4px;"></p>
+              <p id="accountEmail" style="color:#94A0B8;margin-bottom:2px;"></p>
+              <p id="accountPhone" style="color:#94A0B8;margin-bottom:2px;"></p>
+              <p id="accountSince" style="color:#94A0B8;font-size:0.85rem;margin-top:8px;"></p>
+            </div>
+            <button id="logoutBtn" class="btn btn-sm" style="background:#2D3748;color:#fff;">Log Out</button>
+          </div>
+        </div>
+
+        <!-- Purchase history -->
+        <h3 style="margin-bottom:16px;">Purchase History</h3>
+        <div id="ordersList">
+          <p style="color:#94A0B8;">Loading your orders...</p>
+        </div>
+        <div id="noOrders" style="display:none;text-align:center;padding:40px 0;">
+          <p style="font-size:3rem;margin-bottom:12px;">📦</p>
+          <h4>No purchases yet</h4>
+          <p style="color:#94A0B8;margin-bottom:16px;">Start shopping to see your orders here.</p>
+          <a href="shop.html" class="btn btn-accent">Browse Shop</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <span class="logo-text" style="color:#fff">Center City<span class="logo-highlight">Wireless</span></span>
+        <p>Your one-stop shop for repairs, accessories &amp; more. Serving Philadelphia since 2015.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="repairs.html">Repair Services</a><a href="shop.html">Accessories Shop</a><a href="book-repair.html">Book a Repair</a><a href="about.html">About Us</a>
+      </div>
+      <div class="footer-links">
+        <h4>Members</h4>
+        <a href="member-signup.html">Sign Up</a><a href="member-login.html">Log In</a><a href="member-account.html">My Account</a>
+      </div>
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a href="contact.html">Contact Us</a><a href="#">Warranty Info</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 Center City Wireless. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var member = JSON.parse(localStorage.getItem('ccw-member') || 'null');
+      var loginPrompt = document.getElementById('accountLoginPrompt');
+      var content = document.getElementById('accountContent');
+
+      if (!member || !member.token) {
+        loginPrompt.style.display = 'block';
+        return;
+      }
+
+      content.style.display = 'block';
+
+      // Load account data from server
+      fetch('/api/members/account', {
+        headers: { 'Authorization': 'Bearer ' + member.token }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.success) {
+          loginPrompt.style.display = 'block';
+          localStorage.removeItem('ccw-member');
+          return;
+        }
+        var m = data.member;
+        document.getElementById('accountName').textContent = m.name;
+        document.getElementById('accountCustomerId').textContent = 'Customer ID: ' + m.customerId;
+        document.getElementById('accountEmail').textContent = m.email;
+        document.getElementById('accountPhone').textContent = m.phone || 'No phone on file';
+        document.getElementById('accountSince').textContent = 'Member since: ' + new Date(m.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        var orders = data.orders;
+        var ordersList = document.getElementById('ordersList');
+        var noOrders = document.getElementById('noOrders');
+
+        if (!orders || orders.length === 0) {
+          ordersList.style.display = 'none';
+          noOrders.style.display = 'block';
+          return;
+        }
+
+        var html = '';
+        for (var i = 0; i < orders.length; i++) {
+          var o = orders[i];
+          html += '<div class="order-card">';
+          html += '<div class="order-card-header">';
+          html += '<span class="order-id">Order #' + o.id.substring(0, 8) + '</span>';
+          html += '<span class="order-date">' + new Date(o.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) + '</span>';
+          html += '<span class="order-status">' + o.status + '</span>';
+          html += '</div>';
+          html += '<div class="order-items">';
+          for (var j = 0; j < o.items.length; j++) {
+            var item = o.items[j];
+            html += '<div class="order-item-row">';
+            html += '<span>' + item.name + (item.quantity > 1 ? ' &times;' + item.quantity : '') + '</span>';
+            html += '<span>$' + ((item.price * (item.quantity || 1)).toFixed(2)) + '</span>';
+            html += '</div>';
+          }
+          html += '</div>';
+          html += '<div class="order-totals">';
+          html += '<div class="order-total-row"><span>Subtotal</span><span>$' + (o.subtotal || 0).toFixed(2) + '</span></div>';
+          html += '<div class="order-total-row"><span>Sales Tax (8%)</span><span>$' + (o.tax || 0).toFixed(2) + '</span></div>';
+          html += '<div class="order-total-row order-grand-total"><span>Total</span><span>$' + (o.total || 0).toFixed(2) + '</span></div>';
+          html += '</div>';
+          html += '</div>';
+        }
+        ordersList.innerHTML = html;
+      })
+      .catch(function() {
+        loginPrompt.style.display = 'block';
+        localStorage.removeItem('ccw-member');
+      });
+
+      // Logout button
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        localStorage.removeItem('ccw-member');
+        window.location.reload();
+      });
+    });
+  </script>
+</body>
+</html>

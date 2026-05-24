@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" fill="none">
+  <defs>
+    <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0080FF" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#00B4FF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="phoneScreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B1A30"/>
+      <stop offset="100%" stop-color="#060F1E"/>
+    </linearGradient>
+    <filter id="phoneGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer glow -->
+  <rect x="130" y="40" width="140" height="470" rx="32" fill="none" stroke="url(#phoneGrad)" stroke-width="20" filter="url(#phoneGlow)" opacity="0.5"/>
+
+  <!-- Phone body -->
+  <rect x="155" y="80" width="90" height="390" rx="24" fill="url(#phoneScreen)" stroke="#0080FF" stroke-width="1.5" stroke-opacity="0.3"/>
+
+  <!-- Screen inner content -->
+  <rect x="163" y="110" width="74" height="330" rx="16" fill="#0F1F3D" opacity="0.6"/>
+
+  <!-- Circuit lines on screen -->
+  <path d="M175 200h20v40h-20zM205 250h-15m15 0v-20M190 310h25l-5 15h-15z" stroke="#0080FF" stroke-width="1" stroke-opacity="0.3"/>
+
+  <!-- Checkmark icon on screen -->
+  <circle cx="200" cy="260" r="22" fill="none" stroke="#00B4FF" stroke-width="2.5" stroke-opacity="0.5"/>
+  <path d="M188 260l8 8 16-18" stroke="#00E5FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top notch -->
+  <rect x="195" y="88" width="10" height="4" rx="2" fill="#0080FF" fill-opacity="0.4"/>
+
+  <!-- Bottom home indicator -->
+  <rect x="190" y="448" width="20" height="3" rx="1.5" fill="#0080FF" fill-opacity="0.3"/>
+
+  <!-- Signal bars top right -->
+  <rect x="225" y="100" width="4" height="6" rx="1" fill="#00B4FF" opacity="0.4"/>
+  <rect x="231" y="98" width="4" height="8" rx="1" fill="#00B4FF" opacity="0.55"/>
+  <rect x="237" y="95" width="4" height="11" rx="1" fill="#00B4FF" opacity="0.7"/>
+
+  <!-- Breathing glow dot -->
+  <circle cx="200" cy="460" r="3" fill="#00E5FF" opacity="0.4">
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

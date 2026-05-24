@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In — Center City Wireless Members</title>
+  <meta name="description" content="Log in to your Center City Wireless member account to place orders and track your purchases.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <svg class="logo-icon" width="40" height="40" viewBox="0 0 40 40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0077ED"/><stop offset="100%" stop-color="#003F8A"/></linearGradient></defs><rect x="6" y="10" width="28" height="21" rx="4" fill="none" stroke="url(#lg)" stroke-width="2.5"/><path d="M14 22l4 4 8-9" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4c-1 3-1 5-1 6h2c0-1 0-3-1-6z" fill="url(#lg)"/><circle cx="20" cy="5" r="2.5" fill="url(#lg)"/></svg>
+        <span class="logo-text">Center City<span class="logo-highlight">Wireless</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="repairs.html">Repairs</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a href="book-repair.html" class="btn btn-primary btn-nav">Book a Repair</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Member Log In</h1>
+      <p>Log in to access members-only checkout and view your purchase history.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:520px;margin:0 auto;">
+      <div class="member-form-card">
+        <form id="loginForm" class="member-form">
+          <div class="form-group">
+            <label for="loginEmail">Email Address *</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password *</label>
+            <input type="password" id="loginPassword" placeholder="Your password" required autocomplete="current-password">
+          </div>
+          <div id="loginError" class="form-error" style="display:none;"></div>
+          <button type="submit" class="btn btn-accent btn-block" id="loginBtn">Log In</button>
+        </form>
+        <p class="member-form-footer">Don't have an account? <a href="member-signup.html">Sign up here</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <span class="logo-text" style="color:#fff">Center City<span class="logo-highlight">Wireless</span></span>
+        <p>Your one-stop shop for repairs, accessories &amp; more. Serving Philadelphia since 2015.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="repairs.html">Repair Services</a><a href="shop.html">Accessories Shop</a><a href="book-repair.html">Book a Repair</a><a href="about.html">About Us</a>
+      </div>
+      <div class="footer-links">
+        <h4>Members</h4>
+        <a href="member-signup.html">Sign Up</a><a href="member-login.html">Log In</a><a href="member-account.html">My Account</a>
+      </div>
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a href="contact.html">Contact Us</a><a href="#">Warranty Info</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 Center City Wireless. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var form = document.getElementById('loginForm');
+      var errEl = document.getElementById('loginError');
+      var btn = document.getElementById('loginBtn');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errEl.style.display = 'none';
+
+        var email = document.getElementById('loginEmail').value.trim();
+        var password = document.getElementById('loginPassword').value;
+
+        if (!email || !password) {
+          errEl.textContent = 'Please enter your email and password.';
+          errEl.style.display = 'block';
+          return;
+        }
+
+        btn.textContent = 'Logging in...';
+        btn.disabled = true;
+
+        fetch('/api/members/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: password })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            localStorage.setItem('ccw-member', JSON.stringify({
+              customerId: data.customerId,
+              token: data.token,
+              name: data.name,
+              email: data.email,
+              phone: data.phone
+            }));
+            showToast('Welcome back, ' + data.name + '!');
+            setTimeout(function() { window.location.href = 'shop.html'; }, 800);
+          } else {
+            errEl.textContent = data.error || 'Login failed. Please try again.';
+            errEl.style.display = 'block';
+            btn.textContent = 'Log In';
+            btn.disabled = false;
+          }
+        })
+        .catch(function() {
+          errEl.textContent = 'Connection error. Please try again.';
+          errEl.style.display = 'block';
+          btn.textContent = 'Log In';
+          btn.disabled = false;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
