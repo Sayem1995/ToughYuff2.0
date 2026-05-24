@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -52,7 +52,7 @@ function generateMemberToken() {
 }
 
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'online', name: 'Center City Wireless', version: '1.0.0' });
+  res.json({ status: 'online', name: 'ToughYuff', version: '1.0.0' });
 });
 
 // ===== MEMBERSHIP / CUSTOMER ACCOUNT =====
@@ -255,7 +255,7 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log('========================================');
-  console.log('  Center City Wireless Backend');
+  console.log('  ToughYuff Backend');
   console.log('  Server: http://localhost:' + PORT);
   console.log('  API:    http://localhost:' + PORT + '/api/status');
   console.log('========================================');

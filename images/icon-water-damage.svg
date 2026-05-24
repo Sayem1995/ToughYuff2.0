@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
-  <circle cx="60" cy="60" r="54" fill="#0080FF" fill-opacity="0.08"/>
-  <path d="M30 56c0-8 8-16 16-24l14-12 14 12c8 8 16 16 16 24 0 12-6 22-16 28-6 3-9 3-14 3s-8 0-14-3c-10-6-16-16-16-28z" fill="none" stroke="#0080FF" stroke-width="2.5"/>
-  <path d="M48 60c4-6 8-9 12-9s8 3 12 9" stroke="#00E5FF" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="56" cy="66" r="2" fill="#00E5FF"/>
-  <circle cx="64" cy="66" r="2" fill="#00E5FF"/>
-</svg>
+﻿<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'><path d='M32 8c0 0-16 20-16 30a16 16 0 0032 0c0-10-16-30-16-30z' stroke='url(#g)' stroke-width='2.5' fill='none'/><path d='M32 8c0 0-16 20-16 30a16 16 0 0032 0c0-10-16-30-16-30z' fill='url(#g)' opacity='.1'/><path d='M30 28l-2 8h6l-2 8' stroke='url(#g)' stroke-width='2' stroke-linecap='round'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='#0077ED'/><stop offset='100%25' stop-color='#00E5FF'/></linearGradient></defs></svg>

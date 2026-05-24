@@ -1,9 +1,10 @@
+﻿import os, json, textwrap
 
+js = '''
 // ===== CCW Complete JavaScript =====
 document.addEventListener('DOMContentLoaded', function() {
   initNavbar();
   initHamburger();
-  initMemberNav();
   initShopFilters();
   initCart();
   initRepairForm();
@@ -12,41 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
   initAnimations();
   loadCartCount();
 });
-
-// ===== MEMBER SESSION =====
-
-function getMember() {
-  return JSON.parse(localStorage.getItem('ccw-member') || 'null');
-}
-
-function isLoggedIn() {
-  var m = getMember();
-  return m && m.token && m.customerId;
-}
-
-function initMemberNav() {
-  var signupLink = document.getElementById('navSignupLink');
-  var loginLink = document.getElementById('navLoginLink');
-  var badge = document.getElementById('navMemberBadge');
-  var accountLink = document.getElementById('navAccountLink');
-  if (!signupLink || !loginLink) return;
-
-  if (isLoggedIn()) {
-    var m = getMember();
-    signupLink.style.display = 'none';
-    loginLink.style.display = 'none';
-    if (badge) {
-      badge.style.display = 'inline';
-      badge.textContent = m.name || m.customerId;
-    }
-    if (accountLink) accountLink.style.display = '';
-  } else {
-    signupLink.style.display = '';
-    loginLink.style.display = '';
-    if (badge) badge.style.display = 'none';
-    if (accountLink) accountLink.style.display = 'none';
-  }
-}
 
 function initNavbar() {
   const navbar = document.getElementById('navbar');
@@ -93,7 +59,9 @@ function initShopFilters() {
     });
   });
 }
+'''
 
+js += '''
 // ===== SHOPPING CART =====
 var cart = JSON.parse(localStorage.getItem('ccw-cart') || '[]');
 
@@ -173,14 +141,14 @@ function openCartModal() {
   var modal = document.createElement('div');
   modal.className = 'ccw-cart-modal';
   var itemsHtml = '';
-  var subtotal = 0;
+  var total = 0;
   if (cart.length === 0) {
     itemsHtml = '<div class="ccw-cart-empty"><p>Your cart is empty.</p><p style="font-size:0.85rem;color:#94A0B8;margin-top:8px;">Add some accessories!</p></div>';
   } else {
     for (var i = 0; i < cart.length; i++) {
       var item = cart[i];
       var itemTotal = item.price * item.quantity;
-      subtotal += itemTotal;
+      total += itemTotal;
       itemsHtml += '<div class="ccw-cart-item">';
       itemsHtml += '<div class="ccw-cart-item-info">';
       itemsHtml += '<h4>' + item.name + '</h4>';
@@ -195,28 +163,12 @@ function openCartModal() {
       itemsHtml += '</div>';
     }
   }
-  // Calculate 8% tax
-  var taxRate = 0.08;
-  var tax = Math.round(subtotal * taxRate * 100) / 100;
-  var total = Math.round((subtotal + tax) * 100) / 100;
-
-  var hasItems = cart.length > 0;
-  var loggedIn = isLoggedIn();
-  var disabledAttr = hasItems && loggedIn ? '' : 'disabled';
-
   modal.innerHTML = '<div class="ccw-cart-modal-header"><h3>Shopping Cart</h3><button class="ccw-cart-close">&times;</button></div>';
   modal.innerHTML += '<div class="ccw-cart-items">' + itemsHtml + '</div>';
-  modal.innerHTML += '<div class="ccw-cart-footer">';
-  modal.innerHTML += '<div class="ccw-cart-total"><span>Subtotal</span><strong>$' + subtotal.toFixed(2) + '</strong></div>';
-  if (hasItems) {
-    modal.innerHTML += '<div class="ccw-cart-tax"><span>Sales Tax (8%)</span><strong>$' + tax.toFixed(2) + '</strong></div>';
-    modal.innerHTML += '<div class="ccw-cart-grand-total"><span>Total</span><strong>$' + total.toFixed(2) + '</strong></div>';
-  }
-  if (!loggedIn && hasItems) {
-    modal.innerHTML += '<div class="ccw-cart-member-notice"><span>&#128274;</span> Members only checkout. <a href="member-login.html">Log in</a> or <a href="member-signup.html">sign up</a>.</div>';
-  }
+  var disabledAttr = cart.length === 0 ? 'disabled' : '';
+  modal.innerHTML += '<div class="ccw-cart-footer"><div class="ccw-cart-total"><span>Total</span><strong>$' + total.toFixed(2) + '</strong></div>';
   modal.innerHTML += '<button class="btn btn-accent ccw-checkout-btn" ' + disabledAttr + '>Checkout</button>';
-  modal.innerHTML += '<button class="btn btn-sm ccw-clear-btn" ' + (hasItems ? '' : 'disabled') + '>Clear Cart</button></div>';
+  modal.innerHTML += '<button class="btn btn-sm ccw-clear-btn" ' + disabledAttr + '>Clear Cart</button></div>';
   document.body.appendChild(overlay);
   document.body.appendChild(modal);
   requestAnimationFrame(function() {
@@ -265,38 +217,11 @@ function openCartModal() {
   if (checkoutBtn) {
     checkoutBtn.addEventListener('click', function() {
       if (cart.length === 0) return;
-      if (!isLoggedIn()) {
-        closeCartModal();
-        window.location.href = 'member-login.html';
-        return;
-      }
-      var member = getMember();
-      checkoutBtn.textContent = 'Placing Order...';
-      checkoutBtn.disabled = true;
-      fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart, customerId: member.customerId, token: member.token })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.success) {
-          closeCartModal();
-          cart = [];
-          saveCart();
-          updateCartBadge();
-          showToast('Order placed! Subtotal: $' + data.subtotal.toFixed(2) + ' + Tax: $' + data.tax.toFixed(2) + ' = Total: $' + data.total.toFixed(2));
-        } else {
-          showToast(data.error || 'Order failed. Please try again.');
-          checkoutBtn.textContent = 'Checkout';
-          checkoutBtn.disabled = false;
-        }
-      })
-      .catch(function() {
-        showToast('Connection error. Please try again.');
-        checkoutBtn.textContent = 'Checkout';
-        checkoutBtn.disabled = false;
-      });
+      closeCartModal();
+      showToast('Order placed! We will contact you within 1 hour.');
+      cart = [];
+      saveCart();
+      updateCartBadge();
     });
   }
 }
@@ -313,7 +238,9 @@ function closeCartModal() {
     setTimeout(function() { modal.remove(); }, 300);
   }
 }
+'''
 
+js += '''
 // ===== FORM SUBMISSION (Formspree) =====
 function initRepairForm() {
   var form = document.getElementById('repairForm');
@@ -333,8 +260,8 @@ function initRepairForm() {
     var formData = new FormData(form);
     var data = {};
     formData.forEach(function(value, key) { data[key] = value; });
-    ;
-    fetch('/api/repair-quote', {
+    data._subject = 'New Repair Quote - Center City Wireless';
+    fetch('https://formspree.io/f/myzkbkqg', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -358,7 +285,9 @@ function initRepairForm() {
     });
   });
 }
+'''
 
+js += '''
 // ===== LIVE CHAT =====
 function initLiveChat() {
   var chatContainer = document.createElement('div');
@@ -370,7 +299,7 @@ function initLiveChat() {
   chatContainer.innerHTML += '<div class="ccw-chat-header">';
   chatContainer.innerHTML += '<div class="ccw-chat-header-info">';
   chatContainer.innerHTML += '<div class="ccw-chat-avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
-  chatContainer.innerHTML += '<div><strong>ToughYuff</strong><span class="ccw-chat-status">Online</span></div>';
+  chatContainer.innerHTML += '<div><strong>Center City Wireless</strong><span class="ccw-chat-status">Online</span></div>';
   chatContainer.innerHTML += '</div>';
   chatContainer.innerHTML += '<button class="ccw-chat-close-btn" id="chatClose">&times;</button>';
   chatContainer.innerHTML += '</div>';
@@ -455,7 +384,9 @@ function getBotResponse(text) {
   }
   return 'Thanks for reaching out! For fastest help, call (215) 555-1234 or stop by the shop.';
 }
+'''
 
+js += '''
 // ===== SMOOTH SCROLL =====
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
@@ -470,7 +401,9 @@ function initSmoothScroll() {
     });
   });
 }
+'''
 
+js += '''
 // ===== SCROLL ANIMATIONS =====
 function initAnimations() {
   var observer = new IntersectionObserver(function(entries) {
@@ -486,7 +419,9 @@ function initAnimations() {
     observer.observe(el);
   });
 }
+'''
 
+js += '''
 // ===== TOAST NOTIFICATION =====
 function showToast(message) {
   var existing = document.querySelector('.ccw-toast');
@@ -503,5 +438,11 @@ function showToast(message) {
     setTimeout(function() { toast.remove(); }, 300);
   }, 2800);
 }
+'''
 
+with open(r'C:\Users\Sayem\ToughYuff2.0\js\main.js', 'w', encoding='utf-8') as f:
+    f.write(js)
 
+size = os.path.getsize(r'C:\Users\Sayem\ToughYuff2.0\js\main.js')
+lines = js.count('\n')
+print(f'JavaScript written: {size} bytes, {lines} lines')
